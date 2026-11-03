@@ -219,10 +219,10 @@ async function test(name, fn) {
     const n = (await page.$$('.ti')).length;
     assert(n === 3, `Ağaçta 3 yazı satırı bekleniyordu, ${n} var`);
     // 2. satırı gizle
-    await (await page.$$('.ti input'))[1].click();
+    await page.locator('.ti input').nth(1).click();
     assert(await page.evaluate(() => window.__nm.S.pages[0].anns.filter(a => a.hid).length === 1), 'Gizleme işlenmedi');
     // 3. satırı kilitle; sayfada tıklanamamalı
-    await (await page.$$('.ti .tl'))[2].click();
+    await page.locator('.ti .tl').nth(2).click();
     const pe = await page.evaluate(() => { const a = window.__nm.S.pages[0].anns.find(a => a.lock); const d = document.querySelector(`[data-aid="${a.id}"]`); return d && getComputedStyle(d).pointerEvents; });
     assert(pe === 'none', 'Kilitli nesne hâlâ tıklanabilir: ' + pe);
     const t = await pdfText(page, await save(page));
