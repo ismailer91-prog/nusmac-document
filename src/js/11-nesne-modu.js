@@ -60,7 +60,7 @@ async function objectify(p){
   const tc=$(`.th[data-pid="${p.id}"] canvas`);if(tc)renderThumb(p,tc);
   if(S.sel&&S.sel.pageId===p.id)updSelUI();
 }
-const sigOf=l=>JSON.stringify(l.map(a=>{const c=Object.assign({},a);delete c.id;return c}));
+const sigOf=l=>JSON.stringify(l.map(a=>{const c=Object.assign({},a);delete c.id;delete c.lock;return c}));
 function objChanged(p){if(!p.objMode)return false;return sigOf(p.anns.filter(a=>a.auto))!==p.objSig}
 const OBJQ=[];let objBusy=false;
 function queueObj(pages){if(!S.objAuto)return;for(const p of pages)if(p.kind==='pdf'&&!p.objMode&&!p.objTried&&!OBJQ.includes(p))OBJQ.push(p);runObjQ()}

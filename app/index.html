@@ -179,8 +179,8 @@ body.dropping .viewer{outline:3px dashed var(--accent);outline-offset:-10px}
 .only-narrow{display:none}
 @media (max-width:760px){
   .only-narrow{display:inline-grid}
-  .thumbs{position:absolute;left:0;top:0;bottom:0;z-index:20;box-shadow:var(--shadow);display:none}
-  .thumbs.show{display:flex}
+  .side{position:absolute;left:0;top:0;bottom:0;z-index:20;box-shadow:var(--shadow);display:none}
+  .side.show{display:flex}
   .rtabs button{padding:5px 9px}
   .search input{width:100px}
 }
@@ -273,18 +273,9 @@ footer.status .r{flex:1;text-align:center}
 .viewer:not(.tool-select) .hitfill{pointer-events:none}
 .viewer.tool-cut .ov,.viewer.tool-lasso .ov,.viewer.tool-grab .ov,.viewer.tool-crop .ov{cursor:crosshair}
 .pg{border-radius:2px}
-.thumbs{width:156px}
 @media (max-width:1100px){.docname{display:none}.hsearch input{width:110px}}
 @media (max-width:760px){.rgl{display:none}.hsearch{display:none}.brand span:last-child{display:none}.top-actions .btn{padding:6px 9px}}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
-/* dar ekranlarda (laptop) şerit tek satırda kalsın */
-@media (max-width:1500px){
-  .rg{padding:0 4px}
-  .ribbon .sb{padding:0 4px;gap:4px;font-size:12px}
-  .ribbon .ib{width:25px}
-  #pfSel{width:96px}#fsSel{width:58px}#lsSel{width:68px}#fBlock{width:78px}#lwSel{width:56px}
-}
-@media (max-width:1340px){.ribbon .sb.nl{font-size:0;gap:2px}.rg{padding:0 3px}}
 /* yazdırma: yalnız hazırlanan sayfa resimleri basılır */
 #printArea{display:none}
 @media print{
@@ -296,73 +287,151 @@ footer.status .r{flex:1;text-align:center}
   .prpage:last-child{break-after:auto}
   .prpage img{max-width:100%;max-height:100%;object-fit:contain}
 }
+
+/* ===== Netcad tarzı arayüz: başlık çubuğu + hızlı erişim, sekmeler, büyük simgeli şerit, sol panel ===== */
+:root{--ic-b:#1f6fd1;--ic-r:#d9381e;--ic-g:#178a4c;--ic-o:#e07800;--ic-k:#3b4150;--tab:#ffffff;--rib:#fbfbfc}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ic-b:#6aa8ff;--ic-r:#ff7a62;--ic-g:#4fd18b;--ic-o:#ffad4a;--ic-k:#c9cdd8;--tab:#262a33;--rib:#20232b}}
+:root[data-theme="dark"]{--ic-b:#6aa8ff;--ic-r:#ff7a62;--ic-g:#4fd18b;--ic-o:#ffad4a;--ic-k:#c9cdd8;--tab:#262a33;--rib:#20232b}
+
+header.top{flex-wrap:nowrap;gap:6px;padding-block:3px;background:var(--tab);border-bottom:0;min-height:38px}
+.brand .mark{width:22px;height:22px;border-radius:5px;font-size:12px}
+.qat{display:flex;align-items:center;gap:1px}
+.qat .ib{width:28px;height:28px;border-radius:5px}
+.qat .ib svg{width:17px;height:17px}
+.qat [data-ico="open"]{color:var(--ic-o)}.qat [data-ico="save"]{color:var(--ic-b)}.qat [data-ico="print"]{color:var(--ic-k)}
+.qsep{width:1px;height:18px;background:var(--line);margin:0 4px}
+.ttl{flex:1;min-width:0;text-align:center;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttl .docname{display:inline;border:0;padding:0;max-width:none;color:var(--ink);font-size:13px}
+.hsearch{height:28px}.hsearch input{width:170px}.hsearch .ib{width:24px;height:24px}
+
+nav.tabs{display:flex;align-items:flex-end;gap:2px;background:var(--tab);border-bottom:1px solid var(--line);padding-top:2px}
+nav.tabs [role="tab"]{border:1px solid transparent;border-bottom:0;background:transparent;padding:5px 14px 6px;margin-bottom:-1px;border-radius:5px 5px 0 0;cursor:pointer;font-size:13px;color:var(--muted);white-space:nowrap}
+nav.tabs [role="tab"]:hover{color:var(--ink);background:var(--accent-soft)}
+nav.tabs [role="tab"][aria-selected="true"]{background:var(--rib);border-color:var(--line);color:var(--accent);font-weight:600}
+nav.tabs [role="tab"]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+nav.tabs .ib{width:28px;height:28px;align-self:center}
+
+.ribbon{display:block;background:var(--rib);padding-block:4px 2px;box-shadow:0 1px 3px rgba(20,22,40,.08);position:relative;z-index:2}
+.rpanel{display:flex;align-items:stretch;min-height:88px;overflow-x:auto;scrollbar-width:thin}
+.rpanel[hidden]{display:none!important}
+.rg{display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:0 6px;border-right:1px solid var(--line);flex:none}
+.rg:last-child{border-right:0}
+.rgc{display:flex;align-items:flex-start;gap:1px;flex:1}
+.rgc>.rrows{align-self:center}
+.rgl{margin-top:2px;font-size:11.5px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted);white-space:nowrap}
+.rlab{font-size:12px;color:var(--muted);margin-right:4px}
+
+/* büyük düğme: simge üstte, yazı altta */
+.bb{display:inline-flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;min-width:52px;max-width:78px;height:66px;padding:5px 4px 2px;border:1px solid transparent;background:transparent;border-radius:4px;cursor:pointer;color:var(--ink);font-size:12px;line-height:1.15;text-align:center;position:relative}
+.bb svg{width:28px;height:28px;flex:none;stroke-width:1.6;color:var(--ic-k)}
+.bb.c-b svg{color:var(--ic-b)}.bb.c-r svg{color:var(--ic-r)}.bb.c-g svg{color:var(--ic-g)}.bb.c-o svg{color:var(--ic-o)}
+.bb .bl{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bb:hover{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,transparent)}
+.bb[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.bb[aria-pressed="true"] .bl{color:var(--accent);font-weight:600}
+.bb:disabled{opacity:.4;cursor:default;background:transparent;border-color:transparent}
+.bb:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bb.dd{padding-bottom:10px}
+.bb.dd::after{position:absolute;bottom:2px;left:50%;margin-left:-4px;transform:none}
+
+/* sol panel */
+.side{width:236px;flex:none;display:flex;flex-direction:column;background:var(--panel);border-right:1px solid var(--line);min-height:0}
+.sp{display:flex;flex-direction:column;min-height:0}
+.sp-pages{flex:0 0 52%}
+.sp-objs{flex:1}
+.sph{display:flex;align-items:center;gap:2px;padding:5px 6px 5px 10px;background:var(--desk);border-bottom:1px solid var(--line);font-size:12px}
+.sph b{font-weight:600}
+.sph .spacer{flex:1}
+.sph .spc{color:var(--muted);margin-left:8px;font-size:11.5px}
+.sph .ib{width:24px;height:24px;border-radius:4px}.sph .ib svg{width:15px;height:15px}
+.side .thumbs{width:auto;flex:1;border-right:0;padding:10px 8px;gap:10px}
+.spl{height:6px;flex:none;cursor:row-resize;background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative}
+.spl::after{content:"";position:absolute;left:50%;top:1px;width:28px;height:2px;margin-left:-14px;border-top:1px dotted var(--muted);border-bottom:1px dotted var(--muted)}
+.tree{flex:1;overflow:auto;padding:4px 0;font-size:12.5px}
+.tempty{padding:12px;color:var(--muted);font-size:12px;line-height:1.5}
+.tg,.ti{display:flex;align-items:center;gap:5px;padding:2px 6px;min-height:26px;white-space:nowrap}
+.tg{font-weight:600;margin-top:2px}
+.tg svg{width:15px;height:15px;color:var(--accent);flex:none}
+.tg .tn{cursor:pointer;flex:1;overflow:hidden;text-overflow:ellipsis}
+.tg .tc{font:11px var(--mono);color:var(--muted);background:var(--desk);border-radius:8px;padding:0 6px}
+.tw{width:16px;height:16px;border:0;background:transparent;padding:0;cursor:pointer;color:var(--muted);display:grid;place-items:center;flex:none}
+.tw::before{content:"";border:4px solid transparent;border-left-color:currentColor;margin-left:3px;transition:transform .12s}
+.tg[aria-expanded="true"] .tw::before{transform:rotate(90deg) translateX(2px)}
+.ti{padding-left:28px;cursor:pointer}
+.ti:hover{background:var(--accent-soft)}
+.ti.sel{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.ti .tn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.ti.off .tn{color:var(--muted);text-decoration:line-through}
+.ti .tauto{font:600 9.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:0 3px}
+.ti .ib{width:22px;height:22px;border-radius:4px;color:var(--muted);flex:none}.ti .ib svg{width:14px;height:14px}
+.ti .ib[aria-pressed="true"]{background:transparent;color:var(--ic-o)}
+.ti .tdel{opacity:0}.ti:hover .tdel,.ti .tdel:focus-visible{opacity:1}
+.tree input[type="checkbox"]{margin:0;accent-color:var(--accent);flex:none}
+.ann.locked,.ovsvg g.locked,.ovsvg g.locked *{pointer-events:none!important}
+
+@media (max-width:1100px){.ttl .appn{display:none}.hsearch input{width:110px}}
+@media (max-width:760px){.qat .qsep,.qat [data-proxy]{display:none}nav.tabs [role="tab"]{padding:5px 9px}.rgl{display:block}}
 </style>
 
 </head>
 <body>
 <div id="app">
   <header class="top gut">
-    <div class="brand"><span class="mark">N</span><span>Nusmac <small class="bsub">Document</small></span></div>
-    <span class="docname" id="docName" title="Belgenin adı">Örnek belge</span>
-    <div class="spacer"></div>
+    <div class="brand" title="Nusmac Document"><span class="mark">N</span></div>
+    <div class="qat" role="toolbar" aria-label="Hızlı erişim">
+      <button class="ib" data-proxy="#fileIn" data-ico="open" title="Aç"></button><button class="ib" data-proxy="#saveBtn" data-ico="save" title="Kaydet (Ctrl+S)"></button><button class="ib" data-proxy="#printBtn" data-ico="print" title="Yazdır (Ctrl+P)"></button><span class="qsep"></span><button class="ib" id="undoBtn" data-ico="undo" title="Geri al (Ctrl+Z)" disabled></button><button class="ib" id="redoBtn" data-ico="redo" title="Yinele (Ctrl+Y)" disabled></button>
+    </div>
+    <div class="ttl"><span class="docname" id="docName" title="Belgenin adı">Boş belge</span><span class="appn"> – Nusmac Document</span></div>
     <div class="search hsearch"><span data-ico="search"></span><input id="q" placeholder="PDF içinde ara" aria-label="PDF içinde ara"><span class="qi" id="qi"></span><button class="ib" id="qprev" data-ico="up" title="Önceki"></button><button class="ib" id="qnext" data-ico="down" title="Sonraki"></button></div>
-    <div class="hgrp"><button class="ib" id="undoBtn" data-ico="undo" title="Geri al (Ctrl+Z)" disabled></button><button class="ib" id="redoBtn" data-ico="redo" title="Yinele (Ctrl+Y)" disabled></button></div>
-    <div class="top-actions">
-      <label class="btn" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span data-ico="open"></span>Aç<input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label>
-      <button class="btn" id="newBtn" title="Belgeyi temizle">Yeni</button>
-      <button class="btn" id="printBtn" title="Yazdır (Ctrl+P)"><span data-ico="print"></span>Yazdır</button>
-      <button class="btn primary" id="saveBtn" title="Kaydet (Ctrl+S)"><span data-ico="save"></span>Kaydet</button>
-    </div>
   </header>
-
+  <nav class="tabs gut" role="tablist" aria-label="Komut sekmeleri">
+    <button class="ib only-narrow" id="sideBtn" data-ico="side" title="Sayfa ve nesne listesi"></button>
+    <button role="tab" data-tab="home" aria-controls="tp-home" aria-selected="true">Giriş</button><button role="tab" data-tab="yazi" aria-controls="tp-yazi" aria-selected="false">Yazı</button><button role="tab" data-tab="ekle" aria-controls="tp-ekle" aria-selected="false">Ekle</button><button role="tab" data-tab="cizim" aria-controls="tp-cizim" aria-selected="false">Çizim</button><button role="tab" data-tab="resim" aria-controls="tp-resim" aria-selected="false">Resim</button><button role="tab" data-tab="sayfa" aria-controls="tp-sayfa" aria-selected="false">Sayfa</button>
+  </nav>
   <div class="ribbon gut" id="ribbon">
-    <button class="ib only-narrow" id="sideBtn" data-ico="side" title="Sayfa listesi"></button>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><select id="pfSel" title="Yazı tipi" aria-label="Yazı tipi"></select><select id="fsSel" title="Yazı boyutu" aria-label="Yazı boyutu"></select><button class="ib" id="supBtn" title="Üst simge (m²)"><span class="tx">x²</span></button><button class="ib" id="subBtn" title="Alt simge (H₂O)"><span class="tx">x₂</span></button></div>
-        <div class="rrow"><button class="ib" id="boldBtn" title="Kalın (Ctrl+B)" aria-pressed="false"><b class="tx">K</b></button><button class="ib" id="italBtn" title="Eğik (Ctrl+I)" aria-pressed="false"><i class="tx" style="font-family:Georgia,serif">T</i></button><button class="ib" id="undBtn" title="Altı çizili (Ctrl+U)" aria-pressed="false"><u class="tx">A</u></button><button class="ib" id="strBtn" title="Üstü çizili" aria-pressed="false"><s class="tx">ab</s></button>
-          <label class="cpick" title="Yazı rengi"><span class="tx">A</span><i class="bar" id="fBar" style="background:#000000"></i><input type="color" id="fColor" value="#000000" aria-label="Yazı rengi"></label>
-          <label class="cpick" title="Vurgu rengi (yazının arkası)"><span data-ico="hl"></span><i class="bar" id="hBar" style="background:#ffe45c"></i><input type="color" id="hColor" value="#ffe45c" aria-label="Vurgu rengi"></label>
-          <button class="ib" id="clrBtn" data-ico="clear" title="Biçimi temizle"></button></div>
-      </div>
-      <div class="rgl">Yazı</div>
+    <div class="rpanel" role="tabpanel" data-panel="home" id="tp-home">
+      <div class="rg"><div class="rgc"><label class="bb c-b" data-ico="open" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span class="bl">Aç</span><input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label><button class="bb c-b" data-ico="new" id="newBtn" title="Belgeyi temizle"><span class="bl">Yeni</span></button><button class="bb c-b" data-ico="save" id="saveBtn" title="Kaydet (Ctrl+S)"><span class="bl">Kaydet</span></button><button class="bb c-b" data-ico="print" id="printBtn" title="Yazdır (Ctrl+P)"><span class="bl">Yazdır</span></button></div><div class="rgl">Dosya</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-r" data-ico="text" data-tool="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)"><span class="bl">Metin</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="image" data-proxy="#imgIn" title="Resim ekle"><span class="bl">Resim</span></button><button class="bb c-b" data-ico="sign" data-proxy="#signBtn" title="İmza çiz ya da kaşe fotoğrafı ekle"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button></div><div class="rgl">Ekle</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" data-proxy="#objBtn" title="PDF’teki yazı ve resimleri ayrı, düzenlenebilir nesne yapar"><span class="bl">Nesneler</span></button><button class="bb c-b" data-ico="rotl" data-proxy="#rotL" title="Bu sayfayı sola döndür"><span class="bl">Sola döndür</span></button><button class="bb c-b" data-ico="rotr" data-proxy="#rotR" title="Bu sayfayı sağa döndür"><span class="bl">Sağa döndür</span></button></div><div class="rgl">Sayfa</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="zin" data-proxy="#zin"><span class="bl">Yakınlaştır</span></button><button class="bb c-g" data-ico="zout" data-proxy="#zout"><span class="bl">Uzaklaştır</span></button><button class="bb c-g" data-ico="fit" data-proxy="#zfit" title="Sayfayı pencere genişliğine sığdır"><span class="bl">Sığdır</span></button></div><div class="rgl">Görünüm</div></div>
     </div>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><button class="ib" id="alL" data-ico="al" title="Sola hizala" aria-pressed="false"></button><button class="ib" id="alC" data-ico="ac" title="Ortala" aria-pressed="false"></button><button class="ib" id="alR" data-ico="ar" title="Sağa hizala" aria-pressed="false"></button><button class="ib" id="alJ" data-ico="aj" title="İki yana yasla" aria-pressed="false"></button>
-          <select id="lsSel" title="Satır aralığı" aria-label="Satır aralığı"><option value="">Aralık</option><option value="1">1,0</option><option value="1.15">1,15</option><option value="1.5">1,5</option><option value="2">2,0</option></select></div>
-        <div class="rrow"><button class="ib" id="ulBtn" data-ico="ul" title="Madde işaretli liste"></button><button class="ib" id="olBtn" data-ico="ol" title="Numaralı liste"></button><button class="ib" id="outBtn" data-ico="outd" title="Girintiyi azalt"></button><button class="ib" id="indBtn" data-ico="ind" title="Girintiyi artır"></button>
-          <select id="fBlock" title="Paragraf biçimi" aria-label="Paragraf biçimi"><option value="p">Normal</option><option value="h1">Başlık 1</option><option value="h2">Başlık 2</option><option value="h3">Başlık 3</option></select></div>
-      </div>
-      <div class="rgl">Paragraf</div>
+    <div class="rpanel" role="tabpanel" data-panel="yazi" id="tp-yazi" hidden>
+      <div class="rg"><div class="rgc"><div class="rrows">
+          <div class="rrow"><select id="pfSel" title="Yazı tipi" aria-label="Yazı tipi"></select><select id="fsSel" title="Yazı boyutu" aria-label="Yazı boyutu"></select><button class="ib" id="supBtn" title="Üst simge (m²)"><span class="tx">x²</span></button><button class="ib" id="subBtn" title="Alt simge (H₂O)"><span class="tx">x₂</span></button></div>
+          <div class="rrow"><button class="ib" id="boldBtn" title="Kalın (Ctrl+B)" aria-pressed="false"><b class="tx">K</b></button><button class="ib" id="italBtn" title="Eğik (Ctrl+I)" aria-pressed="false"><i class="tx" style="font-family:Georgia,serif">T</i></button><button class="ib" id="undBtn" title="Altı çizili (Ctrl+U)" aria-pressed="false"><u class="tx">A</u></button><button class="ib" id="strBtn" title="Üstü çizili" aria-pressed="false"><s class="tx">ab</s></button>
+            <label class="cpick" title="Yazı rengi"><span class="tx">A</span><i class="bar" id="fBar" style="background:#000000"></i><input type="color" id="fColor" value="#000000" aria-label="Yazı rengi"></label>
+            <label class="cpick" title="Vurgu rengi (yazının arkası)"><span data-ico="hl"></span><i class="bar" id="hBar" style="background:#ffe45c"></i><input type="color" id="hColor" value="#ffe45c" aria-label="Vurgu rengi"></label>
+            <button class="ib" id="clrBtn" data-ico="clear" title="Biçimi temizle"></button></div>
+        </div></div><div class="rgl">Yazı tipi</div></div>
+      <div class="rg"><div class="rgc"><div class="rrows">
+          <div class="rrow"><button class="ib" id="alL" data-ico="al" title="Sola hizala" aria-pressed="false"></button><button class="ib" id="alC" data-ico="ac" title="Ortala" aria-pressed="false"></button><button class="ib" id="alR" data-ico="ar" title="Sağa hizala" aria-pressed="false"></button><button class="ib" id="alJ" data-ico="aj" title="İki yana yasla" aria-pressed="false"></button>
+            <select id="lsSel" title="Satır aralığı" aria-label="Satır aralığı"><option value="">Aralık</option><option value="1">1,0</option><option value="1.15">1,15</option><option value="1.5">1,5</option><option value="2">2,0</option></select></div>
+          <div class="rrow"><button class="ib" id="ulBtn" data-ico="ul" title="Madde işaretli liste"></button><button class="ib" id="olBtn" data-ico="ol" title="Numaralı liste"></button><button class="ib" id="outBtn" data-ico="outd" title="Girintiyi azalt"></button><button class="ib" id="indBtn" data-ico="ind" title="Girintiyi artır"></button>
+            <select id="fBlock" title="Paragraf biçimi" aria-label="Paragraf biçimi"><option value="p">Normal</option><option value="h1">Başlık 1</option><option value="h2">Başlık 2</option><option value="h3">Başlık 3</option></select></div>
+        </div></div><div class="rgl">Paragraf</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="search" id="findBtn" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)"><span class="bl">Bul ve değiştir</span></button><button class="bb c-g" data-ico="cal" data-proxy="#dateBtn" title="Yazı sayfasında imlecin olduğu yere bugünün tarihi"><span class="bl">Tarih</span></button><button class="bb c-b" data-ico="table" data-proxy="#tblBtn" title="Yazı sayfasına 3×3 tablo ekler"><span class="bl">Tablo</span></button></div><div class="rgl">Düzen</div></div>
     </div>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><button class="sb" data-tool="text" data-ico="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)">Metin</button><label class="sb" data-ico="image" title="Yazı sayfasında imlecin olduğu yere, diğer sayfalarda tıkladığınız yere resim ekler">Resim<input type="file" id="imgIn" hidden multiple accept="image/*,.tif,.tiff"></label><button class="sb" id="signBtn" data-ico="sign">İmza / Kaşe</button></div>
-        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd nl" data-menu="mMore" data-ico="more" title="Diğer ekleme komutları">Diğer</button></div>
-      </div>
-      <div class="rgl">Ekle</div>
+    <div class="rpanel" role="tabpanel" data-panel="ekle" id="tp-ekle" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-r" data-ico="text" data-tool="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)"><span class="bl">Metin</span></button><label class="bb c-g" data-ico="image" title="Yazı sayfasında imlecin olduğu yere, diğer sayfalarda tıkladığınız yere resim ekler"><span class="bl">Resim</span><input type="file" id="imgIn" hidden multiple accept="image/*,.tif,.tiff"></label><button class="bb c-b" data-ico="sign" id="signBtn"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="table" id="tblBtn" title="Yazı sayfasına 3×3 tablo ekler"><span class="bl">Tablo</span></button><button class="bb dd c-g" data-ico="plus" data-menu="mPage" title="Yazı sayfası, boş sayfa, sayfa sonu, yeni görsel"><span class="bl">Sayfa</span></button></div><div class="rgl">Ekle</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="hash" data-proxy="#pnumBtn" title="Kaydederken her sayfanın altına numara"><span class="bl">Sayfa numarası</span></button><button class="bb c-o" data-ico="drop" data-proxy="#wmBtn" title="Tüm sayfalara çapraz yazı (TASLAK vb.)"><span class="bl">Filigran</span></button><button class="bb dd c-k" data-ico="more" data-menu="mMore" title="Tarih, sayfa numarası, filigran"><span class="bl">Diğer</span></button></div><div class="rgl">Belge</div></div>
     </div>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><button class="ib" data-tool="select" data-ico="select" title="Seç ve taşı (V)"></button><button class="ib" data-tool="hl" data-ico="hl" title="Vurgula (H)"></button><button class="ib" data-tool="pen" data-ico="pen" title="Kalem (P)"></button><button class="ib" data-tool="rect" data-ico="rect" title="Kutu (R)"></button><button class="ib" data-tool="arrow" data-ico="arrow" title="Ok (A)"></button><button class="ib" data-tool="white" data-ico="white" title="Beyaz örtü: yazının üstünü kapatır (W)"></button></div>
-        <div class="rrow"><div class="grp" id="swatches" role="group" aria-label="Renk"></div><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select><button class="ib" id="delBtn" data-ico="trash" title="Seçili işareti sil (Delete)" disabled></button></div>
-      </div>
-      <div class="rgl">Çizim</div>
+    <div class="rpanel" role="tabpanel" data-panel="cizim" id="tp-cizim" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-r" data-ico="rect" data-tool="rect" title="Kutu (R)"><span class="bl">Kutu</span></button><button class="bb c-r" data-ico="arrow" data-tool="arrow" title="Ok (A)"><span class="bl">Ok</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
+      <div class="rg"><div class="rgc"><div class="rrows">
+          <div class="rrow"><div class="grp" id="swatches" role="group" aria-label="Renk"></div></div>
+          <div class="rrow"><span class="rlab">Kalınlık</span><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select></div>
+        </div></div><div class="rgl">Biçim</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-r" data-ico="trash" id="delBtn" disabled title="Seçili işareti sil (Delete)"><span class="bl">Sil</span></button></div><div class="rgl">Düzenle</div></div>
     </div>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><button class="sb" data-tool="crop" data-ico="crop" title="Sayfayı kırp (C)">Kırp</button><button class="sb" data-tool="cut" data-ico="scissors" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)">Kes, ayır</button><button class="sb" data-tool="lasso" data-ico="lasso" title="İstediğiniz şekli çizerek keser (L)">Serbest kes</button></div>
-        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd nl" data-menu="mImg" data-ico="layers" title="Diğer resim komutları">Diğer</button></div>
-      </div>
-      <div class="rgl">Resim</div>
+    <div class="rpanel" role="tabpanel" data-panel="resim" id="tp-resim" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="crop" data-tool="crop" title="Sayfayı kırp (C)"><span class="bl">Kırp</span></button><button class="bb c-r" data-ico="scissors" data-tool="cut" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)"><span class="bl">Kes, ayır</span></button><button class="bb c-r" data-ico="lasso" data-tool="lasso" title="İstediğiniz şekli çizerek keser (L)"><span class="bl">Serbest kes</span></button><button class="bb c-o" data-ico="grid" id="splitBtn" title="Sayfayı satır ve sütunlara böler"><span class="bl">Parçala</span></button></div><div class="rgl">Kesme</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="grab" data-tool="grab" title="Seçtiğiniz alanı resim olarak alır (G)"><span class="bl">Görsel al</span></button><button class="bb c-b" data-ico="layers" data-proxy="#editImg" title="Katmanlar, parlaklık, yazı, şekil"><span class="bl">Gelişmiş düzenleyici</span></button><button class="bb c-g" data-ico="image" data-proxy="#pdfImgs" title="PDF’teki gömülü resimleri dosya olarak kaydeder"><span class="bl">Resimleri çıkar</span></button></div><div class="rgl">Görsel</div></div>
     </div>
-    <div class="rg">
-      <div class="rrows">
-        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb nl" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd nl" data-menu="mPg" data-ico="more" title="Diğer sayfa komutları">Diğer</button></div>
-        <div class="rrow"><button class="ib" id="rotL" data-ico="rotl" title="Bu sayfayı sola döndür"></button><button class="ib" id="rotR" data-ico="rotr" title="Bu sayfayı sağa döndür"></button><button class="ib" id="dupPage" data-ico="copy" title="Bu sayfayı çoğalt"></button><button class="ib" id="delPage" data-ico="trash" title="Bu sayfayı sil"></button></div>
-      </div>
-      <div class="rgl">Sayfa</div>
+    <div class="rpanel" role="tabpanel" data-panel="sayfa" id="tp-sayfa" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" id="objBtn" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur"><span class="bl">Nesneler</span></button><button class="bb c-r" data-ico="edit" data-tool="edit" title="Nesneler kapalıyken tek satırı değiştirmek için"><span class="bl">Satır düzenle</span></button><button class="bb c-b" data-ico="text" data-proxy="#pdf2txt" title="PDF’teki tüm yazıyı Word gibi düzenlenebilir yap"><span class="bl">Yazıya çevir</span></button></div><div class="rgl">PDF</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="rotl" id="rotL" title="Bu sayfayı sola döndür"><span class="bl">Sola döndür</span></button><button class="bb c-b" data-ico="rotr" id="rotR" title="Bu sayfayı sağa döndür"><span class="bl">Sağa döndür</span></button><button class="bb c-g" data-ico="copy" id="dupPage" title="Bu sayfayı çoğalt"><span class="bl">Çoğalt</span></button><button class="bb c-r" data-ico="trash" id="delPage" title="Bu sayfayı sil"><span class="bl">Sil</span></button></div><div class="rgl">Sayfa</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button><button class="bb c-g" data-ico="plus" data-proxy="#blankBtn" title="Üstüne çizip yazabileceğiniz A4"><span class="bl">Boş sayfa</span></button></div><div class="rgl">Yeni</div></div>
     </div>
   </div>
 
@@ -388,7 +457,17 @@ footer.status .r{flex:1;text-align:center}
   <div class="ddm" id="grabMenu" hidden></div>
 
   <div class="body">
-    <aside class="thumbs" id="thumbs" aria-label="Sayfa listesi"></aside>
+    <aside class="side" id="side" aria-label="Sayfalar ve nesneler">
+      <section class="sp sp-pages" id="spPages">
+        <div class="sph"><b>Sayfalar</b><span class="spacer"></span><button class="ib" data-proxy="#addTxt" data-ico="plus" title="Yazı sayfası ekle"></button><button class="ib" data-proxy="#rotR" data-ico="rotr" title="Bu sayfayı sağa döndür"></button><button class="ib" data-proxy="#dupPage" data-ico="copy" title="Bu sayfayı çoğalt"></button><button class="ib" data-proxy="#delPage" data-ico="trash" title="Bu sayfayı sil"></button></div>
+        <div class="thumbs" id="thumbs" aria-label="Sayfa listesi"></div>
+      </section>
+      <div class="spl" id="sideSplit" role="separator" aria-orientation="horizontal" title="Sürükleyerek boyutlandırın"></div>
+      <section class="sp sp-objs">
+        <div class="sph"><b>Nesneler</b><span class="spc" id="objCount"></span><span class="spacer"></span><button class="ib" id="treeShowAll" data-ico="eye" title="Bu sayfadaki tüm nesneleri göster ve kilitlerini aç"></button></div>
+        <div class="tree" id="objTree" role="tree" aria-label="Sayfadaki nesneler"></div>
+      </section>
+    </aside>
     <main class="viewer gut tool-select" id="viewer">
       <div class="note" id="sampleNote" hidden><b>Örnek belge.</b> Programı denemek için hazırlandı. Kendi dosyanızı <b>Aç</b> ile açın ya da buraya sürükleyin; örnek sayfalar kendiliğinden kalkar.</div>
       <div class="empty" id="emptyNote" hidden>
@@ -575,6 +654,9 @@ if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='lib/pdf.worker.js';
 const I={
  open:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3z"/><path d="M3 10h18l-2 9H5z"/>',
  save:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/>',
+ new:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M12 11v6M9 14h6"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ unlock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
  print:'<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/>',
  select:'<path d="M6 3l12 9-5.5 1.2L9.5 19z"/>',
  text:'<path d="M5 7V5h14v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
@@ -839,7 +921,7 @@ function buildThumbs(){
     const d=el('div','th'+(i===S.cur?' cur':''));d.dataset.pid=p.id;d.draggable=true;
     const tw=112,th=Math.min(170,tw*dh(p)/dw(p)),cw=th*dw(p)/dh(p);
     d.innerHTML=`<div class="thc"><canvas style="width:${cw}px;height:${th}px"></canvas>${p.anns.length?'<span class="dot" title="Bu sayfada işaret var"></span>':''}${p.kind==='text'?'<span class="tag">YAZI</span>':''}</div><label><input type="checkbox" ${S.checked.has(p.id)?'checked':''} aria-label="Sayfa ${i+1} seç"> ${i+1}</label>`;
-    d.addEventListener('click',ev=>{if(ev.target.closest('label'))return;scrollToPage(S.pages.indexOf(p));if(innerWidth<=760)$('#thumbs').classList.remove('show')});
+    d.addEventListener('click',ev=>{if(ev.target.closest('label'))return;scrollToPage(S.pages.indexOf(p));if(innerWidth<=760)$('#side').classList.remove('show')});
     d.querySelector('input').addEventListener('change',ev=>{ev.target.checked?S.checked.add(p.id):S.checked.delete(p.id)});
     d.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/x-pid',p.id);ev.dataTransfer.effectAllowed='move';d.classList.add('dragging')});
     d.addEventListener('dragend',()=>d.classList.remove('dragging'));
@@ -896,12 +978,13 @@ function renderOv(p){
   const e=E[p.id];if(!e)return;const ov=e.ov,k=S.k;ov.innerHTML='';
   const W=dw(p)*k,H=dh(p)*k;const svg=sv('svg',{class:'ovsvg',width:W,height:H,viewBox:`0 0 ${W} ${H}`});let hasSvg=false;
   for(const a of p.anns){
+    if(a.hid)continue;
     const selected=S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id;
-    if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
+    if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
       g.append(sv('path',{d,fill:a.fill||'#ffffff',stroke:'none'}));g.append(sv('path',{d,class:'hitfill',fill:'transparent'}));
       if(selected){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}svg.append(g);continue}
     if(a.type==='path'||a.type==='arrow'){
-      hasSvg=true;const g=sv('g',{'data-aid':a.id});
+      hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});
       const d=a.type==='path'?'M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L'):`M${a.x1*k} ${a.y1*k} L${a.x2*k} ${a.y2*k}`;
       g.append(sv('path',{d,fill:'none',stroke:a.color,'stroke-width':a.lw*k,'stroke-linecap':'round','stroke-linejoin':'round'}));
       if(a.type==='arrow')g.append(sv('polygon',{points:arrowHead(a).map(([x,y])=>`${x*k},${y*k}`).join(' '),fill:a.color}));
@@ -909,7 +992,7 @@ function renderOv(p){
       if(selected){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}
       svg.append(g);
     }else{
-      const d=el('div','ann '+a.type+(selected?' sel':''));d.dataset.aid=a.id;
+      const d=el('div','ann '+a.type+(selected?' sel':'')+(a.lock?' locked':''));d.dataset.aid=a.id;
       Object.assign(d.style,{left:a.x*k+'px',top:a.y*k+'px',width:a.w*k+'px',height:a.h*k+'px'});
       if(a.type==='text'){d.textContent=a.text;Object.assign(d.style,{fontSize:a.size*k+'px',color:a.color,fontWeight:a.bold?'700':'400',fontStyle:a.italic?'italic':'normal',textDecoration:a.underline?'underline':'none',textAlign:a.align||'left',fontFamily:fontCss(a.font),background:a.bg||'transparent'});if(a.lineKey)d.style.whiteSpace='pre'}
       else if(a.type==='hl')d.style.background=a.color;
@@ -922,6 +1005,7 @@ function renderOv(p){
   if(hasSvg)ov.append(svg);
   if(S.wm&&S.wm.text){const w=el('div','wm');w.textContent=S.wm.text;Object.assign(w.style,{fontSize:wmSize(dw(p))*k+'px',color:S.wm.color,opacity:S.wm.op});if(p.kind==='text')w.style.top=Math.min(50,42100/Math.max(1,dh(p)))+'%';ov.prepend(w)}
   if(S.pnum&&p.kind!=='text'){const n=el('div','pnum');n.textContent=String(S.pages.indexOf(p)+1);Object.assign(n.style,{fontSize:10*k+'px',top:(dh(p)-22-10)*k+'px'});ov.append(n)}
+  if(p===S.pages[S.cur])refreshTree();
   S.hits.forEach((h,i)=>{if(h.pageId!==p.id)return;const d=el('div','hit'+(i===S.hitI?' cur':''));Object.assign(d.style,{left:h.x*k+'px',top:h.y*k+'px',width:h.w*k+'px',height:h.h*k+'px'});ov.append(d)});
 }
 function local(ev,ov){const r=ov.getBoundingClientRect();return[(ev.clientX-r.left)/S.k,(ev.clientY-r.top)/S.k]}
@@ -1073,6 +1157,7 @@ function countWords(){let n=0;for(const p of S.pages)if(p.kind==='text'){const e
 function updStatus(){
   const n=S.pages.length;$('#docName').textContent=S.baseName||(S.pages.length&&S.pages.every(p=>p.sample)?'Örnek belge':S.pages.length?'Adsız belge':'Boş belge');const files=new Set(S.pages.filter(p=>!p.sample).map(p=>p.name)).size;
   $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:''):'Sayfa yok';
+  refreshTree();
 }
 let scrollRaf=0;
 $('#viewer').addEventListener('scroll',()=>{if(scrollRaf)return;scrollRaf=requestAnimationFrame(()=>{scrollRaf=0;const vr=$('#viewer').getBoundingClientRect(),mid=vr.top+vr.height*0.35;let cur=0;S.pages.forEach((p,i)=>{const e=E[p.id];if(e&&e.pg.getBoundingClientRect().top<=mid)cur=i});
@@ -1115,7 +1200,7 @@ $('#qprev').onclick=()=>gotoHit(S.hitI-1);$('#qnext').onclick=()=>gotoHit(S.hitI
 function wrapLines(ctx,text,maxW){const out=[];for(const para of text.split('\n')){if(!para){out.push('');continue}let line='';for(const w of para.split(/ +/)){const t=line?line+' '+w:w;if(ctx.measureText(t).width<=maxW||!line){if(ctx.measureText(t).width>maxW&&!line){let cur='';for(const ch of w){if(ctx.measureText(cur+ch).width>maxW&&cur){out.push(cur);cur=ch}else cur+=ch}line=cur}else line=t}else{out.push(line);line=w}}out.push(line)}return out}
 function drawAnns(ctx,anns,s,skipHl,vec){
   for(const a of anns){
-    if(skipHl&&a.type==='hl')continue;ctx.save();
+    if(a.hid||(skipHl&&a.type==='hl'))continue;ctx.save();
     if(a.type==='hl'){ctx.globalCompositeOperation='multiply';ctx.fillStyle=a.color;ctx.fillRect(a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='white'){ctx.fillStyle='#fff';ctx.fillRect(a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='rect'){const l=a.lw*s;ctx.strokeStyle=a.color;ctx.lineWidth=l;ctx.strokeRect(a.x*s+l/2,a.y*s+l/2,a.w*s-l,a.h*s-l)}
@@ -1180,7 +1265,7 @@ const boxHit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
 /* Gerçek metin olarak yazılacak metin kutuları: üstüne sonradan resim/beyaz örtü/kesim konmamış olanlar.
    Örtülenler resmin içinde kalır; böylece örtünün altındaki yazı PDF'te bulunmaz. */
 async function vecTexts(anns,F){const out=new Set();if(!F||!F.ok)return out;
-  for(let i=0;i<anns.length;i++){const a=anns[i];if(a.type!=='text'||!a.text||!a.text.trim())continue;
+  for(let i=0;i<anns.length;i++){const a=anns[i];if(a.type!=='text'||a.hid||!a.text||!a.text.trim())continue;
     const bx=annBox(a);if(anns.slice(i+1).some(b=>COVERS.has(b.type)&&boxHit(bx,annBox(b))))continue;
     if(await F.get(a.font,a.bold,a.italic))out.add(a.id)}
   return out}
@@ -1224,7 +1309,7 @@ async function exportPdf(pages,filename,flat,ret){
       if(p.kind==='text'){for(const c of await textCanvases(p,2,!!F)){decorate(c,595.28,++num);const png=await out.embedPng(await canvasBytes(c,'image/png'));const pg=out.addPage([595.28,841.89]);pg.drawImage(png,{x:0,y:0,width:595.28,height:841.89});
           if(F&&c._words)await drawHiddenWords(pg,c._words,F,595.28/794);c.width=c.height=0}continue}
       /* beyaz örtü / serbest kesim varsa sayfa yeniden çizilir; örtünün altındaki yazı dosyada kalmaz */
-      const covered=p.anns.some(a=>!a.auto&&(a.type==='white'||a.type==='poly'));
+      const covered=p.anns.some(a=>!a.auto&&!a.hid&&(a.type==='white'||a.type==='poly'));
       if(p.kind==='pdf'&&!flat&&!objChanged(p)&&!covered){
         const lib=await getLib(p.src);
         if(lib){
@@ -1232,12 +1317,12 @@ async function exportPdf(pages,filename,flat,ret){
           const R=(((cp.getRotation().angle||0)+p.rot)%360+360)%360;cp.setRotation(PDFLib.degrees(R));out.addPage(cp);
           const cb=cp.getCropBox();const W=dw(p),H=dh(p);const mapF=mapFn(R,cb.x,cb.y,cb.width,cb.height);const map=(X,Y)=>mapF(X+cx0(p),Y+cy0(p));
           if(p.clip){const [ax,ay]=map(0,0),[bx,by]=map(W,H);cp.setCropBox(Math.min(ax,bx),Math.min(ay,by),Math.abs(bx-ax),Math.abs(by-ay))}
-          for(const a of p.anns.filter(a=>a.type==='hl'&&!a.auto)){
+          for(const a of p.anns.filter(a=>a.type==='hl'&&!a.auto&&!a.hid)){
             const [ax,ay]=map(a.x,a.y),[bx,by]=map(a.x+a.w,a.y+a.h);
             const o={x:Math.min(ax,bx),y:Math.min(ay,by),width:Math.abs(bx-ax),height:Math.abs(by-ay),color:hexRgb(a.color),opacity:0.5};
             if(PDFLib.BlendMode)o.blendMode=PDFLib.BlendMode.Multiply;cp.drawRectangle(o);
           }
-          const rest=p.anns.filter(a=>a.type!=='hl'&&!a.auto);const vec=await vecTexts(rest,F);
+          const rest=p.anns.filter(a=>a.type!=='hl'&&!a.auto&&!a.hid);const vec=await vecTexts(rest,F);
           if(rest.some(a=>!vec.has(a.id)||a.bg)||(S.wm&&S.wm.text)||S.pnum){
             await ensureImgs(p);const s=3,c=document.createElement('canvas');c.width=Math.round(W*s);c.height=Math.round(H*s);
             drawAnns(c.getContext('2d'),rest,s,true,vec);decorate(c,W,num);bleedWhite(c);const png=await out.embedPng(await canvasBytes(c,'image/png'));
@@ -1345,7 +1430,7 @@ $('#delBtn').onclick=deleteSel;
 $('#undoBtn').onclick=()=>{if(inTxt()){document.execCommand('undo');textChanged(document.activeElement)}else undo()};
 $('#redoBtn').onclick=()=>{if(inTxt()){document.execCommand('redo');textChanged(document.activeElement)}else redo()};
 $('#zin').onclick=()=>setK(S.k*1.2);$('#zout').onclick=()=>setK(S.k/1.2);$('#zfit').onclick=fitWidth;
-$('#sideBtn').onclick=()=>$('#thumbs').classList.toggle('show');
+$('#sideBtn').onclick=()=>$('#side').classList.toggle('show');
 
 /* ---------- formatting (yazı sayfası veya metin kutusu) ---------- */
 function restoreTxt(){const b=S.txt;if(!b||!document.contains(b))return false;b.focus({preventScroll:true});if(S.tRange&&b.contains(S.tRange.startContainer)){const s=getSelection();s.removeAllRanges();s.addRange(S.tRange)}return true}
@@ -1687,7 +1772,7 @@ async function objectify(p){
   const tc=$(`.th[data-pid="${p.id}"] canvas`);if(tc)renderThumb(p,tc);
   if(S.sel&&S.sel.pageId===p.id)updSelUI();
 }
-const sigOf=l=>JSON.stringify(l.map(a=>{const c=Object.assign({},a);delete c.id;return c}));
+const sigOf=l=>JSON.stringify(l.map(a=>{const c=Object.assign({},a);delete c.id;delete c.lock;return c}));
 function objChanged(p){if(!p.objMode)return false;return sigOf(p.anns.filter(a=>a.auto))!==p.objSig}
 const OBJQ=[];let objBusy=false;
 function queueObj(pages){if(!S.objAuto)return;for(const p of pages)if(p.kind==='pdf'&&!p.objMode&&!p.objTried&&!OBJQ.includes(p))OBJQ.push(p);runObjQ()}
@@ -1876,7 +1961,7 @@ async function textCanvases(p,scale=2,words=false){
     if(!ranges.length)ranges.push([0,PH]);
     if(p.anns.length)await ensureImgs(p);
     /* beyaz örtü / kesim altında kalan kelimeler görünmez katmana da yazılmaz */
-    const cov=p.anns.filter(q=>q.type==='white'||q.type==='poly').map(q=>{const r=annBox(q);return{x:r.x*PT2PX,y:r.y*PT2PX,w:r.w*PT2PX,h:r.h*PT2PX}});
+    const cov=p.anns.filter(q=>!q.hid&&(q.type==='white'||q.type==='poly')).map(q=>{const r=annBox(q);return{x:r.x*PT2PX,y:r.y*PT2PX,w:r.w*PT2PX,h:r.h*PT2PX}});
     const W=words?wordBoxes(b,wr).filter(w=>!cov.some(r=>boxHit({x:w.x+M,y:w.y+M,w:w.w,h:w.h},r))):null;
     return ranges.map(([a,z])=>{const c=document.createElement('canvas');c.width=794*scale;c.height=1123*scale;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
       const h=Math.min((z-a)*scale,full.height-a*scale);if(h>0)x.drawImage(full,0,a*scale,full.width,h,M*scale,M*scale,full.width,h);
@@ -2317,6 +2402,80 @@ async function printDoc(){
   setTimeout(()=>{box.querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src));box.innerHTML=''},500);
 }
 $('#printBtn').onclick=printDoc;
+/* ===== js/17-sekmeler-nesne-agaci.js ===== */
+/* ---------- şerit sekmeleri ---------- */
+function setTab(name){
+  if(!$(`.rpanel[data-panel="${name}"]`))name='home';
+  $$('[data-tab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===name)));
+  $$('.rpanel').forEach(p=>p.hidden=p.dataset.panel!==name);
+  closeDD();lsSet('nusmac.tab',name);
+}
+$$('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+$('.tabs').addEventListener('keydown',e=>{
+  if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;const tabs=$$('[data-tab]');const i=tabs.findIndex(b=>b.getAttribute('aria-selected')==='true');
+  const n=tabs[(i+(e.key==='ArrowRight'?1:tabs.length-1))%tabs.length];setTab(n.dataset.tab);n.focus();e.preventDefault()});
+setTab(lsGet('nusmac.tab','home'));
+
+/* ---------- vekil düğmeler ----------
+   Aynı komut birden fazla yerde (hızlı erişim, Giriş sekmesi, sol panel) durabilir: data-proxy="#asılDüğme".
+   Vekil, asıl düğmeye tıklar; asılın etkin/basılı durumu vekile kopyalanır. */
+const proxyMirror=new MutationObserver(ms=>ms.forEach(m=>syncProxies(m.target)));
+function syncProxies(t){if(!t.id)return;$$(`[data-proxy="#${t.id}"]`).forEach(b=>{b.disabled=!!t.disabled;const ap=t.getAttribute('aria-pressed');if(ap!=null)b.setAttribute('aria-pressed',ap);else b.removeAttribute('aria-pressed')})}
+$$('[data-proxy]').forEach(b=>{const t=$(b.dataset.proxy);if(!t){b.hidden=true;return}
+  b.addEventListener('click',e=>{e.preventDefault();closeDD();t.click()});
+  proxyMirror.observe(t,{attributes:true,attributeFilter:['disabled','aria-pressed']});syncProxies(t)});
+
+/* ---------- sol panel: sayfalar / nesneler ayırıcısı ---------- */
+(()=>{const sp=$('#spPages'),bar=$('#sideSplit');const h0=lsGet('nusmac.sideH',null);if(h0)sp.style.flexBasis=h0+'px';
+  bar.addEventListener('pointerdown',e=>{e.preventDefault();bar.setPointerCapture(e.pointerId);const y0=e.clientY,b0=sp.getBoundingClientRect().height;
+    const mv=ev=>{const max=$('#side').clientHeight-120;const h=Math.max(120,Math.min(max,b0+ev.clientY-y0));sp.style.flexBasis=h+'px'};
+    const up=()=>{bar.removeEventListener('pointermove',mv);bar.removeEventListener('pointerup',up);lsSet('nusmac.sideH',Math.round(sp.getBoundingClientRect().height))};
+    bar.addEventListener('pointermove',mv);bar.addEventListener('pointerup',up)});
+})();
+
+/* ---------- nesne ağacı (Netcad'deki katman yöneticisi gibi) ----------
+   Bulunulan sayfadaki işaretler türlerine göre gruplanır. Her öğe: göster/gizle (a.hid), kilit (a.lock: seçilemez, taşınamaz), sil.
+   Gizlenen nesne ekranda görünmez ve kaydedilen dosyaya da girmez. */
+const TGROUPS=[['text','Yazılar','text'],['img','Resimler ve imzalar','image'],['draw','Çizimler','pen'],['hl','Vurgular','hl'],['cover','Örtüler','white']];
+const tgOf=a=>a.type==='text'?'text':a.type==='img'?'img':a.type==='hl'?'hl':(a.type==='white'||a.type==='poly')?'cover':'draw';
+const treeOpen=lsGet('nusmac.tree',{text:true,img:true,draw:true,hl:true,cover:true});
+function annLabel(a){
+  if(a.type==='text'){const t=(a.text||'').replace(/\s+/g,' ').trim();return t?(t.length>48?t.slice(0,48)+'…':t):'(boş yazı)'}
+  return {img:a.auto?'PDF resmi':'Resim / imza',path:'Kalem çizgisi',rect:'Kutu',arrow:'Ok',hl:'Vurgu',white:'Beyaz örtü',poly:'Serbest kesim'}[a.type]||a.type;
+}
+function refreshTree(){if(refreshTree.r)return;refreshTree.r=requestAnimationFrame(()=>{refreshTree.r=0;buildTree()})}
+function afterAnnChange(p){renderOv(p);markThumb(p);updSelUI();buildTree()}
+function showAnn(p,a){const e=E[p.id];if(!e)return;const v=$('#viewer');const top=e.wrap.offsetTop+e.pg.offsetTop+(a.y!=null?a.y:Math.min(a.y1,a.y2)||0)*S.k;
+  if(top<v.scrollTop+40||top>v.scrollTop+v.clientHeight-80)v.scrollTo({top:Math.max(0,top-v.clientHeight/3),behavior:'smooth'})}
+function buildTree(){
+  const box=$('#objTree');if(!box)return;const p=S.pages[S.cur];const sc=box.scrollTop;box.innerHTML='';
+  $('#objCount').textContent=p?`Sayfa ${S.cur+1}`:'';
+  if(!p){box.innerHTML='<div class="tempty">Belge boş.</div>';return}
+  if(!p.anns.length){box.innerHTML='<div class="tempty">Bu sayfada nesne yok. Metin, resim, imza ya da çizim eklediğinizde burada listelenir.</div>';return}
+  for(const [g,name,icon] of TGROUPS){
+    const items=p.anns.filter(a=>tgOf(a)===g);if(!items.length)continue;
+    const vis=items.filter(a=>!a.hid).length;
+    const row=el('div','tg');row.setAttribute('role','treeitem');row.setAttribute('aria-expanded',String(!!treeOpen[g]));
+    row.innerHTML=`<button class="tw" title="Aç / kapat" aria-label="${name} aç/kapat"></button><input type="checkbox" title="Hepsini göster / gizle" aria-label="${name}: göster">${ic(icon)}<span class="tn">${name}</span><span class="tc">${items.length}</span>`;
+    const cb=row.querySelector('input');cb.checked=vis>0;cb.indeterminate=vis>0&&vis<items.length;
+    const toggle=()=>{treeOpen[g]=!treeOpen[g];lsSet('nusmac.tree',treeOpen);buildTree()};
+    row.querySelector('.tw').onclick=toggle;row.querySelector('.tn').onclick=toggle;
+    cb.onchange=()=>{pushUndo();const on=cb.checked;items.forEach(a=>{if(on)delete a.hid;else a.hid=true});if(!on&&S.sel&&items.some(a=>a.id===S.sel.aid))S.sel=null;afterAnnChange(p)};
+    box.append(row);
+    if(!treeOpen[g])continue;
+    for(const a of items){
+      const it=el('div','ti'+(S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id?' sel':'')+(a.hid?' off':''));it.setAttribute('role','treeitem');
+      it.innerHTML=`<input type="checkbox" ${a.hid?'':'checked'} title="Göster / gizle" aria-label="Göster"><span class="tn" title="${esc(a.type==='text'?a.text||'':annLabel(a))}">${esc(annLabel(a))}</span>${a.auto?'<span class="tauto" title="PDF’ten otomatik ayrıştırıldı">PDF</span>':''}<button class="ib tl" aria-pressed="${!!a.lock}" title="${a.lock?'Kilidi aç':'Kilitle: seçilemez, taşınamaz'}">${ic(a.lock?'lock':'unlock')}</button><button class="ib tdel" title="Sil">${ic('trash')}</button>`;
+      it.querySelector('input').onchange=ev=>{pushUndo();if(ev.target.checked)delete a.hid;else{a.hid=true;if(S.sel&&S.sel.aid===a.id)S.sel=null}afterAnnChange(p)};
+      it.querySelector('.tl').onclick=()=>{pushUndo();if(a.lock)delete a.lock;else{a.lock=true;if(S.sel&&S.sel.aid===a.id)S.sel=null}afterAnnChange(p)};
+      it.querySelector('.tdel').onclick=()=>{pushUndo();p.anns=p.anns.filter(x=>x!==a);if(S.sel&&S.sel.aid===a.id)S.sel=null;afterAnnChange(p)};
+      it.addEventListener('click',ev=>{if(ev.target.closest('input,button'))return;showAnn(p,a);if(a.hid||a.lock)return;setTool('select');setSel({pageId:p.id,aid:a.id});buildTree()});
+      box.append(it);
+    }
+  }
+  box.scrollTop=sc;
+}
+$('#treeShowAll').onclick=()=>{const p=S.pages[S.cur];if(!p||!p.anns.some(a=>a.hid||a.lock))return;pushUndo();p.anns.forEach(a=>{delete a.hid;delete a.lock});afterAnnChange(p);toast('Bu sayfadaki tüm nesneler gösterildi ve kilitleri açıldı.')};
 /* ===== js/99-acilis.js ===== */
 /* ---------- boot ---------- */
 const missing=[['pdfjsLib','PDF görüntüleyici'],['PDFLib','PDF kaydedici'],['html2canvas','sayfa çizici'],['UTIF','TIF okuyucu']].filter(([g])=>!window[g]).map(([,n])=>n);

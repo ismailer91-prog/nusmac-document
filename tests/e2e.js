@@ -203,6 +203,37 @@ async function test(name, fn) {
     assert(pages === 3, `Yazdırma çıktısı 3 sayfa olmalı, ${pages} oldu`);
   });
 
+  await test('Sekmeler ve vekil düğmeler çalışır', async page => {
+    await page.click('[data-tab="sayfa"]');
+    assert(await page.isVisible('#rotL'), 'Sayfa sekmesi açılmadı');
+    assert(!(await page.isVisible('#saveBtn')), 'Giriş sekmesi gizlenmedi');
+    // hızlı erişimdeki Kaydet, asıl Kaydet düğmesini çalıştırır (boş belgede uyarı verir)
+    await page.click('.qat [data-proxy="#saveBtn"]');
+    assert((await page.textContent('#toast')).includes('Kaydedilecek sayfa yok'), 'Vekil Kaydet çalışmadı');
+    assert(await page.isDisabled('#undoBtn'), 'Geri al kapalı olmalı');
+  });
+
+  await test('Nesne ağacı: gizlenen yazı kaydedilmez, kilitlenen seçilemez', async page => {
+    await openFiles(page, 'turkce.pdf');
+    await page.waitForSelector('.ti');
+    const n = (await page.$$('.ti')).length;
+    assert(n === 3, `Ağaçta 3 yazı satırı bekleniyordu, ${n} var`);
+    // 2. satırı gizle
+    await (await page.$$('.ti input'))[1].click();
+    assert(await page.evaluate(() => window.__nm.S.pages[0].anns.filter(a => a.hid).length === 1), 'Gizleme işlenmedi');
+    // 3. satırı kilitle; sayfada tıklanamamalı
+    await (await page.$$('.ti .tl'))[2].click();
+    const pe = await page.evaluate(() => { const a = window.__nm.S.pages[0].anns.find(a => a.lock); const d = document.querySelector(`[data-aid="${a.id}"]`); return d && getComputedStyle(d).pointerEvents; });
+    assert(pe === 'none', 'Kilitli nesne hâlâ tıklanabilir: ' + pe);
+    const t = await pdfText(page, await save(page));
+    assert(!t[0].includes('12345'), 'Gizlenen satır kaydedildi: ' + t[0]);
+    assert(t[0].includes('Çalışma ağacı'), 'Kilitli satır kaydedilmeli: ' + t[0]);
+    // Geri al: gizleme geri gelir
+    await page.evaluate(() => document.activeElement && document.activeElement.blur());
+    await page.keyboard.press('Control+z'); await page.keyboard.press('Control+z');
+    assert(await page.evaluate(() => !window.__nm.S.pages[0].anns.some(a => a.hid)), 'Geri al gizlemeyi geri getirmedi');
+  });
+
   await test('Word olarak kaydedilir', async page => {
     await openFiles(page, 'ornek.docx');
     const f = await save(page, 'docx');

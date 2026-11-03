@@ -2,7 +2,7 @@
 function wrapLines(ctx,text,maxW){const out=[];for(const para of text.split('\n')){if(!para){out.push('');continue}let line='';for(const w of para.split(/ +/)){const t=line?line+' '+w:w;if(ctx.measureText(t).width<=maxW||!line){if(ctx.measureText(t).width>maxW&&!line){let cur='';for(const ch of w){if(ctx.measureText(cur+ch).width>maxW&&cur){out.push(cur);cur=ch}else cur+=ch}line=cur}else line=t}else{out.push(line);line=w}}out.push(line)}return out}
 function drawAnns(ctx,anns,s,skipHl,vec){
   for(const a of anns){
-    if(skipHl&&a.type==='hl')continue;ctx.save();
+    if(a.hid||(skipHl&&a.type==='hl'))continue;ctx.save();
     if(a.type==='hl'){ctx.globalCompositeOperation='multiply';ctx.fillStyle=a.color;ctx.fillRect(a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='white'){ctx.fillStyle='#fff';ctx.fillRect(a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='rect'){const l=a.lw*s;ctx.strokeStyle=a.color;ctx.lineWidth=l;ctx.strokeRect(a.x*s+l/2,a.y*s+l/2,a.w*s-l,a.h*s-l)}
@@ -67,7 +67,7 @@ const boxHit=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
 /* Gerçek metin olarak yazılacak metin kutuları: üstüne sonradan resim/beyaz örtü/kesim konmamış olanlar.
    Örtülenler resmin içinde kalır; böylece örtünün altındaki yazı PDF'te bulunmaz. */
 async function vecTexts(anns,F){const out=new Set();if(!F||!F.ok)return out;
-  for(let i=0;i<anns.length;i++){const a=anns[i];if(a.type!=='text'||!a.text||!a.text.trim())continue;
+  for(let i=0;i<anns.length;i++){const a=anns[i];if(a.type!=='text'||a.hid||!a.text||!a.text.trim())continue;
     const bx=annBox(a);if(anns.slice(i+1).some(b=>COVERS.has(b.type)&&boxHit(bx,annBox(b))))continue;
     if(await F.get(a.font,a.bold,a.italic))out.add(a.id)}
   return out}
@@ -111,7 +111,7 @@ async function exportPdf(pages,filename,flat,ret){
       if(p.kind==='text'){for(const c of await textCanvases(p,2,!!F)){decorate(c,595.28,++num);const png=await out.embedPng(await canvasBytes(c,'image/png'));const pg=out.addPage([595.28,841.89]);pg.drawImage(png,{x:0,y:0,width:595.28,height:841.89});
           if(F&&c._words)await drawHiddenWords(pg,c._words,F,595.28/794);c.width=c.height=0}continue}
       /* beyaz örtü / serbest kesim varsa sayfa yeniden çizilir; örtünün altındaki yazı dosyada kalmaz */
-      const covered=p.anns.some(a=>!a.auto&&(a.type==='white'||a.type==='poly'));
+      const covered=p.anns.some(a=>!a.auto&&!a.hid&&(a.type==='white'||a.type==='poly'));
       if(p.kind==='pdf'&&!flat&&!objChanged(p)&&!covered){
         const lib=await getLib(p.src);
         if(lib){
@@ -119,12 +119,12 @@ async function exportPdf(pages,filename,flat,ret){
           const R=(((cp.getRotation().angle||0)+p.rot)%360+360)%360;cp.setRotation(PDFLib.degrees(R));out.addPage(cp);
           const cb=cp.getCropBox();const W=dw(p),H=dh(p);const mapF=mapFn(R,cb.x,cb.y,cb.width,cb.height);const map=(X,Y)=>mapF(X+cx0(p),Y+cy0(p));
           if(p.clip){const [ax,ay]=map(0,0),[bx,by]=map(W,H);cp.setCropBox(Math.min(ax,bx),Math.min(ay,by),Math.abs(bx-ax),Math.abs(by-ay))}
-          for(const a of p.anns.filter(a=>a.type==='hl'&&!a.auto)){
+          for(const a of p.anns.filter(a=>a.type==='hl'&&!a.auto&&!a.hid)){
             const [ax,ay]=map(a.x,a.y),[bx,by]=map(a.x+a.w,a.y+a.h);
             const o={x:Math.min(ax,bx),y:Math.min(ay,by),width:Math.abs(bx-ax),height:Math.abs(by-ay),color:hexRgb(a.color),opacity:0.5};
             if(PDFLib.BlendMode)o.blendMode=PDFLib.BlendMode.Multiply;cp.drawRectangle(o);
           }
-          const rest=p.anns.filter(a=>a.type!=='hl'&&!a.auto);const vec=await vecTexts(rest,F);
+          const rest=p.anns.filter(a=>a.type!=='hl'&&!a.auto&&!a.hid);const vec=await vecTexts(rest,F);
           if(rest.some(a=>!vec.has(a.id)||a.bg)||(S.wm&&S.wm.text)||S.pnum){
             await ensureImgs(p);const s=3,c=document.createElement('canvas');c.width=Math.round(W*s);c.height=Math.round(H*s);
             drawAnns(c.getContext('2d'),rest,s,true,vec);decorate(c,W,num);bleedWhite(c);const png=await out.embedPng(await canvasBytes(c,'image/png'));

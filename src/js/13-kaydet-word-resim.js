@@ -16,7 +16,7 @@ async function textCanvases(p,scale=2,words=false){
     if(!ranges.length)ranges.push([0,PH]);
     if(p.anns.length)await ensureImgs(p);
     /* beyaz örtü / kesim altında kalan kelimeler görünmez katmana da yazılmaz */
-    const cov=p.anns.filter(q=>q.type==='white'||q.type==='poly').map(q=>{const r=annBox(q);return{x:r.x*PT2PX,y:r.y*PT2PX,w:r.w*PT2PX,h:r.h*PT2PX}});
+    const cov=p.anns.filter(q=>!q.hid&&(q.type==='white'||q.type==='poly')).map(q=>{const r=annBox(q);return{x:r.x*PT2PX,y:r.y*PT2PX,w:r.w*PT2PX,h:r.h*PT2PX}});
     const W=words?wordBoxes(b,wr).filter(w=>!cov.some(r=>boxHit({x:w.x+M,y:w.y+M,w:w.w,h:w.h},r))):null;
     return ranges.map(([a,z])=>{const c=document.createElement('canvas');c.width=794*scale;c.height=1123*scale;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
       const h=Math.min((z-a)*scale,full.height-a*scale);if(h>0)x.drawImage(full,0,a*scale,full.width,h,M*scale,M*scale,full.width,h);

@@ -16,7 +16,7 @@ $('#delBtn').onclick=deleteSel;
 $('#undoBtn').onclick=()=>{if(inTxt()){document.execCommand('undo');textChanged(document.activeElement)}else undo()};
 $('#redoBtn').onclick=()=>{if(inTxt()){document.execCommand('redo');textChanged(document.activeElement)}else redo()};
 $('#zin').onclick=()=>setK(S.k*1.2);$('#zout').onclick=()=>setK(S.k/1.2);$('#zfit').onclick=fitWidth;
-$('#sideBtn').onclick=()=>$('#thumbs').classList.toggle('show');
+$('#sideBtn').onclick=()=>$('#side').classList.toggle('show');
 
 /* ---------- formatting (yazı sayfası veya metin kutusu) ---------- */
 function restoreTxt(){const b=S.txt;if(!b||!document.contains(b))return false;b.focus({preventScroll:true});if(S.tRange&&b.contains(S.tRange.startContainer)){const s=getSelection();s.removeAllRanges();s.addRange(S.tRange)}return true}

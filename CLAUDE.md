@@ -6,7 +6,7 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 
 ## Dosya yapısı
 - `src/` — **asıl kaynak** (yalnız burası düzenlenir):
-  - `src/index.html` — sayfa iskeleti (şerit, pencereler, kütüphane `<script>` etiketleri).
+  - `src/index.html` — sayfa iskeleti: başlık çubuğu (hızlı erişim + belge adı + arama), Netcad tarzı **sekmeli şerit** (`nav.tabs` + `.rpanel` panelleri: Giriş, Yazı, Ekle, Çizim, Resim, Sayfa; büyük düğme `.bb` = simge üstte yazı altta, renk sınıfı `c-b/c-r/c-g/c-o/c-k`), sol panel (`#side`: Sayfalar + Nesneler ağacı), pencereler, kütüphane `<script>` etiketleri.
   - `src/styles.css` — tüm stiller.
   - `src/js/NN-ad.js` — program kodu, numara sırasıyla birleştirilir. Hepsi tek bir `(function(){'use strict'; … })()` içine konur; dosyalar ortak kapsamı paylaşır (import/export yok). Yeni dosya eklerken numarayla sıraya koyun; üst düzeyde hemen çalışan kod, kullandığı `const`/`let` tanımlarından sonra gelmelidir.
 - `tools/build.js` — `src/` → `app/index.html` (masaüstü: kütüphaneler `app/lib/`'den, Google Fonts yok) ve `dist-web/nusmac.html` (tek dosyalık tarayıcı sürümü, CDN). **`app/index.html` elle düzenlenmez.**
@@ -27,7 +27,7 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFile` (Türkçe karakterleri dosya adında sadeleştirir).
 - `01-temel.js` — simgeler, arayüz yardımcıları, **durum**: `S` (belge durumu: `pages`, `k` ölçek, `tool`, `sel`, `ctx` ['txt'|'ann'], `undo/redo`, `wm` filigran, `pnum`, `objAuto` …), `pool` (id→sayfa), `E` (id→DOM); resim yardımcıları.
 - **Sayfa modeli** — `S.pages` dizisi. `kind`: `'pdf'` (src+index), `'img'` (canvas/img), `'text'` (yazı sayfası, `html`). Ortak alanlar: `w,h` (pt), `rot`, `clip` (kırpma), `anns` (işaretler), `objMode/objSig` (PDF nesne modu), `comp` (gelişmiş düzenleyici katmanları).
-- **İşaret (ann) türleri** — `text` (metin kutusu; `lineKey` varsa tek satır), `hl`, `path` (kalem), `rect`, `arrow`, `white` (beyaz örtü), `poly` (serbest kesim örtüsü), `img` (imza/kaşe/kesilen parça). Koordinatlar pt, sayfanın görünen (döndürülmüş, kırpılmış) alanına göre. `auto:true` = nesne modunun ürettiği.
+- **İşaret (ann) türleri** — `text` (metin kutusu; `lineKey` varsa tek satır), `hl`, `path` (kalem), `rect`, `arrow`, `white` (beyaz örtü), `poly` (serbest kesim örtüsü), `img` (imza/kaşe/kesilen parça). İsteğe bağlı bayraklar: `hid` (gizli: ekranda görünmez, kaydedilmez), `lock` (kilitli: tıklanamaz). Koordinatlar pt, sayfanın görünen (döndürülmüş, kırpılmış) alanına göre. `auto:true` = nesne modunun ürettiği.
 - `02-dosya-acma.js` — `openFiles`, `addPdf`, `addImage`, `addTiff`.
 - `03-geri-al.js` — `snap/pushUndo/commitUndo/restore` (sayfa sırası + her sayfanın rot/anns/clip/objMode). Yazı sayfası içindeki yazım geri alması tarayıcının kendi `execCommand` geçmişidir.
 - `04-goruntuleyici.js` — `buildViewer`, `renderBase`, `paintPage` (nesne modunda yazı+resimsiz çizim), küçük resimler, sayfa işlemleri, `renderOv`, `onDown` (tüm araçların fare işlemleri), `editText`, `editLineAt`, PDF içinde arama.
@@ -42,12 +42,13 @@ Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFil
 - `14-gorsel-alani.js` — katmanlı resim düzenleyici (`G` durumu, `gRender`, `gCrop`, `gSelCopy`, `gMerge` …); `openStudio/closeStudio`.
 - `15-kaydet-penceresi.js` — `openSave` → PDF / Word / JPG / PNG; dosya seçme, sürükle-bırak, kaydedilmemiş değişiklik uyarısı.
 - `16-yazdir.js` — `printDoc` (Yazdır düğmesi, Ctrl+P): sayfaları resim olarak `#printArea`'ya koyar, `window.print()`; yazdırma CSS'i `styles.css` sonunda.
+- `17-sekmeler-nesne-agaci.js` — `setTab` (son sekme hatırlanır), vekil düğmeler (`data-proxy="#asılId"`: asıl düğmeye tıklar, `disabled`/`aria-pressed` durumunu kopyalar), sol panel ayırıcısı, nesne ağacı `buildTree`/`refreshTree` (bulunulan sayfanın işaretleri türe göre; göster/gizle, kilit, sil, tıklayınca seç).
 - `99-acilis.js` — açılış, test kancası, masaüstünden dosya alma. Her zaman en son çalışır.
 
 ## Kurallar
 - Kullanıcıya görünen metinler Türkçe, sade ve kısa. Hata mesajı neyin olmadığını ve ne yapılacağını söyler.
 - Renkler `:root` değişkenlerinden gelir; açık/koyu tema ikisi de tanımlı.
-- Şerit 1280 piksel genişlikte tek satıra sığmalı (dar ekran kuralları `styles.css` sonunda; `.nl` sınıfı dar ekranda düğme yazısını gizler, `title` şart).
+- Her şerit sekmesi 1280 piksel genişlikte sığmalı. Aynı komutu başka yerde de göstermek için id'yi kopyalamayın; `data-proxy` kullanın. Araç düğmeleri `data-tool` ile istenen kadar tekrar edilebilir.
 - Değişiklikten sonra: `npm test`; gerekirse `npm start` ile uygulamayı açıp ilgili akışı deneyin (dosya aç → düzenle → kaydet). Kaydedilen PDF’i başka bir okuyucuyla açıp kontrol edin.
 - Testler `#test` adresiyle açılan sayfadaki `window.__nm` kancasını kullanır (yalnız test içindir).
 - Bilinen sınırlar: düzenlenen PDF sayfalarında yazılar gerçek metindir ama arka plan (çizgi, tablo, renk) resim olur; Word sayfaları PDF'te görüntü + görünmez metin katmanıdır; tarayıcı sürümünde yazı tipi dosyası okunamadığı için metin kutuları resim olarak kalır; nesne modunda yazılar en yakın sistem yazı tipiyle gösterilir; .doc (eski Word) açılmaz.

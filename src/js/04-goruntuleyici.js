@@ -78,7 +78,7 @@ function buildThumbs(){
     const d=el('div','th'+(i===S.cur?' cur':''));d.dataset.pid=p.id;d.draggable=true;
     const tw=112,th=Math.min(170,tw*dh(p)/dw(p)),cw=th*dw(p)/dh(p);
     d.innerHTML=`<div class="thc"><canvas style="width:${cw}px;height:${th}px"></canvas>${p.anns.length?'<span class="dot" title="Bu sayfada işaret var"></span>':''}${p.kind==='text'?'<span class="tag">YAZI</span>':''}</div><label><input type="checkbox" ${S.checked.has(p.id)?'checked':''} aria-label="Sayfa ${i+1} seç"> ${i+1}</label>`;
-    d.addEventListener('click',ev=>{if(ev.target.closest('label'))return;scrollToPage(S.pages.indexOf(p));if(innerWidth<=760)$('#thumbs').classList.remove('show')});
+    d.addEventListener('click',ev=>{if(ev.target.closest('label'))return;scrollToPage(S.pages.indexOf(p));if(innerWidth<=760)$('#side').classList.remove('show')});
     d.querySelector('input').addEventListener('change',ev=>{ev.target.checked?S.checked.add(p.id):S.checked.delete(p.id)});
     d.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/x-pid',p.id);ev.dataTransfer.effectAllowed='move';d.classList.add('dragging')});
     d.addEventListener('dragend',()=>d.classList.remove('dragging'));
@@ -135,12 +135,13 @@ function renderOv(p){
   const e=E[p.id];if(!e)return;const ov=e.ov,k=S.k;ov.innerHTML='';
   const W=dw(p)*k,H=dh(p)*k;const svg=sv('svg',{class:'ovsvg',width:W,height:H,viewBox:`0 0 ${W} ${H}`});let hasSvg=false;
   for(const a of p.anns){
+    if(a.hid)continue;
     const selected=S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id;
-    if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
+    if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
       g.append(sv('path',{d,fill:a.fill||'#ffffff',stroke:'none'}));g.append(sv('path',{d,class:'hitfill',fill:'transparent'}));
       if(selected){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}svg.append(g);continue}
     if(a.type==='path'||a.type==='arrow'){
-      hasSvg=true;const g=sv('g',{'data-aid':a.id});
+      hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});
       const d=a.type==='path'?'M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L'):`M${a.x1*k} ${a.y1*k} L${a.x2*k} ${a.y2*k}`;
       g.append(sv('path',{d,fill:'none',stroke:a.color,'stroke-width':a.lw*k,'stroke-linecap':'round','stroke-linejoin':'round'}));
       if(a.type==='arrow')g.append(sv('polygon',{points:arrowHead(a).map(([x,y])=>`${x*k},${y*k}`).join(' '),fill:a.color}));
@@ -148,7 +149,7 @@ function renderOv(p){
       if(selected){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}
       svg.append(g);
     }else{
-      const d=el('div','ann '+a.type+(selected?' sel':''));d.dataset.aid=a.id;
+      const d=el('div','ann '+a.type+(selected?' sel':'')+(a.lock?' locked':''));d.dataset.aid=a.id;
       Object.assign(d.style,{left:a.x*k+'px',top:a.y*k+'px',width:a.w*k+'px',height:a.h*k+'px'});
       if(a.type==='text'){d.textContent=a.text;Object.assign(d.style,{fontSize:a.size*k+'px',color:a.color,fontWeight:a.bold?'700':'400',fontStyle:a.italic?'italic':'normal',textDecoration:a.underline?'underline':'none',textAlign:a.align||'left',fontFamily:fontCss(a.font),background:a.bg||'transparent'});if(a.lineKey)d.style.whiteSpace='pre'}
       else if(a.type==='hl')d.style.background=a.color;
@@ -161,6 +162,7 @@ function renderOv(p){
   if(hasSvg)ov.append(svg);
   if(S.wm&&S.wm.text){const w=el('div','wm');w.textContent=S.wm.text;Object.assign(w.style,{fontSize:wmSize(dw(p))*k+'px',color:S.wm.color,opacity:S.wm.op});if(p.kind==='text')w.style.top=Math.min(50,42100/Math.max(1,dh(p)))+'%';ov.prepend(w)}
   if(S.pnum&&p.kind!=='text'){const n=el('div','pnum');n.textContent=String(S.pages.indexOf(p)+1);Object.assign(n.style,{fontSize:10*k+'px',top:(dh(p)-22-10)*k+'px'});ov.append(n)}
+  if(p===S.pages[S.cur])refreshTree();
   S.hits.forEach((h,i)=>{if(h.pageId!==p.id)return;const d=el('div','hit'+(i===S.hitI?' cur':''));Object.assign(d.style,{left:h.x*k+'px',top:h.y*k+'px',width:h.w*k+'px',height:h.h*k+'px'});ov.append(d)});
 }
 function local(ev,ov){const r=ov.getBoundingClientRect();return[(ev.clientX-r.left)/S.k,(ev.clientY-r.top)/S.k]}
@@ -312,6 +314,7 @@ function countWords(){let n=0;for(const p of S.pages)if(p.kind==='text'){const e
 function updStatus(){
   const n=S.pages.length;$('#docName').textContent=S.baseName||(S.pages.length&&S.pages.every(p=>p.sample)?'Örnek belge':S.pages.length?'Adsız belge':'Boş belge');const files=new Set(S.pages.filter(p=>!p.sample).map(p=>p.name)).size;
   $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:''):'Sayfa yok';
+  refreshTree();
 }
 let scrollRaf=0;
 $('#viewer').addEventListener('scroll',()=>{if(scrollRaf)return;scrollRaf=requestAnimationFrame(()=>{scrollRaf=0;const vr=$('#viewer').getBoundingClientRect(),mid=vr.top+vr.height*0.35;let cur=0;S.pages.forEach((p,i)=>{const e=E[p.id];if(e&&e.pg.getBoundingClientRect().top<=mid)cur=i});
