@@ -269,3 +269,22 @@ footer.status .r{flex:1;text-align:center}
 @media (max-width:1100px){.docname{display:none}.hsearch input{width:110px}}
 @media (max-width:760px){.rgl{display:none}.hsearch{display:none}.brand span:last-child{display:none}.top-actions .btn{padding:6px 9px}}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+/* dar ekranlarda (laptop) şerit tek satırda kalsın */
+@media (max-width:1500px){
+  .rg{padding:0 4px}
+  .ribbon .sb{padding:0 4px;gap:4px;font-size:12px}
+  .ribbon .ib{width:25px}
+  #pfSel{width:96px}#fsSel{width:58px}#lsSel{width:68px}#fBlock{width:78px}#lwSel{width:56px}
+}
+@media (max-width:1340px){.ribbon .sb.nl{font-size:0;gap:2px}.rg{padding:0 3px}}
+/* yazdırma: yalnız hazırlanan sayfa resimleri basılır */
+#printArea{display:none}
+@media print{
+  @page{margin:0}
+  html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block}
+  .prpage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;break-after:page}
+  .prpage:last-child{break-after:auto}
+  .prpage img{max-width:100%;max-height:100%;object-fit:contain}
+}

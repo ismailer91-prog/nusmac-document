@@ -41,11 +41,13 @@ Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFil
 - `13-kaydet-word-resim.js` — `textCanvases` (yazı sayfasını A4'lere böler), `exportDocx` (altChunk+MHT), `exportImages`, `exportSplitPdf`.
 - `14-gorsel-alani.js` — katmanlı resim düzenleyici (`G` durumu, `gRender`, `gCrop`, `gSelCopy`, `gMerge` …); `openStudio/closeStudio`.
 - `15-kaydet-penceresi.js` — `openSave` → PDF / Word / JPG / PNG; dosya seçme, sürükle-bırak, kaydedilmemiş değişiklik uyarısı.
-- `16-acilis.js` — açılış, test kancası, masaüstünden dosya alma.
+- `16-yazdir.js` — `printDoc` (Yazdır düğmesi, Ctrl+P): sayfaları resim olarak `#printArea`'ya koyar, `window.print()`; yazdırma CSS'i `styles.css` sonunda.
+- `99-acilis.js` — açılış, test kancası, masaüstünden dosya alma. Her zaman en son çalışır.
 
 ## Kurallar
 - Kullanıcıya görünen metinler Türkçe, sade ve kısa. Hata mesajı neyin olmadığını ve ne yapılacağını söyler.
 - Renkler `:root` değişkenlerinden gelir; açık/koyu tema ikisi de tanımlı.
+- Şerit 1280 piksel genişlikte tek satıra sığmalı (dar ekran kuralları `styles.css` sonunda; `.nl` sınıfı dar ekranda düğme yazısını gizler, `title` şart).
 - Değişiklikten sonra: `npm test`; gerekirse `npm start` ile uygulamayı açıp ilgili akışı deneyin (dosya aç → düzenle → kaydet). Kaydedilen PDF’i başka bir okuyucuyla açıp kontrol edin.
 - Testler `#test` adresiyle açılan sayfadaki `window.__nm` kancasını kullanır (yalnız test içindir).
 - Bilinen sınırlar: düzenlenen PDF sayfalarında yazılar gerçek metindir ama arka plan (çizgi, tablo, renk) resim olur; Word sayfaları PDF'te görüntü + görünmez metin katmanıdır; tarayıcı sürümünde yazı tipi dosyası okunamadığı için metin kutuları resim olarak kalır; nesne modunda yazılar en yakın sistem yazı tipiyle gösterilir; .doc (eski Word) açılmaz.

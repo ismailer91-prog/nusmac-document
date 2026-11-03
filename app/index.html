@@ -277,6 +277,25 @@ footer.status .r{flex:1;text-align:center}
 @media (max-width:1100px){.docname{display:none}.hsearch input{width:110px}}
 @media (max-width:760px){.rgl{display:none}.hsearch{display:none}.brand span:last-child{display:none}.top-actions .btn{padding:6px 9px}}
 @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+/* dar ekranlarda (laptop) şerit tek satırda kalsın */
+@media (max-width:1500px){
+  .rg{padding:0 4px}
+  .ribbon .sb{padding:0 4px;gap:4px;font-size:12px}
+  .ribbon .ib{width:25px}
+  #pfSel{width:96px}#fsSel{width:58px}#lsSel{width:68px}#fBlock{width:78px}#lwSel{width:56px}
+}
+@media (max-width:1340px){.ribbon .sb.nl{font-size:0;gap:2px}.rg{padding:0 3px}}
+/* yazdırma: yalnız hazırlanan sayfa resimleri basılır */
+#printArea{display:none}
+@media print{
+  @page{margin:0}
+  html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block}
+  .prpage{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;break-after:page}
+  .prpage:last-child{break-after:auto}
+  .prpage img{max-width:100%;max-height:100%;object-fit:contain}
+}
 </style>
 
 </head>
@@ -291,6 +310,7 @@ footer.status .r{flex:1;text-align:center}
     <div class="top-actions">
       <label class="btn" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span data-ico="open"></span>Aç<input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label>
       <button class="btn" id="newBtn" title="Belgeyi temizle">Yeni</button>
+      <button class="btn" id="printBtn" title="Yazdır (Ctrl+P)"><span data-ico="print"></span>Yazdır</button>
       <button class="btn primary" id="saveBtn" title="Kaydet (Ctrl+S)"><span data-ico="save"></span>Kaydet</button>
     </div>
   </header>
@@ -319,7 +339,7 @@ footer.status .r{flex:1;text-align:center}
     <div class="rg">
       <div class="rrows">
         <div class="rrow"><button class="sb" data-tool="text" data-ico="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)">Metin</button><label class="sb" data-ico="image" title="Yazı sayfasında imlecin olduğu yere, diğer sayfalarda tıkladığınız yere resim ekler">Resim<input type="file" id="imgIn" hidden multiple accept="image/*,.tif,.tiff"></label><button class="sb" id="signBtn" data-ico="sign">İmza / Kaşe</button></div>
-        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd" data-menu="mMore" data-ico="more">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd nl" data-menu="mMore" data-ico="more" title="Diğer ekleme komutları">Diğer</button></div>
       </div>
       <div class="rgl">Ekle</div>
     </div>
@@ -333,13 +353,13 @@ footer.status .r{flex:1;text-align:center}
     <div class="rg">
       <div class="rrows">
         <div class="rrow"><button class="sb" data-tool="crop" data-ico="crop" title="Sayfayı kırp (C)">Kırp</button><button class="sb" data-tool="cut" data-ico="scissors" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)">Kes, ayır</button><button class="sb" data-tool="lasso" data-ico="lasso" title="İstediğiniz şekli çizerek keser (L)">Serbest kes</button></div>
-        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd" data-menu="mImg" data-ico="layers">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd nl" data-menu="mImg" data-ico="layers" title="Diğer resim komutları">Diğer</button></div>
       </div>
       <div class="rgl">Resim</div>
     </div>
     <div class="rg">
       <div class="rrows">
-        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd" data-menu="mPg" data-ico="more">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb nl" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd nl" data-menu="mPg" data-ico="more" title="Diğer sayfa komutları">Diğer</button></div>
         <div class="rrow"><button class="ib" id="rotL" data-ico="rotl" title="Bu sayfayı sola döndür"></button><button class="ib" id="rotR" data-ico="rotr" title="Bu sayfayı sağa döndür"></button><button class="ib" id="dupPage" data-ico="copy" title="Bu sayfayı çoğalt"></button><button class="ib" id="delPage" data-ico="trash" title="Bu sayfayı sil"></button></div>
       </div>
       <div class="rgl">Sayfa</div>
@@ -533,6 +553,7 @@ footer.status .r{flex:1;text-align:center}
 </div>
 <div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyMsg">Hazırlanıyor…</span></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<div id="printArea" aria-hidden="true"></div>
 
 <script src="lib/pdf.js"></script>
 <script src="lib/pdf.worker.js"></script>
@@ -554,6 +575,7 @@ if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='lib/pdf.worker.js';
 const I={
  open:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3z"/><path d="M3 10h18l-2 9H5z"/>',
  save:'<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/>',
+ print:'<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/>',
  select:'<path d="M6 3l12 9-5.5 1.2L9.5 19z"/>',
  text:'<path d="M5 7V5h14v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
  hl:'<path d="m14 4 6 6-8 8H6v-6z"/><path d="M4 21h9"/>',
@@ -1371,6 +1393,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
   if(mod&&k==='s'){e.preventDefault();if($('#studio').hidden)openSave();return}
   if(mod&&k==='h'&&$('#studio').hidden){e.preventDefault();openFind();return}
+  if(mod&&k==='p'){e.preventDefault();if($('#studio').hidden&&$('#saveModal').hidden)printDoc();return}
   if(!$('#studio').hidden||!$('#sigModal').hidden||!$('#saveModal').hidden)return;const t=e.target;if(t.isContentEditable||/INPUT|SELECT|TEXTAREA/.test(t.tagName))return;
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
   if(mod&&k==='y'){e.preventDefault();redo();return}
@@ -2273,7 +2296,28 @@ window.addEventListener('dragover',e=>{if(e.dataTransfer&&e.dataTransfer.types.i
 window.addEventListener('drop',e=>{if(!e.dataTransfer||!e.dataTransfer.files.length)return;e.preventDefault();dragDepth=0;document.body.classList.remove('dropping');openFiles([...e.dataTransfer.files])});
 window.addEventListener('beforeunload',e=>{if(S.dirty&&S.pages.some(p=>!p.sample)){e.preventDefault();e.returnValue=''}});
 
-/* ===== js/16-acilis.js ===== */
+/* ===== js/16-yazdir.js ===== */
+/* ---------- yazdır ----------
+   Her sayfa (filigran ve sayfa numarasıyla) resim olarak #printArea'ya konur, sonra sistemin yazdırma penceresi açılır.
+   Yazdırma CSS'i (styles.css, @media print) yalnız #printArea'yı gösterir; her sayfa kâğıda sığdırılır. */
+async function printDoc(){
+  flushEdit();syncAll();
+  if(!S.pages.length){toast('Yazdırılacak sayfa yok. Önce bir dosya açın.');return}
+  const box=$('#printArea');box.innerHTML='';let ok=false;
+  try{
+    let n=0,num=0;
+    for(const p of S.pages){busy(`Yazdırma hazırlanıyor… ${++n}/${S.pages.length}`);await tick();
+      for(const c of await pageCanvases(p)){decorate(c,p.kind==='text'?595.28:dw(p),++num);
+        const im=new Image();im.alt='';im.src=URL.createObjectURL(await canvasBlob(c,'image/png'));await im.decode();
+        const d=el('div','prpage');d.append(im);box.append(d);c.width=c.height=0}}
+    ok=true;
+  }catch(e){console.error(e);toast('Yazdırma hazırlanamadı: '+(e.message||e),6000)}
+  finally{busy(false)}
+  if(ok){await tick();window.print()}
+  setTimeout(()=>{box.querySelectorAll('img').forEach(i=>URL.revokeObjectURL(i.src));box.innerHTML=''},500);
+}
+$('#printBtn').onclick=printDoc;
+/* ===== js/99-acilis.js ===== */
 /* ---------- boot ---------- */
 const missing=[['pdfjsLib','PDF görüntüleyici'],['PDFLib','PDF kaydedici'],['html2canvas','sayfa çizici'],['UTIF','TIF okuyucu']].filter(([g])=>!window[g]).map(([,n])=>n);
 setTool('select');updObjBtn();buildViewer();

@@ -64,6 +64,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
   if(mod&&k==='s'){e.preventDefault();if($('#studio').hidden)openSave();return}
   if(mod&&k==='h'&&$('#studio').hidden){e.preventDefault();openFind();return}
+  if(mod&&k==='p'){e.preventDefault();if($('#studio').hidden&&$('#saveModal').hidden)printDoc();return}
   if(!$('#studio').hidden||!$('#sigModal').hidden||!$('#saveModal').hidden)return;const t=e.target;if(t.isContentEditable||/INPUT|SELECT|TEXTAREA/.test(t.tagName))return;
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
   if(mod&&k==='y'){e.preventDefault();redo();return}

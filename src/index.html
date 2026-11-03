@@ -15,6 +15,7 @@
     <div class="top-actions">
       <label class="btn" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span data-ico="open"></span>Aç<input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label>
       <button class="btn" id="newBtn" title="Belgeyi temizle">Yeni</button>
+      <button class="btn" id="printBtn" title="Yazdır (Ctrl+P)"><span data-ico="print"></span>Yazdır</button>
       <button class="btn primary" id="saveBtn" title="Kaydet (Ctrl+S)"><span data-ico="save"></span>Kaydet</button>
     </div>
   </header>
@@ -43,7 +44,7 @@
     <div class="rg">
       <div class="rrows">
         <div class="rrow"><button class="sb" data-tool="text" data-ico="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)">Metin</button><label class="sb" data-ico="image" title="Yazı sayfasında imlecin olduğu yere, diğer sayfalarda tıkladığınız yere resim ekler">Resim<input type="file" id="imgIn" hidden multiple accept="image/*,.tif,.tiff"></label><button class="sb" id="signBtn" data-ico="sign">İmza / Kaşe</button></div>
-        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd" data-menu="mMore" data-ico="more">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd nl" data-menu="mMore" data-ico="more" title="Diğer ekleme komutları">Diğer</button></div>
       </div>
       <div class="rgl">Ekle</div>
     </div>
@@ -57,13 +58,13 @@
     <div class="rg">
       <div class="rrows">
         <div class="rrow"><button class="sb" data-tool="crop" data-ico="crop" title="Sayfayı kırp (C)">Kırp</button><button class="sb" data-tool="cut" data-ico="scissors" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)">Kes, ayır</button><button class="sb" data-tool="lasso" data-ico="lasso" title="İstediğiniz şekli çizerek keser (L)">Serbest kes</button></div>
-        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd" data-menu="mImg" data-ico="layers">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd nl" data-menu="mImg" data-ico="layers" title="Diğer resim komutları">Diğer</button></div>
       </div>
       <div class="rgl">Resim</div>
     </div>
     <div class="rg">
       <div class="rrows">
-        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd" data-menu="mPg" data-ico="more">Diğer</button></div>
+        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb nl" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd nl" data-menu="mPg" data-ico="more" title="Diğer sayfa komutları">Diğer</button></div>
         <div class="rrow"><button class="ib" id="rotL" data-ico="rotl" title="Bu sayfayı sola döndür"></button><button class="ib" id="rotR" data-ico="rotr" title="Bu sayfayı sağa döndür"></button><button class="ib" id="dupPage" data-ico="copy" title="Bu sayfayı çoğalt"></button><button class="ib" id="delPage" data-ico="trash" title="Bu sayfayı sil"></button></div>
       </div>
       <div class="rgl">Sayfa</div>
@@ -257,6 +258,7 @@
 </div>
 <div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyMsg">Hazırlanıyor…</span></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
+<div id="printArea" aria-hidden="true"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>

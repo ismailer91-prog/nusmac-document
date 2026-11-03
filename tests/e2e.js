@@ -184,6 +184,25 @@ async function test(name, fn) {
     assert(t.includes('söndürünüz'), 'Örtülmeyen yazı kayboldu: ' + t);
   });
 
+  await test('Yazdır: tüm sayfalar kâğıda hazırlanır', async page => {
+    await openFiles(page, 'turkce.pdf');
+    await openFiles(page, 'ornek.docx');
+    await page.evaluate(() => {
+      URL.revokeObjectURL = () => {};
+      window.print = () => { window.__printed = document.getElementById('printArea').innerHTML; };
+    });
+    await page.keyboard.press('Control+p');
+    await page.waitForFunction(() => window.__printed, null, { timeout: 30000 });
+    const n = await page.evaluate(() => (window.__printed.match(/class="prpage"/g) || []).length);
+    assert(n === 3, `3 sayfa bekleniyordu, ${n} hazırlandı`);
+    // Yazdırma görünümünü PDF'e basıp sayfa sayısını kontrol et
+    await page.evaluate(() => { document.getElementById('printArea').innerHTML = window.__printed; });
+    const pdf = await page.pdf({ preferCSSPageSize: true });
+    fs.writeFileSync(path.join(OUT, 'yazdir.pdf'), pdf);
+    const pages = (pdf.toString('latin1').match(/\/Type\s*\/Page[^s]/g) || []).length;
+    assert(pages === 3, `Yazdırma çıktısı 3 sayfa olmalı, ${pages} oldu`);
+  });
+
   await test('Word olarak kaydedilir', async page => {
     await openFiles(page, 'ornek.docx');
     const f = await save(page, 'docx');
