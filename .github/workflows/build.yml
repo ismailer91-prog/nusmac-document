@@ -40,6 +40,22 @@ jobs:
           name: NusmacDocument-Windows
           path: |
             dist/*.exe
-      - if: startsWith(github.ref, 'refs/tags/v')
+      # main dalına her gönderimde: package.json sürümüyle (ör. v1.6.0) "Releases" sayfasına konur.
+      # Aynı sürüm tekrar gönderilirse dosyalar güncellenir.
+      - id: ver
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: echo "v=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
-        with: { files: 'dist/*.exe' }
+        with:
+          tag_name: v${{ steps.ver.outputs.v }}
+          name: Nusmac Document ${{ steps.ver.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
+          body: |
+            Windows için indirin:
+            - **NusmacDocument-Kurulum-${{ steps.ver.outputs.v }}.exe** – kurulum (masaüstü kısayolu, PDF'e sağ tık "Birlikte aç")
+            - **NusmacDocument-Tasinabilir-${{ steps.ver.outputs.v }}.exe** – kurulumsuz, çift tıklayınca açılır
+            İlk açılışta Windows uyarı verirse: Ek bilgi → Yine de çalıştır.
+          files: dist/*.exe
