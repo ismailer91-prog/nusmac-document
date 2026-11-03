@@ -16,6 +16,8 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 ## Çalıştırma / paketleme
 - `npm install` → `npm start` (build + Electron ile aç).
 - `npm test` → build + tüm testler. **Her değişiklikten sonra çalıştırın.**
+- `npm run test:electron` → gerçek Electron programıyla kısa deneme (Linux’ta `xvfb-run -a` ile).
+- GitHub Actions (`.github/workflows/build.yml`): her gönderimde testler + Windows kurulum dosyası (Actions → Artifacts). `v1.5.0` gibi etiket gönderilince Releases sayfasına da konur.
 - `npm run dist` → `dist/` içinde Windows kurulum (.exe, NSIS) ve taşınabilir sürüm (electron-builder). Simge: `app/icon.ico`.
 
 ## Kod haritası (src/nusmac.html içindeki `/* ---------- … ---------- */` başlıkları)

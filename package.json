@@ -1,7 +1,7 @@
 {
   "name": "nusmac-document",
   "productName": "Nusmac Document",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Nusmac Document - PDF, Word ve resim düzenleyici",
   "main": "app/main.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "start": "npm run build:html && electron .",
     "dist": "npm run build:html && electron-builder --win",
     "test": "npm run build:html && node tests/e2e.js",
-    "fixtures": "node tools/make-fixtures.js"
+    "fixtures": "node tools/make-fixtures.js",
+    "test:electron": "npm run build:html && node tests/electron-smoke.js"
   },
   "devDependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
@@ -35,7 +36,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "Nusmac Document"
+      "shortcutName": "Nusmac Document",
+      "artifactName": "NusmacDocument-Kurulum-${version}.${ext}"
     },
     "fileAssociations": [
       {
@@ -51,6 +53,9 @@
         "name": "Belge",
         "role": "Editor"
       }
-    ]
+    ],
+    "portable": {
+      "artifactName": "NusmacDocument-Tasinabilir-${version}.${ext}"
+    }
   }
 }
