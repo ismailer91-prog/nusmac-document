@@ -6,15 +6,15 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 
 ## Dosya yapısı
 - `src/` — **asıl kaynak** (yalnız burası düzenlenir):
-  - `src/index.html` — sayfa iskeleti: başlık çubuğu (hızlı erişim + belge adı + arama), Netcad tarzı **sekmeli şerit** (`nav.tabs` + `.rpanel` panelleri: Giriş, Yazı, Ekle, Çizim, Resim, Sayfa; büyük düğme `.bb` = simge üstte yazı altta, renk sınıfı `c-b/c-r/c-g/c-o/c-k`), sol panel (`#side`: Sayfalar + Nesneler ağacı), pencereler, kütüphane `<script>` etiketleri.
+  - `src/index.html` — sayfa iskeleti: başlık çubuğu (hızlı erişim + belge adı + arama), Netcad tarzı **sekmeli şerit** (`nav.tabs` + `.rpanel` panelleri: Giriş, Yazı, Ekle, Çizim, Ölçü, Resim, Sayfa; büyük düğme `.bb` = simge üstte yazı altta, renk sınıfı `c-b/c-r/c-g/c-o/c-k`), sol panel (`#side`: Sayfalar + Nesneler ağacı), pencereler, kütüphane `<script>` etiketleri.
   - `src/styles.css` — tüm stiller.
   - `src/js/NN-ad.js` — program kodu, numara sırasıyla birleştirilir. Hepsi tek bir `(function(){'use strict'; … })()` içine konur; dosyalar ortak kapsamı paylaşır (import/export yok). Yeni dosya eklerken numarayla sıraya koyun; üst düzeyde hemen çalışan kod, kullandığı `const`/`let` tanımlarından sonra gelmelidir.
 - `tools/build.js` — `src/` → `app/index.html` (masaüstü: kütüphaneler `app/lib/`'den, Google Fonts yok) ve `dist-web/nusmac.html` (tek dosyalık tarayıcı sürümü, CDN). **`app/index.html` elle düzenlenmez.**
 - `app/main.js` — Electron ana süreci: pencere, Türkçe sağ tık menüsü + yazım denetimi önerileri, dosya ile açma (argv / ikinci örnek), kaydetme penceresi, kaydedilmemiş değişiklik uyarısı. `BM_TEST_DIR` ortam değişkeni varsa indirmeler soru sormadan oraya yazılır (testler için).
-- `app/preload.js` — `window.desktop.onOpenFile` ve `window.desktop.readFont` (PDF'e gömülecek yazı tipini Windows'tan ya da `app/fonts`'tan okur) köprüleri.
+- `app/preload.js` — `window.desktop.onOpenFile`, `window.desktop.readAsset` (yalnız `app/lib` altını okur; yazı tanıma dosyaları için) ve `window.desktop.readFont` (PDF'e gömülecek yazı tipini Windows'tan ya da `app/fonts`'tan okur) köprüleri.
 - `app/fonts/` — PDF'e gerçek metin yazmak için gömülen yazı tipleri (Liberation = Arial/Times/Courier eşdeğeri, Carlito = Calibri, Caladea = Cambria; lisanslar `LICENSES.txt`).
 - `tests/e2e.js` — uçtan uca testler (Playwright). `tests/fixtures/` test dosyaları, `npm run fixtures` ile yeniden üretilir. Çıktılar `test-output/` klasörüne yazılır.
-- `app/lib/` — pdf.js 3.11.174 (`pdf.js`, `pdf.worker.js`; worker ana iş parçacığında “fake worker” olarak çalışır), pdf-lib 1.17.1, @pdf-lib/fontkit 1.1.1, html2canvas 1.4.1, pako 2.1.0, UTIF.js.
+- `app/lib/` — pdf.js 3.11.174 (`pdf.js`, `pdf.worker.js`; worker ana iş parçacığında “fake worker” olarak çalışır), pdf-lib 1.17.1, @pdf-lib/fontkit 1.1.1, html2canvas 1.4.1, pako 2.1.0, UTIF.js, `tesseract/` (tesseract.js 7.0.0 + SIMD-LSTM çekirdeği + Türkçe dil dosyası `lang/tur.traineddata.gz`, yazı tanıma için; internet gerekmez).
 
 ## Çalıştırma / paketleme
 - `npm install` → `npm start` (build + Electron ile aç).
@@ -27,7 +27,7 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFile` (Türkçe karakterleri dosya adında sadeleştirir).
 - `01-temel.js` — simgeler, arayüz yardımcıları, **durum**: `S` (belge durumu: `pages`, `k` ölçek, `tool`, `sel`, `ctx` ['txt'|'ann'], `undo/redo`, `wm` filigran, `pnum`, `objAuto` …), `pool` (id→sayfa), `E` (id→DOM); resim yardımcıları.
 - **Sayfa modeli** — `S.pages` dizisi. `kind`: `'pdf'` (src+index), `'img'` (canvas/img), `'text'` (yazı sayfası, `html`). Ortak alanlar: `w,h` (pt), `rot`, `clip` (kırpma), `anns` (işaretler), `objMode/objSig` (PDF nesne modu), `comp` (gelişmiş düzenleyici katmanları).
-- **İşaret (ann) türleri** — `text` (metin kutusu; `lineKey` varsa tek satır), `hl`, `path` (kalem), `rect`, `arrow`, `white` (beyaz örtü), `poly` (serbest kesim örtüsü), `img` (imza/kaşe/kesilen parça). İsteğe bağlı bayraklar: `hid` (gizli: ekranda görünmez, kaydedilmez), `lock` (kilitli: tıklanamaz). Koordinatlar pt, sayfanın görünen (döndürülmüş, kırpılmış) alanına göre. `auto:true` = nesne modunun ürettiği.
+- **İşaret (ann) türleri** — `text` (metin kutusu; `lineKey` varsa tek satır), `hl`, `path` (kalem), `rect`, `arrow`, `white` (beyaz örtü), `poly` (serbest kesim örtüsü), `img` (imza/kaşe/kesilen parça), `ellipse` (daire), `pline` (çoklu çizgi, `pts`), `dim` (mesafe, x1..y2), `area` (alan, `pts`), `xy` (koordinat noktası). Ölçü türlerinin `lbl` etiketi `renderOv` sırasında sayfanın ölçeğinden (`p.ms`) hesaplanır. İsteğe bağlı bayraklar: `hid` (gizli: ekranda görünmez, kaydedilmez), `lock` (kilitli: tıklanamaz). Koordinatlar pt, sayfanın görünen (döndürülmüş, kırpılmış) alanına göre. `auto:true` = nesne modunun ürettiği.
 - `02-dosya-acma.js` — `openFiles`, `addPdf`, `addImage`, `addTiff`.
 - `03-geri-al.js` — `snap/pushUndo/commitUndo/restore` (sayfa sırası + her sayfanın rot/anns/clip/objMode). Yazı sayfası içindeki yazım geri alması tarayıcının kendi `execCommand` geçmişidir.
 - `04-goruntuleyici.js` — `buildViewer`, `renderBase`, `paintPage` (nesne modunda yazı+resimsiz çizim), küçük resimler, sayfa işlemleri, `renderOv`, `onDown` (tüm araçların fare işlemleri), `editText`, `editLineAt`, PDF içinde arama.
@@ -43,6 +43,7 @@ Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFil
 - `15-kaydet-penceresi.js` — `openSave` → PDF / Word / JPG / PNG; dosya seçme, sürükle-bırak, kaydedilmemiş değişiklik uyarısı.
 - `16-yazdir.js` — `printDoc` (Yazdır düğmesi, Ctrl+P): sayfaları resim olarak `#printArea`'ya koyar, `window.print()`; yazdırma CSS'i `styles.css` sonunda.
 - `17-sekmeler-nesne-agaci.js` — `setTab` (son sekme hatırlanır), vekil düğmeler (`data-proxy="#asılId"`: asıl düğmeye tıklar, `disabled`/`aria-pressed` durumunu kopyalar), sol panel ayırıcısı, nesne ağacı `buildTree`/`refreshTree` (bulunulan sayfanın işaretleri türe göre; göster/gizle, kilit, sil, tıklayınca seç).
+- `18-ek-araclar.js` — Netcad: ölçü (mesafe/alan/çoklu çizgi/nokta), sayfa ölçeği `p.ms={mpp,n,name}` (metre/pt; yoksa kâğıt), bilinen uzunlukla ayar, imleç koordinatı; Photoshop: renk seçici, `adjustPage` (çevir, gri, siyah-beyaz, negatif, parlaklık/kontrast; PDF sayfası resim sayfasına döner, sürümler `IMGV`'de saklanır ki geri alınabilsin: `p.iv`); Word: `stepFont`, harf düzeni (`trCase`, Türkçe İ/ı), sembol; OCR: `ocrWorker` (Tesseract dosyaları blob olarak verilir; yerel dosyada fetch çalışmaz), `ocrCurrent`, `p.ocr` (tanınan satırlar → PDF'te görünmez metin katmanı, `ocrWords`).
 - `99-acilis.js` — açılış, test kancası, masaüstünden dosya alma. Her zaman en son çalışır.
 
 ## Kurallar

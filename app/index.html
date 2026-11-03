@@ -371,6 +371,21 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
 
 @media (max-width:1100px){.ttl .appn{display:none}.hsearch input{width:110px}}
 @media (max-width:760px){.qat .qsep,.qat [data-proxy]{display:none}nav.tabs [role="tab"]{padding:5px 9px}.rgl{display:block}}
+
+/* ===== ek araçlar: ölçü etiketleri, sembol tablosu, OCR penceresi ===== */
+.mlbl{font-family:Arial,Helvetica,sans-serif;font-weight:600;paint-order:stroke;stroke:#ffffff;stroke-width:3px;stroke-linejoin:round;pointer-events:none;user-select:none}
+.symgrid{min-width:0;width:300px}
+.syms{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:2px 4px 4px}
+.ddm .syms button{justify-content:center;padding:0;height:32px;font-size:17px;border-radius:5px}
+#ocrText{width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:8px;padding:10px;font:14px/1.5 var(--ui)}
+footer.status .xy{font:12px var(--mono);color:var(--muted);margin-right:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+#xyLbl{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+.viewer.tool-dist .ov,.viewer.tool-area .ov,.viewer.tool-pline .ov,.viewer.tool-ellipse .ov,.viewer.tool-xy .ov,.viewer.tool-calib .ov{cursor:crosshair}
+.viewer.tool-pick .ov{cursor:copy}
+.fld output{font:12px var(--mono);color:var(--ink);margin-left:6px}
+.fld input[type=range]{width:100%}
+.toast{pointer-events:none}
+.rg{padding:0 5px}
 </style>
 
 </head>
@@ -386,13 +401,13 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
   </header>
   <nav class="tabs gut" role="tablist" aria-label="Komut sekmeleri">
     <button class="ib only-narrow" id="sideBtn" data-ico="side" title="Sayfa ve nesne listesi"></button>
-    <button role="tab" data-tab="home" aria-controls="tp-home" aria-selected="true">Giriş</button><button role="tab" data-tab="yazi" aria-controls="tp-yazi" aria-selected="false">Yazı</button><button role="tab" data-tab="ekle" aria-controls="tp-ekle" aria-selected="false">Ekle</button><button role="tab" data-tab="cizim" aria-controls="tp-cizim" aria-selected="false">Çizim</button><button role="tab" data-tab="resim" aria-controls="tp-resim" aria-selected="false">Resim</button><button role="tab" data-tab="sayfa" aria-controls="tp-sayfa" aria-selected="false">Sayfa</button>
+    <button role="tab" data-tab="home" aria-controls="tp-home" aria-selected="true">Giriş</button><button role="tab" data-tab="yazi" aria-controls="tp-yazi" aria-selected="false">Yazı</button><button role="tab" data-tab="ekle" aria-controls="tp-ekle" aria-selected="false">Ekle</button><button role="tab" data-tab="cizim" aria-controls="tp-cizim" aria-selected="false">Çizim</button><button role="tab" data-tab="olcu" aria-controls="tp-olcu" aria-selected="false">Ölçü</button><button role="tab" data-tab="resim" aria-controls="tp-resim" aria-selected="false">Resim</button><button role="tab" data-tab="sayfa" aria-controls="tp-sayfa" aria-selected="false">Sayfa</button>
   </nav>
   <div class="ribbon gut" id="ribbon">
     <div class="rpanel" role="tabpanel" data-panel="home" id="tp-home">
       <div class="rg"><div class="rgc"><label class="bb c-b" data-ico="open" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span class="bl">Aç</span><input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label><button class="bb c-b" data-ico="new" id="newBtn" title="Belgeyi temizle"><span class="bl">Yeni</span></button><button class="bb c-b" data-ico="save" id="saveBtn" title="Kaydet (Ctrl+S)"><span class="bl">Kaydet</span></button><button class="bb c-b" data-ico="print" id="printBtn" title="Yazdır (Ctrl+P)"><span class="bl">Yazdır</span></button></div><div class="rgl">Dosya</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-r" data-ico="text" data-tool="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)"><span class="bl">Metin</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
-      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="image" data-proxy="#imgIn" title="Resim ekle"><span class="bl">Resim</span></button><button class="bb c-b" data-ico="sign" data-proxy="#signBtn" title="İmza çiz ya da kaşe fotoğrafı ekle"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button></div><div class="rgl">Ekle</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="image" data-proxy="#imgIn" title="Resim ekle"><span class="bl">Resim</span></button><button class="bb c-b" data-ico="sign" data-proxy="#signBtn" title="İmza çiz ya da kaşe fotoğrafı ekle"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button><button class="bb c-o" data-ico="scan" data-proxy="#ocrBtn" title="Resimdeki ya da taranmış sayfadaki yazıları okur (OCR)"><span class="bl">Yazıları tanı</span></button></div><div class="rgl">Ekle</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" data-proxy="#objBtn" title="PDF’teki yazı ve resimleri ayrı, düzenlenebilir nesne yapar"><span class="bl">Nesneler</span></button><button class="bb c-b" data-ico="rotl" data-proxy="#rotL" title="Bu sayfayı sola döndür"><span class="bl">Sola döndür</span></button><button class="bb c-b" data-ico="rotr" data-proxy="#rotR" title="Bu sayfayı sağa döndür"><span class="bl">Sağa döndür</span></button></div><div class="rgl">Sayfa</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="zin" data-proxy="#zin"><span class="bl">Yakınlaştır</span></button><button class="bb c-g" data-ico="zout" data-proxy="#zout"><span class="bl">Uzaklaştır</span></button><button class="bb c-g" data-ico="fit" data-proxy="#zfit" title="Sayfayı pencere genişliğine sığdır"><span class="bl">Sığdır</span></button></div><div class="rgl">Görünüm</div></div>
     </div>
@@ -410,6 +425,7 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
           <div class="rrow"><button class="ib" id="ulBtn" data-ico="ul" title="Madde işaretli liste"></button><button class="ib" id="olBtn" data-ico="ol" title="Numaralı liste"></button><button class="ib" id="outBtn" data-ico="outd" title="Girintiyi azalt"></button><button class="ib" id="indBtn" data-ico="ind" title="Girintiyi artır"></button>
             <select id="fBlock" title="Paragraf biçimi" aria-label="Paragraf biçimi"><option value="p">Normal</option><option value="h1">Başlık 1</option><option value="h2">Başlık 2</option><option value="h3">Başlık 3</option></select></div>
         </div></div><div class="rgl">Paragraf</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="aup" id="fsUp" title="Yazıyı büyüt (Ctrl+Shift+>)"><span class="bl">Büyüt</span></button><button class="bb c-b" data-ico="adown" id="fsDown" title="Yazıyı küçült (Ctrl+Shift+<)"><span class="bl">Küçült</span></button><button class="bb dd c-r" data-ico="case" data-menu="mCase" title="BÜYÜK HARF, küçük harf, Cümle düzeni, Her Kelime Büyük"><span class="bl">Harf düzeni</span></button><button class="bb dd c-g" data-ico="omega" data-menu="mSym" title="₺ © ° ± × ½ → ✓ gibi özel karakterler"><span class="bl">Sembol</span></button></div><div class="rgl">Biçim</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="search" id="findBtn" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)"><span class="bl">Bul ve değiştir</span></button><button class="bb c-g" data-ico="cal" data-proxy="#dateBtn" title="Yazı sayfasında imlecin olduğu yere bugünün tarihi"><span class="bl">Tarih</span></button><button class="bb c-b" data-ico="table" data-proxy="#tblBtn" title="Yazı sayfasına 3×3 tablo ekler"><span class="bl">Tablo</span></button></div><div class="rgl">Düzen</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="ekle" id="tp-ekle" hidden>
@@ -417,16 +433,23 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="hash" data-proxy="#pnumBtn" title="Kaydederken her sayfanın altına numara"><span class="bl">Sayfa numarası</span></button><button class="bb c-o" data-ico="drop" data-proxy="#wmBtn" title="Tüm sayfalara çapraz yazı (TASLAK vb.)"><span class="bl">Filigran</span></button><button class="bb dd c-k" data-ico="more" data-menu="mMore" title="Tarih, sayfa numarası, filigran"><span class="bl">Diğer</span></button></div><div class="rgl">Belge</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="cizim" id="tp-cizim" hidden>
-      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-r" data-ico="rect" data-tool="rect" title="Kutu (R)"><span class="bl">Kutu</span></button><button class="bb c-r" data-ico="arrow" data-tool="arrow" title="Ok (A)"><span class="bl">Ok</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-r" data-ico="rect" data-tool="rect" title="Kutu (R)"><span class="bl">Kutu</span></button><button class="bb c-r" data-ico="arrow" data-tool="arrow" title="Ok (A)"><span class="bl">Ok</span></button><button class="bb c-r" data-ico="ellipse" data-tool="ellipse" title="Daire / elips: sürükleyin (Shift ile tam daire) (D)"><span class="bl">Daire</span></button><button class="bb c-r" data-ico="pline" data-tool="pline" title="Tıklayarak noktalar koyun; çift tık ya da Enter ile bitirin (N)"><span class="bl">Çoklu çizgi</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
       <div class="rg"><div class="rgc"><div class="rrows">
           <div class="rrow"><div class="grp" id="swatches" role="group" aria-label="Renk"></div></div>
-          <div class="rrow"><span class="rlab">Kalınlık</span><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select></div>
+          <div class="rrow"><button class="ib" data-tool="pick" data-ico="pick" title="Renk seçici: sayfadan renk alın (I)"></button><span class="rlab">Kalınlık</span><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select></div>
         </div></div><div class="rgl">Biçim</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-r" data-ico="trash" id="delBtn" disabled title="Seçili işareti sil (Delete)"><span class="bl">Sil</span></button></div><div class="rgl">Düzenle</div></div>
+    </div>
+    <div class="rpanel" role="tabpanel" data-panel="olcu" id="tp-olcu" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-r" data-ico="ruler" data-tool="dist" title="İki nokta arası uzaklık: sürükleyin (M)"><span class="bl">Mesafe</span></button><button class="bb c-g" data-ico="area" data-tool="area" title="Tıklayarak köşeleri koyun; çift tık ya da Enter ile bitirin. Alan ve çevre yazılır (Ö)"><span class="bl">Alan</span></button><button class="bb c-r" data-ico="pline" data-tool="pline" title="Kırık çizgi; uzunluğu nesne listesinde görünür (N)"><span class="bl">Çoklu çizgi</span></button></div><div class="rgl">Ölç</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="scale" id="scaleBtn" title="Sayfanın ölçeği: 1:500, 1:1000 … ya da bilinen bir uzunlukla ayarlayın"><span class="bl">Ölçek</span></button><div class="rrows"><div class="rrow"><span class="rlab" id="scaleLbl">Ölçek: kâğıt (1:1)</span></div><div class="rrow"><span class="rlab" id="xyLbl">X: –  Y: –</span></div></div></div><div class="rgl">Ölçek</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="xy" data-tool="xy" title="Tıkladığınız noktanın koordinatını yazar (X, Y)"><span class="bl">Nokta koy</span></button></div><div class="rgl">Koordinat</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="resim" id="tp-resim" hidden>
       <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="crop" data-tool="crop" title="Sayfayı kırp (C)"><span class="bl">Kırp</span></button><button class="bb c-r" data-ico="scissors" data-tool="cut" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)"><span class="bl">Kes, ayır</span></button><button class="bb c-r" data-ico="lasso" data-tool="lasso" title="İstediğiniz şekli çizerek keser (L)"><span class="bl">Serbest kes</span></button><button class="bb c-o" data-ico="grid" id="splitBtn" title="Sayfayı satır ve sütunlara böler"><span class="bl">Parçala</span></button></div><div class="rgl">Kesme</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="grab" data-tool="grab" title="Seçtiğiniz alanı resim olarak alır (G)"><span class="bl">Görsel al</span></button><button class="bb c-b" data-ico="layers" data-proxy="#editImg" title="Katmanlar, parlaklık, yazı, şekil"><span class="bl">Gelişmiş düzenleyici</span></button><button class="bb c-g" data-ico="image" data-proxy="#pdfImgs" title="PDF’teki gömülü resimleri dosya olarak kaydeder"><span class="bl">Resimleri çıkar</span></button></div><div class="rgl">Görsel</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="fliph" data-adj="fliph" title="Sayfayı ayna gibi sağ-sol çevirir"><span class="bl">Yatay çevir</span></button><button class="bb c-b" data-ico="flipv" data-adj="flipv" title="Sayfayı alt-üst çevirir"><span class="bl">Dikey çevir</span></button><button class="bb c-o" data-ico="contrast" id="bcBtn" title="Sayfanın parlaklığını ve kontrastını ayarlar"><span class="bl">Parlaklık / kontrast</span></button><button class="bb c-k" data-ico="gray" data-adj="gray" title="Renkleri kaldırır"><span class="bl">Gri ton</span></button><button class="bb c-k" data-ico="bw" data-adj="bw" title="Taranmış belgeyi temiz siyah-beyaz yapar"><span class="bl">Siyah-beyaz</span></button><button class="bb c-k" data-ico="invert" data-adj="invert" title="Renkleri ters çevirir"><span class="bl">Negatif</span></button></div><div class="rgl">Ayarlar</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="scan" id="ocrBtn" title="Resimdeki ya da taranmış sayfadaki yazıları okur (OCR)"><span class="bl">Yazıları tanı</span></button></div><div class="rgl">Yazı tanıma</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="sayfa" id="tp-sayfa" hidden>
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" id="objBtn" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur"><span class="bl">Nesneler</span></button><button class="bb c-r" data-ico="edit" data-tool="edit" title="Nesneler kapalıyken tek satırı değiştirmek için"><span class="bl">Satır düzenle</span></button><button class="bb c-b" data-ico="text" data-proxy="#pdf2txt" title="PDF’teki tüm yazıyı Word gibi düzenlenebilir yap"><span class="bl">Yazıya çevir</span></button></div><div class="rgl">PDF</div></div>
@@ -453,6 +476,16 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
   <div class="ddm" id="mPg" hidden>
     <button data-tool="edit"><span data-ico="edit"></span><span><b>PDF satırını düzenle</b><small>Nesneler kapalıyken tek satırı değiştirmek için</small></span></button>
     <button id="pdf2txt"><span data-ico="text"></span><span><b>Yazı sayfasına çevir</b><small>PDF’teki tüm yazıyı Word gibi düzenlenebilir yap</small></span></button>
+  </div>
+  <div class="ddm" id="mCase" hidden>
+    <button data-case="upper"><span data-ico="case"></span><span><b>BÜYÜK HARF</b><small>Seçili yazının tüm harfleri büyük</small></span></button>
+    <button data-case="lower"><span data-ico="case"></span><span><b>küçük harf</b><small>Tüm harfler küçük (I → ı, İ → i)</small></span></button>
+    <button data-case="sentence"><span data-ico="case"></span><span><b>Cümle düzeni.</b><small>Yalnız cümle başları büyük</small></span></button>
+    <button data-case="title"><span data-ico="case"></span><span><b>Her Kelime Büyük</b><small>Her sözcüğün ilk harfi büyük</small></span></button>
+  </div>
+  <div class="ddm symgrid" id="mSym" hidden>
+    <div class="ddh">Sembol ekle (imlecin olduğu yere)</div>
+    <div class="syms"><button data-sym="₺" title="₺">₺</button><button data-sym="€" title="€">€</button><button data-sym="$" title="$">$</button><button data-sym="£" title="£">£</button><button data-sym="©" title="©">©</button><button data-sym="®" title="®">®</button><button data-sym="™" title="™">™</button><button data-sym="§" title="§">§</button><button data-sym="¶" title="¶">¶</button><button data-sym="°" title="°">°</button><button data-sym="±" title="±">±</button><button data-sym="×" title="×">×</button><button data-sym="÷" title="÷">÷</button><button data-sym="≈" title="≈">≈</button><button data-sym="≠" title="≠">≠</button><button data-sym="≤" title="≤">≤</button><button data-sym="≥" title="≥">≥</button><button data-sym="∞" title="∞">∞</button><button data-sym="√" title="√">√</button><button data-sym="∑" title="∑">∑</button><button data-sym="π" title="π">π</button><button data-sym="µ" title="µ">µ</button><button data-sym="½" title="½">½</button><button data-sym="¼" title="¼">¼</button><button data-sym="¾" title="¾">¾</button><button data-sym="²" title="²">²</button><button data-sym="³" title="³">³</button><button data-sym="•" title="•">•</button><button data-sym="…" title="…">…</button><button data-sym="–" title="–">–</button><button data-sym="—" title="—">—</button><button data-sym="«" title="«">«</button><button data-sym="»" title="»">»</button><button data-sym="“" title="“">“</button><button data-sym="”" title="”">”</button><button data-sym="‘" title="‘">‘</button><button data-sym="’" title="’">’</button><button data-sym="→" title="→">→</button><button data-sym="←" title="←">←</button><button data-sym="↑" title="↑">↑</button><button data-sym="↓" title="↓">↓</button><button data-sym="⇒" title="⇒">⇒</button><button data-sym="✓" title="✓">✓</button><button data-sym="✗" title="✗">✗</button><button data-sym="☐" title="☐">☐</button><button data-sym="☑" title="☑">☑</button><button data-sym="★" title="★">★</button><button data-sym="☎" title="☎">☎</button><button data-sym="✉" title="✉">✉</button><button data-sym="Ø" title="Ø">Ø</button><button data-sym="∅" title="∅">∅</button><button data-sym="⌀" title="⌀">⌀</button></div>
   </div>
   <div class="ddm" id="grabMenu" hidden></div>
 
@@ -482,7 +515,7 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
       <div id="pagesList"></div>
     </main>
   </div>
-  <footer class="status gut"><span class="l" id="pStat"></span><span class="r" id="pHint"></span>
+  <footer class="status gut"><span class="l" id="pStat"></span><span class="r" id="pHint"></span><span class="xy" id="pXY"></span>
     <span class="zoom"><button class="ib" id="zout" data-ico="zout" title="Uzaklaştır"></button><span class="zl" id="zl">100%</span><button class="ib" id="zin" data-ico="zin" title="Yakınlaştır"></button><button class="ib" id="zfit" data-ico="fit" title="Genişliğe sığdır"></button></span></footer>
 
   <div class="fpanel" id="findPanel" hidden role="dialog" aria-label="Bul ve değiştir">
@@ -630,6 +663,43 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
     <div class="row" style="justify-content:flex-end"><button class="btn" id="wmOff">Filigranı kaldır</button><span style="flex:1"></span><button class="btn" id="wmCancel">Vazgeç</button><button class="btn primary" id="wmGo">Uygula</button></div>
   </div>
 </div>
+<div class="scrim" id="ocrModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ocrTitle" style="width:min(640px,100%)">
+    <h3 id="ocrTitle">Tanınan yazılar</h3>
+    <div class="muted" id="ocrInfo"></div>
+    <textarea id="ocrText" rows="12" spellcheck="true" aria-label="Tanınan yazı"></textarea>
+    <div class="muted">Yazıyı burada düzeltebilirsiniz. Kaydettiğiniz PDF’te bu sayfanın yazısı artık aranabilir ve seçilebilir olur.</div>
+    <div class="row" style="justify-content:flex-end;flex-wrap:wrap"><button class="btn" id="ocrCopy"><span data-ico="copy"></span>Panoya kopyala</button><button class="btn" id="ocrToPage"><span data-ico="text"></span>Yazı sayfası olarak ekle</button><button class="btn" id="ocrEdit"><span data-ico="edit"></span>Sayfada düzenlenebilir yap</button><span style="flex:1"></span><button class="btn primary" id="ocrClose">Tamam</button></div>
+  </div>
+</div>
+<div class="scrim" id="scaleModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scaleTitle" style="width:min(460px,100%)">
+    <h3 id="scaleTitle">Ölçek</h3>
+    <div class="muted">Plan ve haritalarda ölçeği seçin; ölçümler metre ve metrekare olarak yazılır. “Kâğıt” seçilirse sayfadaki gerçek boyut (cm) gösterilir.</div>
+    <label class="fld">Ölçek<select id="scaleSel"><option value="0">Kâğıt (1:1, cm)</option><option>100</option><option>200</option><option>250</option><option>500</option><option>1000</option><option>2000</option><option>2500</option><option>5000</option><option>10000</option><option>25000</option><option value="c">Diğer…</option></select></label>
+    <label class="fld" id="scaleCustomW" hidden>1 : <input type="number" id="scaleCustom" min="1" step="1" value="1000"></label>
+    <label class="chk"><input type="checkbox" id="scaleAll"> Tüm sayfalara uygula</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="scaleCalib"><span data-ico="ruler"></span>Bilinen uzunlukla ayarla</button><span style="flex:1"></span><button class="btn" id="scaleCancel">Vazgeç</button><button class="btn primary" id="scaleGo">Uygula</button></div>
+  </div>
+</div>
+<div class="scrim" id="calibModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="calibTitle" style="width:min(400px,100%)">
+    <h3 id="calibTitle">Bilinen uzunluk</h3>
+    <div class="muted">Çizdiğiniz çizginin gerçekteki uzunluğunu yazın. Sayfanın ölçeği buna göre ayarlanır.</div>
+    <label class="fld">Gerçek uzunluk (metre)<input type="number" id="calibLen" min="0" step="any" value="10"></label>
+    <label class="chk"><input type="checkbox" id="calibAll"> Tüm sayfalara uygula</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="calibCancel">Vazgeç</button><button class="btn primary" id="calibGo">Uygula</button></div>
+  </div>
+</div>
+<div class="scrim" id="bcModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bcTitle" style="width:min(420px,100%)">
+    <h3 id="bcTitle">Parlaklık / kontrast</h3>
+    <div class="muted">Bulunduğunuz sayfaya uygulanır; sayfada önizlenir.</div>
+    <label class="fld">Parlaklık <output id="bcBo">0</output><input type="range" id="bcB" min="-100" max="100" value="0"></label>
+    <label class="fld">Kontrast <output id="bcCo">0</output><input type="range" id="bcC" min="-100" max="100" value="0"></label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="bcReset">Sıfırla</button><span style="flex:1"></span><button class="btn" id="bcCancel">Vazgeç</button><button class="btn primary" id="bcGo">Uygula</button></div>
+  </div>
+</div>
 <div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyMsg">Hazırlanıyor…</span></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
 <div id="printArea" aria-hidden="true"></div>
@@ -641,6 +711,7 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
 <script src="lib/pako.min.js"></script>
 <script src="lib/UTIF.js"></script>
 <script src="lib/fontkit.umd.min.js"></script>
+<script src="lib/tesseract/tesseract.min.js"></script>
 <script>
 (function(){
 'use strict';
@@ -657,6 +728,23 @@ const I={
  new:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M12 11v6M9 14h6"/>',
  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
  unlock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+ scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 9h8M8 12h8M8 15h5"/>',
+ aup:'<path d="M3 19 8.5 5 14 19"/><path d="M5.2 14h6.6"/><path d="M18 11V4M15 7l3-3 3 3"/>',
+ adown:'<path d="M3 19 8.5 5 14 19"/><path d="M5.2 14h6.6"/><path d="M18 4v7M15 8l3 3 3-3"/>',
+ case:'<path d="M2 18 6.5 6 11 18"/><path d="M3.8 14h5.4"/><circle cx="17" cy="15" r="3"/><path d="M20 12v6"/>',
+ omega:'<path d="M4 20h5v-2.5A7 7 0 1 1 15 17.5V20h5"/>',
+ pline:'<path d="M3 18 8 8l5 7 4-9 4 4"/><circle cx="3" cy="18" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="13" cy="15" r="1.3"/><circle cx="17" cy="6" r="1.3"/>',
+ pick:'<path d="m14 7 3 3"/><path d="M5 19l1-4 9-9a2.1 2.1 0 0 1 3 3l-9 9z"/><path d="M4 20h2"/>',
+ ruler:'<path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/>',
+ area:'<path d="M4 18 6 6l9-2 5 9-6 7z"/><path d="M9 11h4M9 14h6" stroke-width="1.4"/>',
+ scale:'<path d="M3 16h18"/><path d="M3 13v6M9 14v4M15 14v4M21 13v6"/><path d="M7 6h10M7 6l2-2M7 6l2 2M17 6l-2-2M17 6l-2 2"/>',
+ xy:'<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="3"/>',
+ fliph:'<path d="M12 3v18"/><path d="M9 7 4 17h5zM15 7l5 10h-5z"/>',
+ flipv:'<path d="M3 12h18"/><path d="M7 9 17 4v5zM7 15l10 5v-5z"/>',
+ contrast:'<circle cx="12" cy="12" r="8"/><path d="M12 4v16a8 8 0 0 0 0-16z" fill="currentColor"/>',
+ gray:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M4 14h16M9 4v16M14 4v16" stroke-width="1"/>',
+ bw:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 4h8v8H4zM12 12h8v8h-8z" fill="currentColor"/>',
+ invert:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/><path d="M8 12h1M15 12h1"/>',
  print:'<path d="M7 8V3h10v5"/><rect x="3" y="8" width="18" height="9" rx="2"/><path d="M7 14h10v7H7z"/>',
  select:'<path d="M6 3l12 9-5.5 1.2L9.5 19z"/>',
  text:'<path d="M5 7V5h14v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
@@ -831,10 +919,10 @@ async function addTiff(f){const cs=tiffCanvases(await f.arrayBuffer());cs.forEac
 
 /* ===== js/03-geri-al.js ===== */
 /* ---------- undo ---------- */
-function snap(){return JSON.stringify({order:S.pages.map(p=>p.id),st:S.pages.map(p=>({id:p.id,rot:p.rot,anns:p.anns,clip:p.clip||null,objMode:!!p.objMode,objSig:p.objSig||null}))})}
+function snap(){return JSON.stringify({order:S.pages.map(p=>p.id),st:S.pages.map(p=>({id:p.id,rot:p.rot,anns:p.anns,clip:p.clip||null,objMode:!!p.objMode,objSig:p.objSig||null,ms:p.ms||null,iv:p.iv==null?null:p.iv}))})}
 function pushUndo(){S.dirty=true;S.undo.push(snap());if(S.undo.length>80)S.undo.shift();S.redo=[];updUndo()}
 function commitUndo(before){S.dirty=true;S.undo.push(before);if(S.undo.length>80)S.undo.shift();S.redo=[];updUndo()}
-function restore(s){const o=JSON.parse(s);S.pages=o.order.map(id=>pool.get(id)).filter(Boolean);for(const st of o.st){const p=pool.get(st.id);if(p){p.rot=st.rot;p.anns=st.anns;p.clip=st.clip||null;p.objMode=st.objMode;p.objSig=st.objSig;if(p.objMode)p.objTried=true}}S.sel=null;S.editing=null;keepScroll(buildViewer)}
+function restore(s){const o=JSON.parse(s);S.pages=o.order.map(id=>pool.get(id)).filter(Boolean);for(const st of o.st){const p=pool.get(st.id);if(p){if(st.iv!=null&&st.iv!==p.iv)applyImgVer(p,st.iv);p.ms=st.ms||null;p.rot=st.rot;p.anns=st.anns;p.clip=st.clip||null;p.objMode=st.objMode;p.objSig=st.objSig;if(p.objMode)p.objTried=true}}S.sel=null;S.editing=null;keepScroll(buildViewer)}
 function undo(){if(!S.undo.length)return;S.redo.push(snap());restore(S.undo.pop());updUndo()}
 function redo(){if(!S.redo.length)return;S.undo.push(snap());restore(S.redo.pop());updUndo()}
 function updUndo(){$('#undoBtn').disabled=!S.undo.length;$('#redoBtn').disabled=!S.redo.length}
@@ -870,7 +958,7 @@ function buildViewer(){
     wrap.append(head,pg);list.append(wrap);
     E[p.id]={wrap,pg,canvas:c,ov,doc,body,rk:0,task:null};
     head.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b)pageAct(p,b.dataset.act)});
-    ov.addEventListener('pointerdown',ev=>onDown(ev,p));
+    ov.addEventListener('pointerdown',ev=>onDown(ev,p));ov.addEventListener('pointermove',ev=>showXY(ev,p));
     ov.addEventListener('dblclick',ev=>onDbl(ev,p));
     if(!T)io.observe(pg);
     if(T)p.h=Math.max(841.89,pg.offsetHeight/S.k);
@@ -943,8 +1031,9 @@ function scrollToPage(i,smooth=true){const p=S.pages[i];if(!p||!E[p.id])return;c
 /* ---------- page actions ---------- */
 function rotAnn(a,d,W,H){
   const P=d>0?([x,y])=>[H-y,x]:([x,y])=>[y,W-x];
-  if(a.type==='path'||a.type==='poly')a.pts=a.pts.map(P);
-  else if(a.type==='arrow'){[a.x1,a.y1]=P([a.x1,a.y1]);[a.x2,a.y2]=P([a.x2,a.y2])}
+  if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area')a.pts=a.pts.map(P);
+  else if(a.type==='arrow'||a.type==='dim'){[a.x1,a.y1]=P([a.x1,a.y1]);[a.x2,a.y2]=P([a.x2,a.y2])}
+  else if(a.type==='xy'){[a.x,a.y]=P([a.x,a.y])}
   else if(a.type==='text'||a.type==='img'){const [cx,cy]=P([a.x+a.w/2,a.y+a.h/2]);a.x=cx-a.w/2;a.y=cy-a.h/2}
   else{const [x1,y1]=P([a.x,a.y]),[x2,y2]=P([a.x+a.w,a.y+a.h]);a.x=Math.min(x1,x2);a.y=Math.min(y1,y2);a.w=Math.abs(x2-x1);a.h=Math.abs(y2-y1)}
 }
@@ -972,13 +1061,16 @@ function pageAct(p,act){
 const NS='http://www.w3.org/2000/svg';
 function sv(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}
 function arrowHead(a){const L=Math.max(9,a.lw*4),ang=Math.atan2(a.y2-a.y1,a.x2-a.x1),s=0.45;return [[a.x2,a.y2],[a.x2-L*Math.cos(ang-s),a.y2-L*Math.sin(ang-s)],[a.x2-L*Math.cos(ang+s),a.y2-L*Math.sin(ang+s)]]}
-function bbox(a){if(a.type==='path'||a.type==='poly'){const xs=a.pts.map(p=>p[0]),ys=a.pts.map(p=>p[1]);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
-  if(a.type==='arrow')return{x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x2-a.x1),h:Math.abs(a.y2-a.y1)};return a}
+function bbox(a){if(a.type==='xy')return{x:a.x-4,y:a.y-4,w:8,h:8};if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area'){const xs=a.pts.map(p=>p[0]),ys=a.pts.map(p=>p[1]);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
+  if(a.type==='arrow'||a.type==='dim')return{x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x2-a.x1),h:Math.abs(a.y2-a.y1)};return a}
 function renderOv(p){
   const e=E[p.id];if(!e)return;const ov=e.ov,k=S.k;ov.innerHTML='';
   const W=dw(p)*k,H=dh(p)*k;const svg=sv('svg',{class:'ovsvg',width:W,height:H,viewBox:`0 0 ${W} ${H}`});let hasSvg=false;
+  updMeasLabels(p);
   for(const a of p.anns){
     if(a.hid)continue;
+    if(SVGT.has(a.type)){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});measSvg(g,a,k);
+      if(S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}svg.append(g);continue}
     const selected=S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id;
     if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
       g.append(sv('path',{d,fill:a.fill||'#ffffff',stroke:'none'}));g.append(sv('path',{d,class:'hitfill',fill:'transparent'}));
@@ -1027,7 +1119,7 @@ function updSelUI(){
   [['alL','left'],['alC','center'],['alR','right'],['alJ','justify']].forEach(([id,v])=>$('#'+id).setAttribute('aria-pressed',String(al===v)));
   if(src.color&&/^#[0-9a-f]{6}$/i.test(src.color))$('#fColor').value=src.color;
 }
-function moveAnn(a,o,dx,dy){if(a.type==='path'||a.type==='poly')a.pts=o.pts.map(([x,y])=>[x+dx,y+dy]);else if(a.type==='arrow'){a.x1=o.x1+dx;a.y1=o.y1+dy;a.x2=o.x2+dx;a.y2=o.y2+dy}else{a.x=o.x+dx;a.y=o.y+dy}}
+function moveAnn(a,o,dx,dy){if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area')a.pts=o.pts.map(([x,y])=>[x+dx,y+dy]);else if(a.type==='arrow'||a.type==='dim'){a.x1=o.x1+dx;a.y1=o.y1+dy;a.x2=o.x2+dx;a.y2=o.y2+dy}else{a.x=o.x+dx;a.y=o.y+dy}}
 function drag(ov,ev,mv,up){ov.setPointerCapture(ev.pointerId);const m=e=>mv(e);const u=e=>{ov.removeEventListener('pointermove',m);ov.removeEventListener('pointerup',u);ov.removeEventListener('pointercancel',u);up(e)};ov.addEventListener('pointermove',m);ov.addEventListener('pointerup',u);ov.addEventListener('pointercancel',u)}
 function onDown(ev,p){
   if(ev.button>0||ev.target.isContentEditable)return;
@@ -1065,11 +1157,15 @@ function onDown(ev,p){
     const a={id:nid('a'),type:'img',x:Math.max(0,x-w/2),y:Math.max(0,y-h/2),w,h,src:pi.src};
     p.anns.push(a);S.pendingImg=null;setTool('select');setSel({pageId:p.id,aid:a.id});renderOv(p);markThumb(p);return;
   }
+  if(tool==='pline'||tool==='area'){buildClick(p,x,y,tool);return}
+  if(tool==='pick'){pickColor(p,x,y);return}
+  if(tool==='xy'){pushUndo();p.anns.push({id:nid('a'),type:'xy',x,y,color:S.color});renderOv(p);markThumb(p);return}
   const before=snap();let a;
   if(tool==='crop')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,crop:true};
   else if(tool==='cut'||tool==='grab')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,temp:tool};
   else if(tool==='lasso')a={id:nid('a'),type:'path',pts:[[x,y]],color:'#3a3db0',lw:1.5,temp:'lasso'};
-  else if(tool==='rect'||tool==='hl'||tool==='white')a={id:nid('a'),type:tool,x,y,w:0,h:0,color:tool==='hl'?S.hlColor:S.color,lw:S.lw};
+  else if(tool==='dist'||tool==='calib')a={id:nid('a'),type:'dim',x1:x,y1:y,x2:x,y2:y,color:tool==='calib'?'#3a3db0':S.color,lw:tool==='calib'?1.2:Math.min(S.lw,2),temp:tool==='calib'?'calib':undefined};
+  else if(tool==='rect'||tool==='hl'||tool==='white'||tool==='ellipse')a={id:nid('a'),type:tool,x,y,w:0,h:0,color:tool==='hl'?S.hlColor:S.color,lw:S.lw};
   else if(tool==='pen')a={id:nid('a'),type:'path',pts:[[x,y]],color:S.color,lw:S.lw};
   else if(tool==='arrow')a={id:nid('a'),type:'arrow',x1:x,y1:y,x2:x,y2:y,color:S.color,lw:S.lw};
   else return;
@@ -1077,12 +1173,14 @@ function onDown(ev,p){
   p.anns.push(a);
   drag(ov,ev,m=>{const [mx,my]=local(m,ov);
     if(a.type==='path'){const l=a.pts[a.pts.length-1];if(Math.hypot(mx-l[0],my-l[1])*S.k>1.5)a.pts.push([mx,my])}
-    else if(a.type==='arrow'){a.x2=mx;a.y2=my}
+    else if(a.type==='arrow'||a.type==='dim'){a.x2=mx;a.y2=my;if(m.shiftKey){if(Math.abs(mx-x)>Math.abs(my-y))a.y2=y;else a.x2=x}}
+    else if(a.type==='ellipse'&&m.shiftKey){const r=Math.max(Math.abs(mx-x),Math.abs(my-y));a.x=mx<x?x-r:x;a.y=my<y?y-r:y;a.w=a.h=r}
     else{a.x=Math.min(x,mx);a.y=Math.min(y,my);a.w=Math.abs(mx-x);a.h=Math.abs(my-y)}
     renderOv(p)},
    ()=>{let tiny;
     if(a.type==='path'){if(a.pts.length===1)a.pts.push([a.pts[0][0]+0.2,a.pts[0][1]+0.2]);tiny=false}
-    else if(a.type==='arrow')tiny=Math.hypot(a.x2-a.x1,a.y2-a.y1)<4;else tiny=a.w<3||a.h<3;
+    else if(a.type==='arrow'||a.type==='dim')tiny=Math.hypot(a.x2-a.x1,a.y2-a.y1)<4;else tiny=a.w<3||a.h<3;
+    if(a.temp==='calib'){p.anns.pop();renderOv(p);if(!tiny)openCalib(p,Math.hypot(a.x2-a.x1,a.y2-a.y1));return}
     if(a.temp){p.anns.pop();renderOv(p);if(a.temp==='lasso'?a.pts.length>3:!tiny)imageOp(p,a);return}
     if(a.crop){p.anns.pop();if(tiny||!applyCrop(p,a))renderOv(p);else commitUndo(before);return}
     if(tiny)p.anns.pop();else{commitUndo(before);markThumb(p)}renderOv(p)});
@@ -1134,7 +1232,7 @@ async function editLineAt(p,x,y){
 function deleteSel(){const s=selAnn();if(!s)return;pushUndo();s.p.anns=s.p.anns.filter(a=>a!==s.a);S.sel=null;renderOv(s.p);markThumb(s.p);updSelUI()}
 function applyProp(prop,val){
   const s=selAnn();if(!s)return;const a=s.a;
-  const ok={color:['text','rect','path','arrow'],size:['text'],lw:['rect','path','arrow'],bold:['text'],italic:['text'],underline:['text'],font:['text'],align:['text']}[prop];
+  const ok={color:['text','rect','path','arrow','ellipse','pline','dim','area','xy'],size:['text'],lw:['rect','path','arrow','ellipse','pline','dim','area'],bold:['text'],italic:['text'],underline:['text'],font:['text'],align:['text']}[prop];
   if(!ok.includes(a.type))return;pushUndo();a[prop]=val;if(prop==='size')a.h=Math.max(a.h,val*1.25);renderOv(s.p);
 }
 const HINTS={select:'Seç: işarete tıklayıp taşıyın, köşedeki tutamaçla boyutlandırın, metni değiştirmek için çift tıklayın.',
@@ -1146,9 +1244,16 @@ const HINTS={select:'Seç: işarete tıklayıp taşıyın, köşedeki tutamaçla
  crop:'Kırp: sayfada bırakmak istediğiniz alanı sürükleyerek seçin.',
  cut:'Kes, ayır: kesmek istediğiniz alanı sürükleyerek seçin; parça ayrılır ve sürüklenebilir olur.',
  lasso:'Serbest kes: fareyi basılı tutup kesmek istediğiniz şeklin çevresini çizin, bırakınca kesilir.',
- grab:'Görsel al: almak istediğiniz alanı seçin; sonra kaydedebilir, yeni sayfa yapabilir ya da yazıya ekleyebilirsiniz.'};
+ grab:'Görsel al: almak istediğiniz alanı seçin; sonra kaydedebilir, yeni sayfa yapabilir ya da yazıya ekleyebilirsiniz.',
+ ellipse:'Daire: sürükleyerek çizin. Shift basılıyken tam daire olur.',
+ pline:'Çoklu çizgi: noktaları tıklayarak koyun; çift tık ya da Enter ile bitirin, Esc ile bırakın.',
+ dist:'Mesafe: ölçmek istediğiniz iki nokta arasında sürükleyin. Shift ile yatay/dikey. Ölçeği Ölçü → Ölçek ile ayarlayın.',
+ area:'Alan: köşe noktalarını tıklayarak koyun; çift tık ya da Enter ile bitirin. Alan ve çevre yazılır.',
+ xy:'Nokta koy: koordinatını yazmak istediğiniz noktalara tıklayın.',
+ pick:'Renk seçici: sayfada rengini almak istediğiniz yere tıklayın.',
+ calib:'Uzunluğunu bildiğiniz iki nokta arasında sürükleyin; sonra gerçek uzunluğu yazacaksınız.'};
 function setTool(t){
-  flushEdit();if(t!=='place')S.pendingImg=null;S.tool=t;
+  if(S.build)finishBuild();flushEdit();if(t!=='place')S.pendingImg=null;S.tool=t;
   $$('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===t));
   const v=$('#viewer');v.className=v.className.replace(/\btool-\S+/g,'')+' tool-'+t;
   if(t!=='select'&&S.sel)setSel(null);$('#pHint').textContent=HINTS[t]||'';
@@ -1157,7 +1262,7 @@ function countWords(){let n=0;for(const p of S.pages)if(p.kind==='text'){const e
 function updStatus(){
   const n=S.pages.length;$('#docName').textContent=S.baseName||(S.pages.length&&S.pages.every(p=>p.sample)?'Örnek belge':S.pages.length?'Adsız belge':'Boş belge');const files=new Set(S.pages.filter(p=>!p.sample).map(p=>p.name)).size;
   $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:''):'Sayfa yok';
-  refreshTree();
+  refreshTree();updScaleLbl();
 }
 let scrollRaf=0;
 $('#viewer').addEventListener('scroll',()=>{if(scrollRaf)return;scrollRaf=requestAnimationFrame(()=>{scrollRaf=0;const vr=$('#viewer').getBoundingClientRect(),mid=vr.top+vr.height*0.35;let cur=0;S.pages.forEach((p,i)=>{const e=E[p.id];if(e&&e.pg.getBoundingClientRect().top<=mid)cur=i});
@@ -1207,6 +1312,7 @@ function drawAnns(ctx,anns,s,skipHl,vec){
     else if(a.type==='path'||a.type==='arrow'){ctx.strokeStyle=a.color;ctx.lineWidth=a.lw*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
       const pts=a.type==='path'?a.pts:[[a.x1,a.y1],[a.x2,a.y2]];pts.forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.stroke();
       if(a.type==='arrow'){ctx.fillStyle=a.color;ctx.beginPath();arrowHead(a).forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.closePath();ctx.fill()}}
+    else if(SVGT.has(a.type))drawMeas(ctx,a,s);
     else if(a.type==='poly'){ctx.fillStyle=a.fill||'#ffffff';ctx.beginPath();a.pts.forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.closePath();ctx.fill()}
     else if(a.type==='img'){const im=cachedImg(a.src);if(im)ctx.drawImage(im,a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='text'){
@@ -1294,11 +1400,11 @@ function wordBoxes(b,wr){const out=[];const tw=document.createTreeWalker(b,NodeF
     for(const m of t.matchAll(/\S+/g)){r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);const rs=r.getClientRects();if(!rs.length)continue;const q=rs[0];if(q.width<=0)continue;
       out.push({s:m[0],x:q.left-wr.left,y:q.top-wr.top,w:q.width,h:q.height,fam,bold,italic})}}
   return out}
-async function drawHiddenWords(pg,words,F,s){/* s: px→pt */
+async function drawHiddenWords(pg,words,F,s,map,R){/* s: px→pt; map/R: kopyalanan PDF sayfası için koordinat dönüşümü */
   for(const w of words){const f=await F.get(w.fam,w.bold,w.italic);if(!f)continue;const t=cleanTxt(w.s);if(!t)continue;
     let size=w.h*s*0.8;try{const u=f.font.widthOfTextAtSize(t,1);if(u>0)size=Math.min(size*1.6,Math.max(size*0.5,w.w*s/u))}catch(e){continue}
-    const base=pg.getHeight()-(w.y+w.h*f.ascR)*s;
-    try{pg.drawText(t,{x:w.x*s,y:base,size,font:f.font,opacity:0})}catch(e){}}}
+    try{if(map){const [px,py]=map(w.x*s,(w.y+w.h*f.ascR)*s);pg.drawText(t,{x:px,y:py,size,font:f.font,opacity:0,rotate:PDFLib.degrees(R||0)})}
+      else pg.drawText(t,{x:w.x*s,y:pg.getHeight()-(w.y+w.h*f.ascR)*s,size,font:f.font,opacity:0})}catch(e){}}}
 async function exportPdf(pages,filename,flat,ret){
   if(!pages.length){toast('Kaydedilecek sayfa yok.');return}
   if(!window.PDFLib){toast('PDF aracı yüklenemedi. Programı yeniden açıp tekrar deneyin.');return}
@@ -1329,6 +1435,7 @@ async function exportPdf(pages,filename,flat,ret){
             const [ox,oy]=map(0,H);cp.drawImage(png,{x:ox,y:oy,width:W,height:H,rotate:PDFLib.degrees(R)});
           }
           for(const a of rest)if(vec.has(a.id))await drawVecText(cp,a,F,map,R);
+          if(F)await drawHiddenWords(cp,ocrWords(p),F,1,map,R);
           continue;
         }
       }
@@ -1337,6 +1444,7 @@ async function exportPdf(pages,filename,flat,ret){
       const img=p.fromWord?await out.embedPng(await canvasBytes(c,'image/png')):await out.embedJpg(await canvasBytes(c,'image/jpeg',0.9));
       const pg=out.addPage([dw(p),dh(p)]);pg.drawImage(img,{x:0,y:0,width:dw(p),height:dh(p)});c.width=c.height=0;
       const H0=dh(p);for(const a of p.anns)if(vec.has(a.id))await drawVecText(pg,a,F,(X,Y)=>[X,H0-Y],0);
+      if(F)await drawHiddenWords(pg,ocrWords(p),F,1);
     }
     busy('Dosya yazılıyor…');const bytes=await out.save();if(ret)return bytes;busy(false);
     return await saveFile(filename,new Blob([bytes],{type:'application/pdf'}));
@@ -1420,7 +1528,7 @@ $('#swatches').addEventListener('click',e=>{const b=e.target.closest('[data-colo
 $('#lwSel').onchange=e=>{S.lw=+e.target.value;applyProp('lw',S.lw)};
 $('#pfSel').innerHTML=Object.keys(FONTS).map(f=>`<option>${f}</option>`).join('');
 $('#ribbon').addEventListener('pointerdown',e=>{
-  const b=e.target.closest('button,label.lb,label.sb');if(b&&!b.closest('.search'))e.preventDefault();
+  const b=e.target.closest('button,label.lb,label.sb,label.bb');if(b&&!b.closest('.search'))e.preventDefault();
   if(!inTxt()&&e.target.closest('button,select,input[type=color]'))flushEdit();
 });
 const inTxt=()=>{const a=document.activeElement;return !!(a&&a.classList&&a.classList.contains('tbody'))};
@@ -1478,6 +1586,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
   if(mod&&k==='s'){e.preventDefault();if($('#studio').hidden)openSave();return}
   if(mod&&k==='h'&&$('#studio').hidden){e.preventDefault();openFind();return}
+  if(mod&&e.shiftKey&&(e.key==='>'||e.key==='<'||e.code==='Period'||e.code==='Comma'||e.code==='IntlBackslash')){e.preventDefault();stepFont(e.key==='<'||e.code==='Comma'?-1:1);return}
   if(mod&&k==='p'){e.preventDefault();if($('#studio').hidden&&$('#saveModal').hidden)printDoc();return}
   if(!$('#studio').hidden||!$('#sigModal').hidden||!$('#saveModal').hidden)return;const t=e.target;if(t.isContentEditable||/INPUT|SELECT|TEXTAREA/.test(t.tagName))return;
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
@@ -1485,9 +1594,10 @@ document.addEventListener('keydown',e=>{
   if(mod&&k==='f'){e.preventDefault();$('#q').focus();return}
   if(mod&&k==='h'){e.preventDefault();openFind();return}
   if((e.key==='Delete'||e.key==='Backspace')&&S.sel){e.preventDefault();deleteSel();return}
+  if(e.key==='Enter'&&S.build){e.preventDefault();finishBuild();return}
   if(e.key==='Escape'){setSel(null);setTool('select');return}
   if(mod||e.altKey)return;
-  const m={v:'select',t:'text',e:'edit',h:'hl',p:'pen',r:'rect',a:'arrow',w:'white',c:'crop',k:'cut',l:'lasso',g:'grab'};if(m[k])setTool(m[k]);
+  const m={v:'select',t:'text',e:'edit',h:'hl',p:'pen',r:'rect',a:'arrow',w:'white',c:'crop',k:'cut',l:'lasso',g:'grab',d:'ellipse',n:'pline',m:'dist','ö':'area',i:'pick'};if(m[k])setTool(m[k]);
 });
 
 /* ===== js/09-yazi-sayfalari.js ===== */
@@ -2436,12 +2546,13 @@ $$('[data-proxy]').forEach(b=>{const t=$(b.dataset.proxy);if(!t){b.hidden=true;r
 /* ---------- nesne ağacı (Netcad'deki katman yöneticisi gibi) ----------
    Bulunulan sayfadaki işaretler türlerine göre gruplanır. Her öğe: göster/gizle (a.hid), kilit (a.lock: seçilemez, taşınamaz), sil.
    Gizlenen nesne ekranda görünmez ve kaydedilen dosyaya da girmez. */
-const TGROUPS=[['text','Yazılar','text'],['img','Resimler ve imzalar','image'],['draw','Çizimler','pen'],['hl','Vurgular','hl'],['cover','Örtüler','white']];
-const tgOf=a=>a.type==='text'?'text':a.type==='img'?'img':a.type==='hl'?'hl':(a.type==='white'||a.type==='poly')?'cover':'draw';
+const TGROUPS=[['text','Yazılar','text'],['img','Resimler ve imzalar','image'],['meas','Ölçüler','ruler'],['draw','Çizimler','pen'],['hl','Vurgular','hl'],['cover','Örtüler','white']];
+const tgOf=a=>(a.type==='dim'||a.type==='area'||a.type==='xy')?'meas':a.type==='text'?'text':a.type==='img'?'img':a.type==='hl'?'hl':(a.type==='white'||a.type==='poly')?'cover':'draw';
 const treeOpen=lsGet('nusmac.tree',{text:true,img:true,draw:true,hl:true,cover:true});
 function annLabel(a){
   if(a.type==='text'){const t=(a.text||'').replace(/\s+/g,' ').trim();return t?(t.length>48?t.slice(0,48)+'…':t):'(boş yazı)'}
-  return {img:a.auto?'PDF resmi':'Resim / imza',path:'Kalem çizgisi',rect:'Kutu',arrow:'Ok',hl:'Vurgu',white:'Beyaz örtü',poly:'Serbest kesim'}[a.type]||a.type;
+  return {img:a.auto?'PDF resmi':'Resim / imza',path:'Kalem çizgisi',rect:'Kutu',arrow:'Ok',hl:'Vurgu',white:'Beyaz örtü',poly:'Serbest kesim',ellipse:'Daire / elips',
+    pline:'Çoklu çizgi · '+(a.lbl||''),dim:'Mesafe · '+(a.lbl||''),area:'Alan · '+(a.lbl||'').split('\n')[0].replace(/^Alan: /,''),xy:'Nokta · '+(a.lbl||'')}[a.type]||a.type;
 }
 function refreshTree(){if(refreshTree.r)return;refreshTree.r=requestAnimationFrame(()=>{refreshTree.r=0;buildTree()})}
 function afterAnnChange(p){renderOv(p);markThumb(p);updSelUI();buildTree()}
@@ -2455,14 +2566,14 @@ function buildTree(){
   for(const [g,name,icon] of TGROUPS){
     const items=p.anns.filter(a=>tgOf(a)===g);if(!items.length)continue;
     const vis=items.filter(a=>!a.hid).length;
-    const row=el('div','tg');row.setAttribute('role','treeitem');row.setAttribute('aria-expanded',String(!!treeOpen[g]));
+    const row=el('div','tg');row.setAttribute('role','treeitem');row.setAttribute('aria-expanded',String(treeOpen[g]!==false));
     row.innerHTML=`<button class="tw" title="Aç / kapat" aria-label="${name} aç/kapat"></button><input type="checkbox" title="Hepsini göster / gizle" aria-label="${name}: göster">${ic(icon)}<span class="tn">${name}</span><span class="tc">${items.length}</span>`;
     const cb=row.querySelector('input');cb.checked=vis>0;cb.indeterminate=vis>0&&vis<items.length;
-    const toggle=()=>{treeOpen[g]=!treeOpen[g];lsSet('nusmac.tree',treeOpen);buildTree()};
+    const toggle=()=>{treeOpen[g]=treeOpen[g]===false;lsSet('nusmac.tree',treeOpen);buildTree()};
     row.querySelector('.tw').onclick=toggle;row.querySelector('.tn').onclick=toggle;
     cb.onchange=()=>{pushUndo();const on=cb.checked;items.forEach(a=>{if(on)delete a.hid;else a.hid=true});if(!on&&S.sel&&items.some(a=>a.id===S.sel.aid))S.sel=null;afterAnnChange(p)};
     box.append(row);
-    if(!treeOpen[g])continue;
+    if(treeOpen[g]===false)continue;
     for(const a of items){
       const it=el('div','ti'+(S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id?' sel':'')+(a.hid?' off':''));it.setAttribute('role','treeitem');
       it.innerHTML=`<input type="checkbox" ${a.hid?'':'checked'} title="Göster / gizle" aria-label="Göster"><span class="tn" title="${esc(a.type==='text'?a.text||'':annLabel(a))}">${esc(annLabel(a))}</span>${a.auto?'<span class="tauto" title="PDF’ten otomatik ayrıştırıldı">PDF</span>':''}<button class="ib tl" aria-pressed="${!!a.lock}" title="${a.lock?'Kilidi aç':'Kilitle: seçilemez, taşınamaz'}">${ic(a.lock?'lock':'unlock')}</button><button class="ib tdel" title="Sil">${ic('trash')}</button>`;
@@ -2476,6 +2587,262 @@ function buildTree(){
   box.scrollTop=sc;
 }
 $('#treeShowAll').onclick=()=>{const p=S.pages[S.cur];if(!p||!p.anns.some(a=>a.hid||a.lock))return;pushUndo();p.anns.forEach(a=>{delete a.hid;delete a.lock});afterAnnChange(p);toast('Bu sayfadaki tüm nesneler gösterildi ve kilitleri açıldı.')};
+/* ===== js/18-ek-araclar.js ===== */
+/* =====================================================================
+   Ek araçlar
+   - Netcad'den: mesafe / alan / çoklu çizgi / nokta (koordinat) ölçümü, sayfa ölçeği (1:1000 …), imleç koordinatı
+   - Photoshop'tan: renk seçici, yatay/dikey çevir, gri ton, siyah-beyaz, negatif, parlaklık/kontrast
+   - Word'den: yazıyı büyüt/küçült, BÜYÜK/küçük harf, sembol ekle
+   - Yazı tanıma (OCR, Tesseract): resimdeki/taranmış sayfadaki yazıyı okur
+   ===================================================================== */
+
+/* ---------- ölçü: birimler ve etiketler ---------- */
+const SVGT=new Set(['ellipse','pline','dim','area','xy']);
+const PAPER_MPP=0.0254/72;                       /* kâğıtta 1 pt = 0,3528 mm */
+const mppOf=p=>p&&p.ms&&p.ms.mpp?p.ms.mpp:PAPER_MPP;
+const isPaper=p=>!(p&&p.ms&&p.ms.mpp);
+const nf=(v,d)=>v.toLocaleString('tr-TR',{minimumFractionDigits:d,maximumFractionDigits:d});
+function fmtLen(p,pt){const m=pt*mppOf(p);if(isPaper(p))return m<0.1?nf(m*1000,1)+' mm':nf(m*100,1)+' cm';return m>=1000?nf(m/1000,3)+' km':nf(m,2)+' m'}
+function fmtArea(p,pt2){const m2=pt2*mppOf(p)**2;if(isPaper(p))return nf(m2*1e4,1)+' cm²';return m2>=10000?nf(m2,1)+' m² ('+nf(m2/1e4,3)+' ha)':nf(m2,2)+' m²'}
+function fmtXY(p,x,y){const m=mppOf(p),H=dh(p);if(isPaper(p))return `X ${nf(x*m*100,1)}  Y ${nf((H-y)*m*100,1)} cm`;return `X ${nf(x*m,2)}  Y ${nf((H-y)*m,2)} m`}
+function plen(pts,closed){let s=0;for(let i=1;i<pts.length;i++)s+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);if(closed&&pts.length>2){const a=pts[0],b=pts[pts.length-1];s+=Math.hypot(a[0]-b[0],a[1]-b[1])}return s}
+function parea(pts){let s=0;for(let i=0;i<pts.length;i++){const [x1,y1]=pts[i],[x2,y2]=pts[(i+1)%pts.length];s+=x1*y2-x2*y1}return Math.abs(s)/2}
+function pcenter(pts){let x=0,y=0;pts.forEach(q=>{x+=q[0];y+=q[1]});return[x/pts.length,y/pts.length]}
+function measLabel(p,a){
+  if(a.type==='dim')return fmtLen(p,Math.hypot(a.x2-a.x1,a.y2-a.y1));
+  if(a.type==='pline')return fmtLen(p,plen(a.pts,false));
+  if(a.type==='area')return 'Alan: '+fmtArea(p,parea(a.pts))+'\nÇevre: '+fmtLen(p,plen(a.pts,true));
+  if(a.type==='xy')return fmtXY(p,a.x,a.y);
+  return '';
+}
+function updMeasLabels(p){for(const a of p.anns)if(a.type==='dim'||a.type==='pline'||a.type==='area'||a.type==='xy')a.lbl=measLabel(p,a)}
+const LBL_PT=9;
+function labelPos(a){
+  if(a.type==='dim'){const mx=(a.x1+a.x2)/2,my=(a.y1+a.y2)/2;return[mx,my-LBL_PT*0.9]}
+  if(a.type==='area')return pcenter(a.pts);
+  if(a.type==='pline'){const q=a.pts[a.pts.length-1];return[q[0]+4,q[1]-LBL_PT*0.8]}
+  if(a.type==='xy')return[a.x+6,a.y-6];
+  return null;
+}
+function dimTicks(a){const dx=a.x2-a.x1,dy=a.y2-a.y1,L=Math.hypot(dx,dy)||1,nx=-dy/L*4,ny=dx/L*4;return[[a.x1+nx,a.y1+ny,a.x1-nx,a.y1-ny],[a.x2+nx,a.y2+ny,a.x2-nx,a.y2-ny]]}
+const mAlpha=(c,o)=>/^#[0-9a-f]{6}$/i.test(c||'')?c+Math.round(o*255).toString(16).padStart(2,'0'):'rgba(31,63,191,'+o+')';
+
+/* ekranda (SVG) */
+function measSvg(g,a,k){
+  const col=a.color||'#1f3fbf',lw=Math.max(0.8,(a.lw||1.5))*k;const P=([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`;let d=null;
+  if(a.type==='ellipse'){const e={cx:(a.x+a.w/2)*k,cy:(a.y+a.h/2)*k,rx:Math.max(0.5,a.w/2*k),ry:Math.max(0.5,a.h/2*k)};
+    g.append(sv('ellipse',Object.assign({fill:'none',stroke:col,'stroke-width':lw},e)));g.append(sv('ellipse',Object.assign({class:'hitpath',fill:'none',stroke:'transparent','stroke-width':Math.max(14,lw+10)},e)));return}
+  if(a.type==='xy'){g.append(sv('path',{d:`M${(a.x-4)*k} ${a.y*k}h${8*k}M${a.x*k} ${(a.y-4)*k}v${8*k}`,stroke:col,'stroke-width':Math.max(1,1.2*k),fill:'none'}));
+    g.append(sv('circle',{cx:a.x*k,cy:a.y*k,r:Math.max(6,5*k),class:'hitfill',fill:'transparent'}))}
+  if(a.type==='pline'){d='M'+a.pts.map(P).join(' L')}
+  if(a.type==='area'){d='M'+a.pts.map(P).join(' L')+' Z';g.append(sv('path',{d,fill:mAlpha(col,0.14),stroke:'none',class:'hitfill'}))}
+  if(a.type==='dim'){d=`M${P([a.x1,a.y1])} L${P([a.x2,a.y2])}`;for(const [x1,y1,x2,y2] of dimTicks(a))g.append(sv('path',{d:`M${P([x1,y1])} L${P([x2,y2])}`,stroke:col,'stroke-width':lw,fill:'none'}))}
+  if(d){g.append(sv('path',{d,fill:'none',stroke:col,'stroke-width':lw,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':a.type==='area'?'':''}));
+    if(a.type!=='area')g.append(sv('path',{d,class:'hitpath',fill:'none',stroke:'transparent','stroke-width':Math.max(14,lw+10)}));
+    else g.append(sv('path',{d,class:'hitpath',fill:'none',stroke:'transparent','stroke-width':Math.max(14,lw+10)}))}
+  const lp=labelPos(a);if(lp&&a.lbl){const lines=a.lbl.split('\n'),fs=LBL_PT*k;const t=sv('text',{x:lp[0]*k,y:lp[1]*k-(lines.length-1)*fs*0.6,class:'mlbl','font-size':fs,fill:col,'text-anchor':a.type==='dim'||a.type==='area'?'middle':'start'});
+    lines.forEach((ln,i)=>{const s=sv('tspan',{x:lp[0]*k,dy:i?fs*1.2:0});s.textContent=ln;t.append(s)});g.append(t)}
+}
+/* kaydederken (canvas) */
+function drawMeas(ctx,a,s){
+  const col=a.color||'#1f3fbf';ctx.strokeStyle=col;ctx.lineWidth=Math.max(0.8,a.lw||1.5)*s;ctx.lineJoin='round';ctx.lineCap='round';
+  const path=(pts,close)=>{ctx.beginPath();pts.forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));if(close)ctx.closePath()};
+  if(a.type==='ellipse'){ctx.beginPath();ctx.ellipse((a.x+a.w/2)*s,(a.y+a.h/2)*s,Math.max(0.5,a.w/2*s),Math.max(0.5,a.h/2*s),0,0,Math.PI*2);ctx.stroke();return}
+  if(a.type==='pline'){path(a.pts,false);ctx.stroke()}
+  if(a.type==='area'){path(a.pts,true);ctx.fillStyle=mAlpha(col,0.14);ctx.fill();ctx.stroke()}
+  if(a.type==='dim'){path([[a.x1,a.y1],[a.x2,a.y2]]);ctx.stroke();for(const [x1,y1,x2,y2] of dimTicks(a)){path([[x1,y1],[x2,y2]]);ctx.stroke()}}
+  if(a.type==='xy'){ctx.lineWidth=1.2*s;path([[a.x-4,a.y],[a.x+4,a.y]]);ctx.stroke();path([[a.x,a.y-4],[a.x,a.y+4]]);ctx.stroke()}
+  const lp=labelPos(a);if(lp&&a.lbl){const lines=a.lbl.split('\n'),fs=LBL_PT*s;ctx.font=`600 ${fs}px Arial, Helvetica, sans-serif`;ctx.textAlign=a.type==='dim'||a.type==='area'?'center':'left';ctx.textBaseline='alphabetic';
+    lines.forEach((ln,i)=>{const x=lp[0]*s,y=lp[1]*s-(lines.length-1)*fs*0.6+i*fs*1.2;ctx.lineWidth=3*s/2;ctx.strokeStyle='#ffffff';ctx.strokeText(ln,x,y);ctx.fillStyle=col;ctx.fillText(ln,x,y)})}
+}
+
+/* ---------- çoklu çizgi / alan: tıklayarak nokta koyma ---------- */
+function buildClick(p,x,y,tool){
+  const B=S.build;if(B&&B.p!==p)finishBuild();
+  if(!S.build){const ov=E[p.id].ov;const a={id:nid('a'),type:tool==='area'?'area':'pline',pts:[[x,y],[x,y]],color:S.color,lw:Math.min(S.lw,3)};
+    const st={p,a,ov,before:snap(),t:Date.now(),x,y};st.mv=e=>{const [mx,my]=local(e,ov);a.pts[a.pts.length-1]=[mx,my];renderOv(p)};
+    ov.addEventListener('pointermove',st.mv);S.build=st;p.anns.push(a);renderOv(p);return}
+  const now=Date.now();if(now-S.build.t<350&&Math.hypot(x-S.build.x,y-S.build.y)*S.k<6){finishBuild();return}
+  const a=S.build.a;S.build.t=now;S.build.x=x;S.build.y=y;a.pts[a.pts.length-1]=[x,y];a.pts.push([x,y]);renderOv(p);
+}
+function finishBuild(){
+  const st=S.build;if(!st)return;S.build=null;st.ov.removeEventListener('pointermove',st.mv);const {p,a}=st;
+  a.pts.pop();a.pts=a.pts.filter((q,i,l)=>!i||Math.hypot(q[0]-l[i-1][0],q[1]-l[i-1][1])>0.5);
+  const ok=a.type==='area'?a.pts.length>=3:a.pts.length>=2;
+  if(ok){commitUndo(st.before);markThumb(p)}else p.anns=p.anns.filter(q=>q!==a);
+  renderOv(p);
+}
+
+/* ---------- imleç koordinatı ve ölçek ---------- */
+function showXY(ev,p){const ov=E[p.id]&&E[p.id].ov;if(!ov)return;const [x,y]=local(ev,ov);const t=fmtXY(p,x,y);$('#pXY').textContent=t;$('#xyLbl').textContent=t}
+function scaleName(p){return isPaper(p)?'kâğıt (1:1)':p.ms.name}
+function updScaleLbl(){const p=S.pages[S.cur];$('#scaleLbl').textContent='Ölçek: '+(p?scaleName(p):'–')}
+function setScale(pages,ms){pushUndo();pages.forEach(p=>{p.ms=ms;renderOv(p)});updScaleLbl();buildTree();S.dirty=true}
+$('#scaleBtn').onclick=()=>{const p=S.pages[S.cur];if(!p){toast('Önce bir dosya açın.');return}
+  const n=p.ms&&p.ms.n?String(p.ms.n):'0';const sel=$('#scaleSel');sel.value=[...sel.options].some(o=>o.value===n)?n:(p.ms?'c':'0');$('#scaleCustom').value=p.ms&&p.ms.n||1000;$('#scaleCustomW').hidden=sel.value!=='c';$('#scaleAll').checked=false;$('#scaleModal').hidden=false};
+$('#scaleSel').onchange=e=>{$('#scaleCustomW').hidden=e.target.value!=='c'};
+$('#scaleCancel').onclick=()=>$('#scaleModal').hidden=true;
+$('#scaleGo').onclick=()=>{const v=$('#scaleSel').value;const n=v==='c'?Math.round(+$('#scaleCustom').value):+v;
+  if(v==='c'&&!(n>0)){toast('Ölçek için 1’den büyük bir sayı yazın.');return}
+  const ms=n?{mpp:PAPER_MPP*n,n,name:'1:'+n.toLocaleString('tr-TR')}:null;$('#scaleModal').hidden=true;
+  setScale($('#scaleAll').checked?S.pages:[S.pages[S.cur]],ms);toast(ms?`Ölçek ${ms.name} olarak ayarlandı.`:'Ölçek kâğıt (gerçek boyut) olarak ayarlandı.')};
+$('#scaleCalib').onclick=()=>{$('#scaleModal').hidden=true;setTool('calib');toast('Uzunluğunu bildiğiniz iki nokta arasında sürükleyin.',5000)};
+function openCalib(p,len){S.calib={p,len};setTool('select');$('#calibAll').checked=false;$('#calibModal').hidden=false;setTimeout(()=>$('#calibLen').select(),30)}
+$('#calibCancel').onclick=()=>{$('#calibModal').hidden=true;S.calib=null};
+$('#calibGo').onclick=()=>{const c=S.calib;const m=+$('#calibLen').value;if(!c)return;if(!(m>0)){toast('Gerçek uzunluğu metre olarak yazın (ör. 25,5).');return}
+  const mpp=m/c.len;const n=Math.round(mpp/PAPER_MPP);$('#calibModal').hidden=true;S.calib=null;
+  setScale($('#calibAll').checked?S.pages:[c.p],{mpp,n,name:'≈1:'+n.toLocaleString('tr-TR')});toast(`Ölçek ayarlandı: yaklaşık 1:${n.toLocaleString('tr-TR')}.`)};
+$('#calibLen').addEventListener('keydown',e=>{if(e.key==='Enter')$('#calibGo').click()});
+
+/* ---------- renk seçici ---------- */
+function pickColor(p,x,y){
+  const e=E[p.id];const c=e&&e.canvas;if(!c||!c.width){toast('Sayfa henüz çizilmedi, biraz bekleyip tekrar deneyin.');return}
+  const px=Math.max(0,Math.min(c.width-1,Math.round(x/dw(p)*c.width))),py=Math.max(0,Math.min(c.height-1,Math.round(y/dh(p)*c.height)));
+  const d=c.getContext('2d').getImageData(px,py,1,1).data;const hex='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+  S.color=hex;$('#fColor').value=hex;$('#fBar').style.background=hex;$$('#swatches .sw').forEach(x=>x.setAttribute('aria-pressed','false'));
+  if(selAnn())applyProp('color',hex);setTool('select');toast('Renk alındı: '+hex+'. Kalem, kutu ve metin bu renkle çizilir.');
+}
+
+/* ---------- sayfa resmi ayarları (Photoshop benzeri) ----------
+   Sayfanın görüntüsü değişir; PDF sayfası resim sayfasına dönüşür. Geri alınabilmesi için her sürüm IMGV'de saklanır. */
+const IMGV=new Map();let ivN=0;
+function imgFields(p){return{kind:p.kind,img:p.img,nat:p.nat,src:p.src,index:p.index,objMode:p.objMode,objSig:p.objSig,objTried:p.objTried}}
+function storeVer(p){if(p.iv==null)p.iv=++ivN;const k=p.id+':'+p.iv;if(!IMGV.has(k))IMGV.set(k,imgFields(p))}
+function applyImgVer(p,iv){const f=IMGV.get(p.id+':'+iv);if(!f)return;Object.assign(p,f);p.iv=iv}
+function mkCanvas(w,h){const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c}
+async function rawCanvas(p){
+  if(p.kind==='img'){const [w,h]=srcSize(p.img);const c=mkCanvas(w,h);c.getContext('2d').drawImage(p.img,0,0);return c}
+  const pg=await p.src.doc.getPage(p.index+1);const s=Math.min(pageScale(p),4500/Math.max(p.w,p.h));const vp=pg.getViewport({scale:s});
+  const c=mkCanvas(vp.width,vp.height),x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
+  const un=p.objMode?filterCtx(x,true,true):null;try{await pg.render({canvasContext:x,viewport:vp}).promise}finally{if(un)un()}return c;
+}
+function adjCanvas(src,op,arg){
+  const c=mkCanvas(src.width,src.height),x=c.getContext('2d');
+  if(op==='fliph'){x.translate(c.width,0);x.scale(-1,1)}else if(op==='flipv'){x.translate(0,c.height);x.scale(1,-1)}
+  else if(op==='gray')x.filter='grayscale(1)';else if(op==='invert')x.filter='invert(1)';
+  else if(op==='bc')x.filter=`brightness(${Math.max(0,1+arg.b/100)}) contrast(${Math.max(0,1+arg.c/100)})`;
+  x.drawImage(src,0,0);x.filter='none';
+  if(op==='bw'){const id=x.getImageData(0,0,c.width,c.height),d=id.data,h=new Array(256).fill(0),N=d.length/4;
+    for(let i=0;i<d.length;i+=4){const v=(d[i]*299+d[i+1]*587+d[i+2]*114)/1000|0;d[i]=v;h[v]++}
+    let sum=0;for(let i=0;i<256;i++)sum+=i*h[i];let sB=0,wB=0,best=0,th=128;
+    for(let t=0;t<256;t++){wB+=h[t];if(!wB)continue;const wF=N-wB;if(!wF)break;sB+=t*h[t];const mB=sB/wB,mF=(sum-sB)/wF,b=wB*wF*(mB-mF)**2;if(b>best){best=b;th=t}}
+    for(let i=0;i<d.length;i+=4){const v=d[i]>th?255:0;d[i]=d[i+1]=d[i+2]=v}x.putImageData(id,0,0)}
+  return c;
+}
+const ADJ_MSG={fliph:'Sayfa yatay çevrildi.',flipv:'Sayfa dikey çevrildi.',gray:'Sayfa gri tona çevrildi.',bw:'Sayfa siyah-beyaz yapıldı.',invert:'Renkler ters çevrildi.',bc:'Parlaklık / kontrast uygulandı.'};
+async function adjustPage(op,arg){
+  const p=S.pages[S.cur];if(!p){toast('Önce bir dosya açın.');return}
+  if(p.kind==='text'){toast('Bu ayar resim ve PDF sayfalarında çalışır.');return}
+  if(p.rot%180&&(op==='fliph'||op==='flipv'))op=op==='fliph'?'flipv':'fliph';
+  busy('Uygulanıyor…');await tick();
+  try{storeVer(p);const src=await rawCanvas(p);const c=adjCanvas(src,op,arg);src.width=src.height=0;
+    pushUndo();Object.assign(p,{kind:'img',img:c,nat:c.width/p.w,src:undefined,index:undefined,objMode:false,objTried:true});p.iv=++ivN;storeVer(p);
+    keepScroll(buildViewer);S.dirty=true;
+    toast(ADJ_MSG[op]+((op==='fliph'||op==='flipv')&&p.anns.some(a=>!a.auto)?' Eklediğiniz işaretler çevrilmedi.':''));
+  }catch(e){console.error(e);toast('Uygulanamadı: '+(e.message||e),6000)}finally{busy(false)}
+}
+$$('[data-adj]').forEach(b=>b.onclick=()=>adjustPage(b.dataset.adj));
+/* parlaklık / kontrast: sayfada canlı önizleme (CSS filtresi), Uygula ile kalıcı */
+function bcPreview(){const p=S.pages[S.cur];const b=+$('#bcB').value,c=+$('#bcC').value;$('#bcBo').textContent=b;$('#bcCo').textContent=c;
+  const e=p&&E[p.id];if(e&&e.canvas)e.canvas.style.filter=`brightness(${1+b/100}) contrast(${1+c/100})`}
+function bcClear(){const p=S.pages[S.cur];const e=p&&E[p.id];if(e&&e.canvas)e.canvas.style.filter=''}
+$('#bcBtn').onclick=()=>{const p=S.pages[S.cur];if(!p){toast('Önce bir dosya açın.');return}if(p.kind==='text'){toast('Bu ayar resim ve PDF sayfalarında çalışır.');return}
+  $('#bcB').value=0;$('#bcC').value=0;bcPreview();$('#bcModal').hidden=false};
+$('#bcB').oninput=bcPreview;$('#bcC').oninput=bcPreview;
+$('#bcReset').onclick=()=>{$('#bcB').value=0;$('#bcC').value=0;bcPreview()};
+$('#bcCancel').onclick=()=>{bcClear();$('#bcModal').hidden=true};
+$('#bcGo').onclick=()=>{const b=+$('#bcB').value,c=+$('#bcC').value;bcClear();$('#bcModal').hidden=true;if(b||c)adjustPage('bc',{b,c})};
+
+/* ---------- Word komutları ---------- */
+const FS_STEPS=[6,7,8,9,10,11,12,14,16,18,20,22,24,28,32,36,40,48,60,72];
+function stepFont(d){const cur=+$('#fsSel').value||S.fs;const v=d>0?(FS_STEPS.find(x=>x>cur)||cur+12):([...FS_STEPS].reverse().find(x=>x<cur)||Math.max(4,cur-1));
+  setFsSel(v);$('#fsSel').dispatchEvent(new Event('change'))}
+$('#fsUp').onclick=()=>stepFont(1);$('#fsDown').onclick=()=>stepFont(-1);
+function trCase(t,m){const L='tr-TR';
+  if(m==='upper')return t.toLocaleUpperCase(L);if(m==='lower')return t.toLocaleLowerCase(L);
+  const lo=t.toLocaleLowerCase(L);
+  if(m==='title')return lo.replace(/(^|[\s(“"'«\-/])(\p{L})/gu,(x,a,b)=>a+b.toLocaleUpperCase(L));
+  return lo.replace(/(^\s*|[.!?…]\s+)(\p{L})/gu,(x,a,b)=>a+b.toLocaleUpperCase(L));
+}
+/* seçili aralıktaki yazıyı biçimini bozmadan dönüştür */
+function caseRange(r,m){
+  const root=r.commonAncestorContainer.nodeType===3?r.commonAncestorContainer.parentNode:r.commonAncestorContainer;
+  const nodes=[];const tw=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=tw.nextNode()))if(r.intersectsNode(n))nodes.push(n);
+  const parts=nodes.map(n=>{const s=n===r.startContainer?r.startOffset:0,e=n===r.endContainer?r.endOffset:n.length;return{n,s,e,t:n.nodeValue.slice(s,e)}});
+  const full=parts.map(q=>q.t).join(''),T=trCase(full,m);let i=0;
+  for(const q of parts){const nt=T.length===full.length?T.slice(i,i+q.t.length):trCase(q.t,m);i+=q.t.length;q.n.nodeValue=q.n.nodeValue.slice(0,q.s)+nt+q.n.nodeValue.slice(q.e)}
+}
+$$('[data-case]').forEach(b=>b.onclick=()=>{closeDD();const m=b.dataset.case;
+  if(useTxt()){if(!restoreTxt())return;const sel=getSelection();if(!sel.rangeCount||sel.isCollapsed){toast('Önce değiştirmek istediğiniz yazıyı seçin.');return}
+    caseRange(sel.getRangeAt(0),m);textChanged(S.txt);return}
+  const t=annT();if(t){pushUndo();t.a.text=trCase(t.a.text,m);renderOv(t.p);buildTree();return}
+  toast('Önce bir yazı seçin: yazı sayfasında yazıyı seçin ya da bir metin kutusuna tıklayın.',5000)});
+$$('[data-sym]').forEach(b=>{b.addEventListener('pointerdown',e=>e.preventDefault());b.onclick=()=>{const ch=b.dataset.sym;
+  if(useTxt()){if(!restoreTxt())return;document.execCommand('insertText',false,ch);textChanged(S.txt);S.tRange=getSelection().rangeCount?getSelection().getRangeAt(0).cloneRange():S.tRange;return}
+  const t=annT();if(t){pushUndo();t.a.text=(t.a.text||'')+ch;renderOv(t.p);buildTree();return}
+  closeDD();toast('Sembolü koymak için önce yazı sayfasına ya da bir metin kutusuna tıklayın.',5000)}});
+
+/* ---------- yazı tanıma (OCR) ----------
+   Tesseract programla birlikte gelir (app/lib/tesseract, Türkçe dil dosyası dahil), internet gerekmez.
+   Dosyalar okunup bellekten (blob) verilir; çünkü yerel dosyalarda fetch çalışmaz. */
+const OCR={p:null};
+async function readAsset(rel){const D=window.desktop;if(D&&D.readAsset){try{const b=await D.readAsset(rel);if(b)return b}catch(e){}}return await readUrl(rel)}
+function ocrWorker(){
+  if(OCR.p)return OCR.p;
+  OCR.p=(async()=>{
+    if(!window.Tesseract)throw new Error('Yazı tanıma bileşeni yüklenemedi');
+    const log=m=>{if(m.status==='recognizing text')busy(`Yazılar tanınıyor… %${Math.round(m.progress*100)}`)};
+    const [ws,cs,lg]=await Promise.all(['lib/tesseract/worker.min.js','lib/tesseract/tesseract-core-simd-lstm.wasm.js','lib/tesseract/lang/tur.traineddata.gz'].map(readAsset));
+    if(!(ws&&cs&&lg)){
+      if(/^https?:/.test(location.protocol))return Tesseract.createWorker('tur',1,{logger:log});   /* tarayıcı sürümü: dosyalar internetten */
+      throw new Error('Yazı tanıma dosyaları bulunamadı. Programı yeniden kurmayı deneyin.');
+    }
+    const url=(parts,t)=>URL.createObjectURL(new Blob(parts,{type:t}));
+    const lang=url([lg],'application/gzip'),core=url([cs],'text/javascript');
+    const patch=`(function(){var L=${JSON.stringify({tur:lang})};var f=self.fetch.bind(self);self.fetch=function(u,o){var m=String(u).match(/nusmac-lang\\/(\\w+)\\.traineddata/);return m?f(L[m[1]],o):f(u,o)}})();\n`;
+    return Tesseract.createWorker('tur',1,{workerPath:url([patch,ws],'text/javascript'),corePath:core+'#core.js',langPath:'nusmac-lang',workerBlobURL:false,cacheMethod:'none',logger:log});
+  })();
+  OCR.p.catch(()=>{OCR.p=null});return OCR.p;
+}
+const ocrKey=p=>JSON.stringify([p.rot,p.clip||null,p.iv||0]);
+/* PDF'e görünmez metin katmanı için: tanınan satırlar (örtülenler hariç) */
+function ocrWords(p){
+  if(!p.ocr||p.ocr.key!==ocrKey(p))return[];
+  const cov=p.anns.filter(a=>!a.hid&&(a.type==='white'||a.type==='poly'||(a.type==='text'&&a.bg))).map(annBox);
+  return p.ocr.lines.filter(l=>!cov.some(r=>boxHit(l,r))).map(l=>({s:l.text,x:l.x,y:l.y,w:l.w,h:l.h,fam:'Arial',bold:false,italic:false}));
+}
+async function ocrCurrent(){
+  const p=S.pages[S.cur];if(!p){toast('Önce bir resim ya da PDF açın.');return}
+  if(p.kind==='text'){toast('Yazı sayfasındaki yazı zaten metin; seçip kopyalayabilirsiniz.');return}
+  flushEdit();busy('Yazı tanıma hazırlanıyor…');await tick();
+  try{
+    const s=Math.max(1.5,Math.min(p.kind==='img'?(p.nat||2):3,3500/Math.max(dw(p),dh(p))));
+    const c=await composite(p,s);const w=await ocrWorker();busy('Yazılar tanınıyor…');
+    const res=await w.recognize(c,{},{blocks:true});c.width=c.height=0;
+    const lines=[],paras=[];let conf=0;
+    for(const b of res.data.blocks||[])for(const pa of b.paragraphs||[]){const pl=[];
+      for(const l of pa.lines||[]){const t=(l.text||'').replace(/\s+/g,' ').trim();if(!t||l.confidence<25)continue;const bb=l.bbox;
+        const L={text:t,x:bb.x0/s,y:bb.y0/s,w:(bb.x1-bb.x0)/s,h:(bb.y1-bb.y0)/s,conf:l.confidence};lines.push(L);pl.push(L);conf+=l.confidence}
+      if(pl.length)paras.push(pl)}
+    busy(false);
+    if(!lines.length){toast('Bu sayfada okunabilir yazı bulunamadı.',5000);return}
+    p.ocr={key:ocrKey(p),lines,paras};S.dirty=true;
+    $('#ocrInfo').textContent=`Sayfa ${S.cur+1}: ${lines.length} satır tanındı · ortalama güven %${Math.round(conf/lines.length)}`;
+    $('#ocrText').value=paras.map(pl=>pl.map(l=>l.text).join('\n')).join('\n\n');
+    S.ocrPage=p;$('#ocrModal').hidden=false;setTimeout(()=>$('#ocrText').focus(),30);
+  }catch(e){console.error(e);toast('Yazı tanınamadı: '+(e.message||e),6000)}finally{busy(false)}
+}
+/* kutudaki düzeltmeler: satır sayısı aynıysa satırlara işlenir */
+function ocrApplyEdits(p){const tl=$('#ocrText').value.split('\n').filter(x=>x.trim());if(p&&p.ocr&&tl.length===p.ocr.lines.length)p.ocr.lines.forEach((l,i)=>l.text=tl[i].trim())}
+$('#ocrBtn').onclick=ocrCurrent;
+$('#ocrClose').onclick=()=>{ocrApplyEdits(S.ocrPage);$('#ocrModal').hidden=true};
+$('#ocrCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#ocrText').value);toast('Yazı panoya kopyalandı.')}catch(e){$('#ocrText').select();document.execCommand('copy');toast('Yazı panoya kopyalandı.')}};
+$('#ocrToPage').onclick=()=>{const v=$('#ocrText').value.trim();if(!v)return;ocrApplyEdits(S.ocrPage);$('#ocrModal').hidden=true;
+  addTextPageAt(v.split(/\n\s*\n/).map(pa=>'<p>'+esc(pa.trim()).replace(/\n/g,'<br>')+'</p>').join(''),'Tanınan yazı');toast('Tanınan yazı yeni bir yazı sayfası olarak eklendi.')};
+$('#ocrEdit').onclick=()=>{const p=S.ocrPage;if(!p||!p.ocr)return;ocrApplyEdits(p);$('#ocrModal').hidden=true;pushUndo();
+  p.ocr.lines.forEach((l,i)=>{const size=Math.max(5,Math.round(l.h*0.78*10)/10);
+    p.anns.push({id:nid('a'),type:'text',x:l.x-1,y:l.y-1,w:l.w+3,h:l.h+2,minW:l.w+3,minH:l.h+2,text:l.text,size,color:'#000000',bold:false,italic:false,underline:false,font:'Arial',align:'left',bg:'#ffffff',lineKey:'ocr'+i})});
+  p.ocr=null;renderOv(p);markThumb(p);buildTree();toast('Satırlar düzenlenebilir metin kutusu oldu: çift tıklayıp değiştirin.',5000)};
 /* ===== js/99-acilis.js ===== */
 /* ---------- boot ---------- */
 const missing=[['pdfjsLib','PDF görüntüleyici'],['PDFLib','PDF kaydedici'],['html2canvas','sayfa çizici'],['UTIF','TIF okuyucu']].filter(([g])=>!window[g]).map(([,n])=>n);

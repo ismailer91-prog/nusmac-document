@@ -16,13 +16,13 @@
   </header>
   <nav class="tabs gut" role="tablist" aria-label="Komut sekmeleri">
     <button class="ib only-narrow" id="sideBtn" data-ico="side" title="Sayfa ve nesne listesi"></button>
-    <button role="tab" data-tab="home" aria-controls="tp-home" aria-selected="true">Giriş</button><button role="tab" data-tab="yazi" aria-controls="tp-yazi" aria-selected="false">Yazı</button><button role="tab" data-tab="ekle" aria-controls="tp-ekle" aria-selected="false">Ekle</button><button role="tab" data-tab="cizim" aria-controls="tp-cizim" aria-selected="false">Çizim</button><button role="tab" data-tab="resim" aria-controls="tp-resim" aria-selected="false">Resim</button><button role="tab" data-tab="sayfa" aria-controls="tp-sayfa" aria-selected="false">Sayfa</button>
+    <button role="tab" data-tab="home" aria-controls="tp-home" aria-selected="true">Giriş</button><button role="tab" data-tab="yazi" aria-controls="tp-yazi" aria-selected="false">Yazı</button><button role="tab" data-tab="ekle" aria-controls="tp-ekle" aria-selected="false">Ekle</button><button role="tab" data-tab="cizim" aria-controls="tp-cizim" aria-selected="false">Çizim</button><button role="tab" data-tab="olcu" aria-controls="tp-olcu" aria-selected="false">Ölçü</button><button role="tab" data-tab="resim" aria-controls="tp-resim" aria-selected="false">Resim</button><button role="tab" data-tab="sayfa" aria-controls="tp-sayfa" aria-selected="false">Sayfa</button>
   </nav>
   <div class="ribbon gut" id="ribbon">
     <div class="rpanel" role="tabpanel" data-panel="home" id="tp-home">
       <div class="rg"><div class="rgc"><label class="bb c-b" data-ico="open" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span class="bl">Aç</span><input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label><button class="bb c-b" data-ico="new" id="newBtn" title="Belgeyi temizle"><span class="bl">Yeni</span></button><button class="bb c-b" data-ico="save" id="saveBtn" title="Kaydet (Ctrl+S)"><span class="bl">Kaydet</span></button><button class="bb c-b" data-ico="print" id="printBtn" title="Yazdır (Ctrl+P)"><span class="bl">Yazdır</span></button></div><div class="rgl">Dosya</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-r" data-ico="text" data-tool="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)"><span class="bl">Metin</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
-      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="image" data-proxy="#imgIn" title="Resim ekle"><span class="bl">Resim</span></button><button class="bb c-b" data-ico="sign" data-proxy="#signBtn" title="İmza çiz ya da kaşe fotoğrafı ekle"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button></div><div class="rgl">Ekle</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="image" data-proxy="#imgIn" title="Resim ekle"><span class="bl">Resim</span></button><button class="bb c-b" data-ico="sign" data-proxy="#signBtn" title="İmza çiz ya da kaşe fotoğrafı ekle"><span class="bl">İmza / Kaşe</span></button><button class="bb c-b" data-ico="text" data-proxy="#addTxt" title="Word gibi yazılabilir yeni sayfa"><span class="bl">Yazı sayfası</span></button><button class="bb c-o" data-ico="scan" data-proxy="#ocrBtn" title="Resimdeki ya da taranmış sayfadaki yazıları okur (OCR)"><span class="bl">Yazıları tanı</span></button></div><div class="rgl">Ekle</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" data-proxy="#objBtn" title="PDF’teki yazı ve resimleri ayrı, düzenlenebilir nesne yapar"><span class="bl">Nesneler</span></button><button class="bb c-b" data-ico="rotl" data-proxy="#rotL" title="Bu sayfayı sola döndür"><span class="bl">Sola döndür</span></button><button class="bb c-b" data-ico="rotr" data-proxy="#rotR" title="Bu sayfayı sağa döndür"><span class="bl">Sağa döndür</span></button></div><div class="rgl">Sayfa</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="zin" data-proxy="#zin"><span class="bl">Yakınlaştır</span></button><button class="bb c-g" data-ico="zout" data-proxy="#zout"><span class="bl">Uzaklaştır</span></button><button class="bb c-g" data-ico="fit" data-proxy="#zfit" title="Sayfayı pencere genişliğine sığdır"><span class="bl">Sığdır</span></button></div><div class="rgl">Görünüm</div></div>
     </div>
@@ -40,6 +40,7 @@
           <div class="rrow"><button class="ib" id="ulBtn" data-ico="ul" title="Madde işaretli liste"></button><button class="ib" id="olBtn" data-ico="ol" title="Numaralı liste"></button><button class="ib" id="outBtn" data-ico="outd" title="Girintiyi azalt"></button><button class="ib" id="indBtn" data-ico="ind" title="Girintiyi artır"></button>
             <select id="fBlock" title="Paragraf biçimi" aria-label="Paragraf biçimi"><option value="p">Normal</option><option value="h1">Başlık 1</option><option value="h2">Başlık 2</option><option value="h3">Başlık 3</option></select></div>
         </div></div><div class="rgl">Paragraf</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="aup" id="fsUp" title="Yazıyı büyüt (Ctrl+Shift+>)"><span class="bl">Büyüt</span></button><button class="bb c-b" data-ico="adown" id="fsDown" title="Yazıyı küçült (Ctrl+Shift+<)"><span class="bl">Küçült</span></button><button class="bb dd c-r" data-ico="case" data-menu="mCase" title="BÜYÜK HARF, küçük harf, Cümle düzeni, Her Kelime Büyük"><span class="bl">Harf düzeni</span></button><button class="bb dd c-g" data-ico="omega" data-menu="mSym" title="₺ © ° ± × ½ → ✓ gibi özel karakterler"><span class="bl">Sembol</span></button></div><div class="rgl">Biçim</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="search" id="findBtn" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)"><span class="bl">Bul ve değiştir</span></button><button class="bb c-g" data-ico="cal" data-proxy="#dateBtn" title="Yazı sayfasında imlecin olduğu yere bugünün tarihi"><span class="bl">Tarih</span></button><button class="bb c-b" data-ico="table" data-proxy="#tblBtn" title="Yazı sayfasına 3×3 tablo ekler"><span class="bl">Tablo</span></button></div><div class="rgl">Düzen</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="ekle" id="tp-ekle" hidden>
@@ -47,16 +48,23 @@
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="hash" data-proxy="#pnumBtn" title="Kaydederken her sayfanın altına numara"><span class="bl">Sayfa numarası</span></button><button class="bb c-o" data-ico="drop" data-proxy="#wmBtn" title="Tüm sayfalara çapraz yazı (TASLAK vb.)"><span class="bl">Filigran</span></button><button class="bb dd c-k" data-ico="more" data-menu="mMore" title="Tarih, sayfa numarası, filigran"><span class="bl">Diğer</span></button></div><div class="rgl">Belge</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="cizim" id="tp-cizim" hidden>
-      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-r" data-ico="rect" data-tool="rect" title="Kutu (R)"><span class="bl">Kutu</span></button><button class="bb c-r" data-ico="arrow" data-tool="arrow" title="Ok (A)"><span class="bl">Ok</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-o" data-ico="hl" data-tool="hl" title="Vurgula (H)"><span class="bl">Vurgula</span></button><button class="bb c-r" data-ico="pen" data-tool="pen" title="Kalem (P)"><span class="bl">Kalem</span></button><button class="bb c-r" data-ico="rect" data-tool="rect" title="Kutu (R)"><span class="bl">Kutu</span></button><button class="bb c-r" data-ico="arrow" data-tool="arrow" title="Ok (A)"><span class="bl">Ok</span></button><button class="bb c-r" data-ico="ellipse" data-tool="ellipse" title="Daire / elips: sürükleyin (Shift ile tam daire) (D)"><span class="bl">Daire</span></button><button class="bb c-r" data-ico="pline" data-tool="pline" title="Tıklayarak noktalar koyun; çift tık ya da Enter ile bitirin (N)"><span class="bl">Çoklu çizgi</span></button><button class="bb c-k" data-ico="white" data-tool="white" title="Yazının üstünü kapatır; kaydederken alttaki yazı dosyadan silinir (W)"><span class="bl">Beyaz örtü</span></button></div><div class="rgl">Araçlar</div></div>
       <div class="rg"><div class="rgc"><div class="rrows">
           <div class="rrow"><div class="grp" id="swatches" role="group" aria-label="Renk"></div></div>
-          <div class="rrow"><span class="rlab">Kalınlık</span><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select></div>
+          <div class="rrow"><button class="ib" data-tool="pick" data-ico="pick" title="Renk seçici: sayfadan renk alın (I)"></button><span class="rlab">Kalınlık</span><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select></div>
         </div></div><div class="rgl">Biçim</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-r" data-ico="trash" id="delBtn" disabled title="Seçili işareti sil (Delete)"><span class="bl">Sil</span></button></div><div class="rgl">Düzenle</div></div>
+    </div>
+    <div class="rpanel" role="tabpanel" data-panel="olcu" id="tp-olcu" hidden>
+      <div class="rg"><div class="rgc"><button class="bb c-k" data-ico="select" data-tool="select" title="Seç ve taşı (V)"><span class="bl">Seç</span></button><button class="bb c-r" data-ico="ruler" data-tool="dist" title="İki nokta arası uzaklık: sürükleyin (M)"><span class="bl">Mesafe</span></button><button class="bb c-g" data-ico="area" data-tool="area" title="Tıklayarak köşeleri koyun; çift tık ya da Enter ile bitirin. Alan ve çevre yazılır (Ö)"><span class="bl">Alan</span></button><button class="bb c-r" data-ico="pline" data-tool="pline" title="Kırık çizgi; uzunluğu nesne listesinde görünür (N)"><span class="bl">Çoklu çizgi</span></button></div><div class="rgl">Ölç</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="scale" id="scaleBtn" title="Sayfanın ölçeği: 1:500, 1:1000 … ya da bilinen bir uzunlukla ayarlayın"><span class="bl">Ölçek</span></button><div class="rrows"><div class="rrow"><span class="rlab" id="scaleLbl">Ölçek: kâğıt (1:1)</span></div><div class="rrow"><span class="rlab" id="xyLbl">X: –  Y: –</span></div></div></div><div class="rgl">Ölçek</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="xy" data-tool="xy" title="Tıkladığınız noktanın koordinatını yazar (X, Y)"><span class="bl">Nokta koy</span></button></div><div class="rgl">Koordinat</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="resim" id="tp-resim" hidden>
       <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="crop" data-tool="crop" title="Sayfayı kırp (C)"><span class="bl">Kırp</span></button><button class="bb c-r" data-ico="scissors" data-tool="cut" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)"><span class="bl">Kes, ayır</span></button><button class="bb c-r" data-ico="lasso" data-tool="lasso" title="İstediğiniz şekli çizerek keser (L)"><span class="bl">Serbest kes</span></button><button class="bb c-o" data-ico="grid" id="splitBtn" title="Sayfayı satır ve sütunlara böler"><span class="bl">Parçala</span></button></div><div class="rgl">Kesme</div></div>
       <div class="rg"><div class="rgc"><button class="bb c-g" data-ico="grab" data-tool="grab" title="Seçtiğiniz alanı resim olarak alır (G)"><span class="bl">Görsel al</span></button><button class="bb c-b" data-ico="layers" data-proxy="#editImg" title="Katmanlar, parlaklık, yazı, şekil"><span class="bl">Gelişmiş düzenleyici</span></button><button class="bb c-g" data-ico="image" data-proxy="#pdfImgs" title="PDF’teki gömülü resimleri dosya olarak kaydeder"><span class="bl">Resimleri çıkar</span></button></div><div class="rgl">Görsel</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-b" data-ico="fliph" data-adj="fliph" title="Sayfayı ayna gibi sağ-sol çevirir"><span class="bl">Yatay çevir</span></button><button class="bb c-b" data-ico="flipv" data-adj="flipv" title="Sayfayı alt-üst çevirir"><span class="bl">Dikey çevir</span></button><button class="bb c-o" data-ico="contrast" id="bcBtn" title="Sayfanın parlaklığını ve kontrastını ayarlar"><span class="bl">Parlaklık / kontrast</span></button><button class="bb c-k" data-ico="gray" data-adj="gray" title="Renkleri kaldırır"><span class="bl">Gri ton</span></button><button class="bb c-k" data-ico="bw" data-adj="bw" title="Taranmış belgeyi temiz siyah-beyaz yapar"><span class="bl">Siyah-beyaz</span></button><button class="bb c-k" data-ico="invert" data-adj="invert" title="Renkleri ters çevirir"><span class="bl">Negatif</span></button></div><div class="rgl">Ayarlar</div></div>
+      <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="scan" id="ocrBtn" title="Resimdeki ya da taranmış sayfadaki yazıları okur (OCR)"><span class="bl">Yazıları tanı</span></button></div><div class="rgl">Yazı tanıma</div></div>
     </div>
     <div class="rpanel" role="tabpanel" data-panel="sayfa" id="tp-sayfa" hidden>
       <div class="rg"><div class="rgc"><button class="bb c-o" data-ico="layers" id="objBtn" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur"><span class="bl">Nesneler</span></button><button class="bb c-r" data-ico="edit" data-tool="edit" title="Nesneler kapalıyken tek satırı değiştirmek için"><span class="bl">Satır düzenle</span></button><button class="bb c-b" data-ico="text" data-proxy="#pdf2txt" title="PDF’teki tüm yazıyı Word gibi düzenlenebilir yap"><span class="bl">Yazıya çevir</span></button></div><div class="rgl">PDF</div></div>
@@ -83,6 +91,16 @@
   <div class="ddm" id="mPg" hidden>
     <button data-tool="edit"><span data-ico="edit"></span><span><b>PDF satırını düzenle</b><small>Nesneler kapalıyken tek satırı değiştirmek için</small></span></button>
     <button id="pdf2txt"><span data-ico="text"></span><span><b>Yazı sayfasına çevir</b><small>PDF’teki tüm yazıyı Word gibi düzenlenebilir yap</small></span></button>
+  </div>
+  <div class="ddm" id="mCase" hidden>
+    <button data-case="upper"><span data-ico="case"></span><span><b>BÜYÜK HARF</b><small>Seçili yazının tüm harfleri büyük</small></span></button>
+    <button data-case="lower"><span data-ico="case"></span><span><b>küçük harf</b><small>Tüm harfler küçük (I → ı, İ → i)</small></span></button>
+    <button data-case="sentence"><span data-ico="case"></span><span><b>Cümle düzeni.</b><small>Yalnız cümle başları büyük</small></span></button>
+    <button data-case="title"><span data-ico="case"></span><span><b>Her Kelime Büyük</b><small>Her sözcüğün ilk harfi büyük</small></span></button>
+  </div>
+  <div class="ddm symgrid" id="mSym" hidden>
+    <div class="ddh">Sembol ekle (imlecin olduğu yere)</div>
+    <div class="syms"><button data-sym="₺" title="₺">₺</button><button data-sym="€" title="€">€</button><button data-sym="$" title="$">$</button><button data-sym="£" title="£">£</button><button data-sym="©" title="©">©</button><button data-sym="®" title="®">®</button><button data-sym="™" title="™">™</button><button data-sym="§" title="§">§</button><button data-sym="¶" title="¶">¶</button><button data-sym="°" title="°">°</button><button data-sym="±" title="±">±</button><button data-sym="×" title="×">×</button><button data-sym="÷" title="÷">÷</button><button data-sym="≈" title="≈">≈</button><button data-sym="≠" title="≠">≠</button><button data-sym="≤" title="≤">≤</button><button data-sym="≥" title="≥">≥</button><button data-sym="∞" title="∞">∞</button><button data-sym="√" title="√">√</button><button data-sym="∑" title="∑">∑</button><button data-sym="π" title="π">π</button><button data-sym="µ" title="µ">µ</button><button data-sym="½" title="½">½</button><button data-sym="¼" title="¼">¼</button><button data-sym="¾" title="¾">¾</button><button data-sym="²" title="²">²</button><button data-sym="³" title="³">³</button><button data-sym="•" title="•">•</button><button data-sym="…" title="…">…</button><button data-sym="–" title="–">–</button><button data-sym="—" title="—">—</button><button data-sym="«" title="«">«</button><button data-sym="»" title="»">»</button><button data-sym="“" title="“">“</button><button data-sym="”" title="”">”</button><button data-sym="‘" title="‘">‘</button><button data-sym="’" title="’">’</button><button data-sym="→" title="→">→</button><button data-sym="←" title="←">←</button><button data-sym="↑" title="↑">↑</button><button data-sym="↓" title="↓">↓</button><button data-sym="⇒" title="⇒">⇒</button><button data-sym="✓" title="✓">✓</button><button data-sym="✗" title="✗">✗</button><button data-sym="☐" title="☐">☐</button><button data-sym="☑" title="☑">☑</button><button data-sym="★" title="★">★</button><button data-sym="☎" title="☎">☎</button><button data-sym="✉" title="✉">✉</button><button data-sym="Ø" title="Ø">Ø</button><button data-sym="∅" title="∅">∅</button><button data-sym="⌀" title="⌀">⌀</button></div>
   </div>
   <div class="ddm" id="grabMenu" hidden></div>
 
@@ -112,7 +130,7 @@
       <div id="pagesList"></div>
     </main>
   </div>
-  <footer class="status gut"><span class="l" id="pStat"></span><span class="r" id="pHint"></span>
+  <footer class="status gut"><span class="l" id="pStat"></span><span class="r" id="pHint"></span><span class="xy" id="pXY"></span>
     <span class="zoom"><button class="ib" id="zout" data-ico="zout" title="Uzaklaştır"></button><span class="zl" id="zl">100%</span><button class="ib" id="zin" data-ico="zin" title="Yakınlaştır"></button><button class="ib" id="zfit" data-ico="fit" title="Genişliğe sığdır"></button></span></footer>
 
   <div class="fpanel" id="findPanel" hidden role="dialog" aria-label="Bul ve değiştir">
@@ -260,6 +278,43 @@
     <div class="row" style="justify-content:flex-end"><button class="btn" id="wmOff">Filigranı kaldır</button><span style="flex:1"></span><button class="btn" id="wmCancel">Vazgeç</button><button class="btn primary" id="wmGo">Uygula</button></div>
   </div>
 </div>
+<div class="scrim" id="ocrModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ocrTitle" style="width:min(640px,100%)">
+    <h3 id="ocrTitle">Tanınan yazılar</h3>
+    <div class="muted" id="ocrInfo"></div>
+    <textarea id="ocrText" rows="12" spellcheck="true" aria-label="Tanınan yazı"></textarea>
+    <div class="muted">Yazıyı burada düzeltebilirsiniz. Kaydettiğiniz PDF’te bu sayfanın yazısı artık aranabilir ve seçilebilir olur.</div>
+    <div class="row" style="justify-content:flex-end;flex-wrap:wrap"><button class="btn" id="ocrCopy"><span data-ico="copy"></span>Panoya kopyala</button><button class="btn" id="ocrToPage"><span data-ico="text"></span>Yazı sayfası olarak ekle</button><button class="btn" id="ocrEdit"><span data-ico="edit"></span>Sayfada düzenlenebilir yap</button><span style="flex:1"></span><button class="btn primary" id="ocrClose">Tamam</button></div>
+  </div>
+</div>
+<div class="scrim" id="scaleModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scaleTitle" style="width:min(460px,100%)">
+    <h3 id="scaleTitle">Ölçek</h3>
+    <div class="muted">Plan ve haritalarda ölçeği seçin; ölçümler metre ve metrekare olarak yazılır. “Kâğıt” seçilirse sayfadaki gerçek boyut (cm) gösterilir.</div>
+    <label class="fld">Ölçek<select id="scaleSel"><option value="0">Kâğıt (1:1, cm)</option><option>100</option><option>200</option><option>250</option><option>500</option><option>1000</option><option>2000</option><option>2500</option><option>5000</option><option>10000</option><option>25000</option><option value="c">Diğer…</option></select></label>
+    <label class="fld" id="scaleCustomW" hidden>1 : <input type="number" id="scaleCustom" min="1" step="1" value="1000"></label>
+    <label class="chk"><input type="checkbox" id="scaleAll"> Tüm sayfalara uygula</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="scaleCalib"><span data-ico="ruler"></span>Bilinen uzunlukla ayarla</button><span style="flex:1"></span><button class="btn" id="scaleCancel">Vazgeç</button><button class="btn primary" id="scaleGo">Uygula</button></div>
+  </div>
+</div>
+<div class="scrim" id="calibModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="calibTitle" style="width:min(400px,100%)">
+    <h3 id="calibTitle">Bilinen uzunluk</h3>
+    <div class="muted">Çizdiğiniz çizginin gerçekteki uzunluğunu yazın. Sayfanın ölçeği buna göre ayarlanır.</div>
+    <label class="fld">Gerçek uzunluk (metre)<input type="number" id="calibLen" min="0" step="any" value="10"></label>
+    <label class="chk"><input type="checkbox" id="calibAll"> Tüm sayfalara uygula</label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="calibCancel">Vazgeç</button><button class="btn primary" id="calibGo">Uygula</button></div>
+  </div>
+</div>
+<div class="scrim" id="bcModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="bcTitle" style="width:min(420px,100%)">
+    <h3 id="bcTitle">Parlaklık / kontrast</h3>
+    <div class="muted">Bulunduğunuz sayfaya uygulanır; sayfada önizlenir.</div>
+    <label class="fld">Parlaklık <output id="bcBo">0</output><input type="range" id="bcB" min="-100" max="100" value="0"></label>
+    <label class="fld">Kontrast <output id="bcCo">0</output><input type="range" id="bcC" min="-100" max="100" value="0"></label>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="bcReset">Sıfırla</button><span style="flex:1"></span><button class="btn" id="bcCancel">Vazgeç</button><button class="btn primary" id="bcGo">Uygula</button></div>
+  </div>
+</div>
 <div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyMsg">Hazırlanıyor…</span></div></div>
 <div class="toast" id="toast" hidden role="status"></div>
 <div id="printArea" aria-hidden="true"></div>
@@ -271,4 +326,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js"></script>
 <!-- @scripts: tools/build.js src/js/*.js dosyalarını sırayla tek bir (function(){ ... })() içinde buraya yerleştirir -->

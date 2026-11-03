@@ -15,5 +15,12 @@ contextBridge.exposeInMainWorld('desktop', {
     const dir = sys ? path.join(process.env.WINDIR || 'C:\\Windows', 'Fonts') : path.join(__dirname, 'fonts');
     try { const b = fs.readFileSync(path.join(dir, file)); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); }
     catch (e) { return null; }
+  },
+  // Programla gelen dosyayı okur (yalnız app/lib altı; ör. yazı tanıma dosyaları).
+  readAsset: (rel) => {
+    const full = path.normalize(path.join(__dirname, rel));
+    if (!full.startsWith(path.join(__dirname, 'lib') + path.sep)) return null;
+    try { const b = fs.readFileSync(full); return b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength); }
+    catch (e) { return null; }
   }
 });

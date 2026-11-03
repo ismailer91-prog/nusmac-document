@@ -6,7 +6,7 @@ $('#swatches').addEventListener('click',e=>{const b=e.target.closest('[data-colo
 $('#lwSel').onchange=e=>{S.lw=+e.target.value;applyProp('lw',S.lw)};
 $('#pfSel').innerHTML=Object.keys(FONTS).map(f=>`<option>${f}</option>`).join('');
 $('#ribbon').addEventListener('pointerdown',e=>{
-  const b=e.target.closest('button,label.lb,label.sb');if(b&&!b.closest('.search'))e.preventDefault();
+  const b=e.target.closest('button,label.lb,label.sb,label.bb');if(b&&!b.closest('.search'))e.preventDefault();
   if(!inTxt()&&e.target.closest('button,select,input[type=color]'))flushEdit();
 });
 const inTxt=()=>{const a=document.activeElement;return !!(a&&a.classList&&a.classList.contains('tbody'))};
@@ -64,6 +64,7 @@ document.addEventListener('keydown',e=>{
   const k=e.key.toLowerCase(),mod=e.ctrlKey||e.metaKey;
   if(mod&&k==='s'){e.preventDefault();if($('#studio').hidden)openSave();return}
   if(mod&&k==='h'&&$('#studio').hidden){e.preventDefault();openFind();return}
+  if(mod&&e.shiftKey&&(e.key==='>'||e.key==='<'||e.code==='Period'||e.code==='Comma'||e.code==='IntlBackslash')){e.preventDefault();stepFont(e.key==='<'||e.code==='Comma'?-1:1);return}
   if(mod&&k==='p'){e.preventDefault();if($('#studio').hidden&&$('#saveModal').hidden)printDoc();return}
   if(!$('#studio').hidden||!$('#sigModal').hidden||!$('#saveModal').hidden)return;const t=e.target;if(t.isContentEditable||/INPUT|SELECT|TEXTAREA/.test(t.tagName))return;
   if(mod&&k==='z'){e.preventDefault();e.shiftKey?redo():undo();return}
@@ -71,8 +72,9 @@ document.addEventListener('keydown',e=>{
   if(mod&&k==='f'){e.preventDefault();$('#q').focus();return}
   if(mod&&k==='h'){e.preventDefault();openFind();return}
   if((e.key==='Delete'||e.key==='Backspace')&&S.sel){e.preventDefault();deleteSel();return}
+  if(e.key==='Enter'&&S.build){e.preventDefault();finishBuild();return}
   if(e.key==='Escape'){setSel(null);setTool('select');return}
   if(mod||e.altKey)return;
-  const m={v:'select',t:'text',e:'edit',h:'hl',p:'pen',r:'rect',a:'arrow',w:'white',c:'crop',k:'cut',l:'lasso',g:'grab'};if(m[k])setTool(m[k]);
+  const m={v:'select',t:'text',e:'edit',h:'hl',p:'pen',r:'rect',a:'arrow',w:'white',c:'crop',k:'cut',l:'lasso',g:'grab',d:'ellipse',n:'pline',m:'dist','ö':'area',i:'pick'};if(m[k])setTool(m[k]);
 });
 

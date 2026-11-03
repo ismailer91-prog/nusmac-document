@@ -1,6 +1,6 @@
 # Her gönderimde: testleri çalıştırır ve Windows kurulum dosyasını üretir.
 # Kurulum dosyası: GitHub → Actions → son çalıştırma → "Artifacts" → NusmacDocument-Windows
-# "v1.5.0" gibi bir etiket gönderilirse dosyalar ayrıca "Releases" sayfasına konur.
+# main dalına her gönderimde dosyalar ayrıca "Releases" sayfasına konur (sürüm package.json'dan).
 name: Test ve Windows kurulum
 
 on:

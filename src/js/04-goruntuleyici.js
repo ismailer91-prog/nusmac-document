@@ -27,7 +27,7 @@ function buildViewer(){
     wrap.append(head,pg);list.append(wrap);
     E[p.id]={wrap,pg,canvas:c,ov,doc,body,rk:0,task:null};
     head.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b)pageAct(p,b.dataset.act)});
-    ov.addEventListener('pointerdown',ev=>onDown(ev,p));
+    ov.addEventListener('pointerdown',ev=>onDown(ev,p));ov.addEventListener('pointermove',ev=>showXY(ev,p));
     ov.addEventListener('dblclick',ev=>onDbl(ev,p));
     if(!T)io.observe(pg);
     if(T)p.h=Math.max(841.89,pg.offsetHeight/S.k);
@@ -100,8 +100,9 @@ function scrollToPage(i,smooth=true){const p=S.pages[i];if(!p||!E[p.id])return;c
 /* ---------- page actions ---------- */
 function rotAnn(a,d,W,H){
   const P=d>0?([x,y])=>[H-y,x]:([x,y])=>[y,W-x];
-  if(a.type==='path'||a.type==='poly')a.pts=a.pts.map(P);
-  else if(a.type==='arrow'){[a.x1,a.y1]=P([a.x1,a.y1]);[a.x2,a.y2]=P([a.x2,a.y2])}
+  if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area')a.pts=a.pts.map(P);
+  else if(a.type==='arrow'||a.type==='dim'){[a.x1,a.y1]=P([a.x1,a.y1]);[a.x2,a.y2]=P([a.x2,a.y2])}
+  else if(a.type==='xy'){[a.x,a.y]=P([a.x,a.y])}
   else if(a.type==='text'||a.type==='img'){const [cx,cy]=P([a.x+a.w/2,a.y+a.h/2]);a.x=cx-a.w/2;a.y=cy-a.h/2}
   else{const [x1,y1]=P([a.x,a.y]),[x2,y2]=P([a.x+a.w,a.y+a.h]);a.x=Math.min(x1,x2);a.y=Math.min(y1,y2);a.w=Math.abs(x2-x1);a.h=Math.abs(y2-y1)}
 }
@@ -129,13 +130,16 @@ function pageAct(p,act){
 const NS='http://www.w3.org/2000/svg';
 function sv(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}
 function arrowHead(a){const L=Math.max(9,a.lw*4),ang=Math.atan2(a.y2-a.y1,a.x2-a.x1),s=0.45;return [[a.x2,a.y2],[a.x2-L*Math.cos(ang-s),a.y2-L*Math.sin(ang-s)],[a.x2-L*Math.cos(ang+s),a.y2-L*Math.sin(ang+s)]]}
-function bbox(a){if(a.type==='path'||a.type==='poly'){const xs=a.pts.map(p=>p[0]),ys=a.pts.map(p=>p[1]);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
-  if(a.type==='arrow')return{x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x2-a.x1),h:Math.abs(a.y2-a.y1)};return a}
+function bbox(a){if(a.type==='xy')return{x:a.x-4,y:a.y-4,w:8,h:8};if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area'){const xs=a.pts.map(p=>p[0]),ys=a.pts.map(p=>p[1]);return{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
+  if(a.type==='arrow'||a.type==='dim')return{x:Math.min(a.x1,a.x2),y:Math.min(a.y1,a.y2),w:Math.abs(a.x2-a.x1),h:Math.abs(a.y2-a.y1)};return a}
 function renderOv(p){
   const e=E[p.id];if(!e)return;const ov=e.ov,k=S.k;ov.innerHTML='';
   const W=dw(p)*k,H=dh(p)*k;const svg=sv('svg',{class:'ovsvg',width:W,height:H,viewBox:`0 0 ${W} ${H}`});let hasSvg=false;
+  updMeasLabels(p);
   for(const a of p.anns){
     if(a.hid)continue;
+    if(SVGT.has(a.type)){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});measSvg(g,a,k);
+      if(S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id){const b=bbox(a);g.append(sv('rect',{class:'selbox',x:b.x*k-5,y:b.y*k-5,width:b.w*k+10,height:b.h*k+10}))}svg.append(g);continue}
     const selected=S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id;
     if(a.type==='poly'){hasSvg=true;const g=sv('g',{'data-aid':a.id,class:a.lock?'locked':''});const d='M'+a.pts.map(([x,y])=>`${(x*k).toFixed(1)} ${(y*k).toFixed(1)}`).join(' L')+' Z';
       g.append(sv('path',{d,fill:a.fill||'#ffffff',stroke:'none'}));g.append(sv('path',{d,class:'hitfill',fill:'transparent'}));
@@ -184,7 +188,7 @@ function updSelUI(){
   [['alL','left'],['alC','center'],['alR','right'],['alJ','justify']].forEach(([id,v])=>$('#'+id).setAttribute('aria-pressed',String(al===v)));
   if(src.color&&/^#[0-9a-f]{6}$/i.test(src.color))$('#fColor').value=src.color;
 }
-function moveAnn(a,o,dx,dy){if(a.type==='path'||a.type==='poly')a.pts=o.pts.map(([x,y])=>[x+dx,y+dy]);else if(a.type==='arrow'){a.x1=o.x1+dx;a.y1=o.y1+dy;a.x2=o.x2+dx;a.y2=o.y2+dy}else{a.x=o.x+dx;a.y=o.y+dy}}
+function moveAnn(a,o,dx,dy){if(a.type==='path'||a.type==='poly'||a.type==='pline'||a.type==='area')a.pts=o.pts.map(([x,y])=>[x+dx,y+dy]);else if(a.type==='arrow'||a.type==='dim'){a.x1=o.x1+dx;a.y1=o.y1+dy;a.x2=o.x2+dx;a.y2=o.y2+dy}else{a.x=o.x+dx;a.y=o.y+dy}}
 function drag(ov,ev,mv,up){ov.setPointerCapture(ev.pointerId);const m=e=>mv(e);const u=e=>{ov.removeEventListener('pointermove',m);ov.removeEventListener('pointerup',u);ov.removeEventListener('pointercancel',u);up(e)};ov.addEventListener('pointermove',m);ov.addEventListener('pointerup',u);ov.addEventListener('pointercancel',u)}
 function onDown(ev,p){
   if(ev.button>0||ev.target.isContentEditable)return;
@@ -222,11 +226,15 @@ function onDown(ev,p){
     const a={id:nid('a'),type:'img',x:Math.max(0,x-w/2),y:Math.max(0,y-h/2),w,h,src:pi.src};
     p.anns.push(a);S.pendingImg=null;setTool('select');setSel({pageId:p.id,aid:a.id});renderOv(p);markThumb(p);return;
   }
+  if(tool==='pline'||tool==='area'){buildClick(p,x,y,tool);return}
+  if(tool==='pick'){pickColor(p,x,y);return}
+  if(tool==='xy'){pushUndo();p.anns.push({id:nid('a'),type:'xy',x,y,color:S.color});renderOv(p);markThumb(p);return}
   const before=snap();let a;
   if(tool==='crop')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,crop:true};
   else if(tool==='cut'||tool==='grab')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,temp:tool};
   else if(tool==='lasso')a={id:nid('a'),type:'path',pts:[[x,y]],color:'#3a3db0',lw:1.5,temp:'lasso'};
-  else if(tool==='rect'||tool==='hl'||tool==='white')a={id:nid('a'),type:tool,x,y,w:0,h:0,color:tool==='hl'?S.hlColor:S.color,lw:S.lw};
+  else if(tool==='dist'||tool==='calib')a={id:nid('a'),type:'dim',x1:x,y1:y,x2:x,y2:y,color:tool==='calib'?'#3a3db0':S.color,lw:tool==='calib'?1.2:Math.min(S.lw,2),temp:tool==='calib'?'calib':undefined};
+  else if(tool==='rect'||tool==='hl'||tool==='white'||tool==='ellipse')a={id:nid('a'),type:tool,x,y,w:0,h:0,color:tool==='hl'?S.hlColor:S.color,lw:S.lw};
   else if(tool==='pen')a={id:nid('a'),type:'path',pts:[[x,y]],color:S.color,lw:S.lw};
   else if(tool==='arrow')a={id:nid('a'),type:'arrow',x1:x,y1:y,x2:x,y2:y,color:S.color,lw:S.lw};
   else return;
@@ -234,12 +242,14 @@ function onDown(ev,p){
   p.anns.push(a);
   drag(ov,ev,m=>{const [mx,my]=local(m,ov);
     if(a.type==='path'){const l=a.pts[a.pts.length-1];if(Math.hypot(mx-l[0],my-l[1])*S.k>1.5)a.pts.push([mx,my])}
-    else if(a.type==='arrow'){a.x2=mx;a.y2=my}
+    else if(a.type==='arrow'||a.type==='dim'){a.x2=mx;a.y2=my;if(m.shiftKey){if(Math.abs(mx-x)>Math.abs(my-y))a.y2=y;else a.x2=x}}
+    else if(a.type==='ellipse'&&m.shiftKey){const r=Math.max(Math.abs(mx-x),Math.abs(my-y));a.x=mx<x?x-r:x;a.y=my<y?y-r:y;a.w=a.h=r}
     else{a.x=Math.min(x,mx);a.y=Math.min(y,my);a.w=Math.abs(mx-x);a.h=Math.abs(my-y)}
     renderOv(p)},
    ()=>{let tiny;
     if(a.type==='path'){if(a.pts.length===1)a.pts.push([a.pts[0][0]+0.2,a.pts[0][1]+0.2]);tiny=false}
-    else if(a.type==='arrow')tiny=Math.hypot(a.x2-a.x1,a.y2-a.y1)<4;else tiny=a.w<3||a.h<3;
+    else if(a.type==='arrow'||a.type==='dim')tiny=Math.hypot(a.x2-a.x1,a.y2-a.y1)<4;else tiny=a.w<3||a.h<3;
+    if(a.temp==='calib'){p.anns.pop();renderOv(p);if(!tiny)openCalib(p,Math.hypot(a.x2-a.x1,a.y2-a.y1));return}
     if(a.temp){p.anns.pop();renderOv(p);if(a.temp==='lasso'?a.pts.length>3:!tiny)imageOp(p,a);return}
     if(a.crop){p.anns.pop();if(tiny||!applyCrop(p,a))renderOv(p);else commitUndo(before);return}
     if(tiny)p.anns.pop();else{commitUndo(before);markThumb(p)}renderOv(p)});
@@ -291,7 +301,7 @@ async function editLineAt(p,x,y){
 function deleteSel(){const s=selAnn();if(!s)return;pushUndo();s.p.anns=s.p.anns.filter(a=>a!==s.a);S.sel=null;renderOv(s.p);markThumb(s.p);updSelUI()}
 function applyProp(prop,val){
   const s=selAnn();if(!s)return;const a=s.a;
-  const ok={color:['text','rect','path','arrow'],size:['text'],lw:['rect','path','arrow'],bold:['text'],italic:['text'],underline:['text'],font:['text'],align:['text']}[prop];
+  const ok={color:['text','rect','path','arrow','ellipse','pline','dim','area','xy'],size:['text'],lw:['rect','path','arrow','ellipse','pline','dim','area'],bold:['text'],italic:['text'],underline:['text'],font:['text'],align:['text']}[prop];
   if(!ok.includes(a.type))return;pushUndo();a[prop]=val;if(prop==='size')a.h=Math.max(a.h,val*1.25);renderOv(s.p);
 }
 const HINTS={select:'Seç: işarete tıklayıp taşıyın, köşedeki tutamaçla boyutlandırın, metni değiştirmek için çift tıklayın.',
@@ -303,9 +313,16 @@ const HINTS={select:'Seç: işarete tıklayıp taşıyın, köşedeki tutamaçla
  crop:'Kırp: sayfada bırakmak istediğiniz alanı sürükleyerek seçin.',
  cut:'Kes, ayır: kesmek istediğiniz alanı sürükleyerek seçin; parça ayrılır ve sürüklenebilir olur.',
  lasso:'Serbest kes: fareyi basılı tutup kesmek istediğiniz şeklin çevresini çizin, bırakınca kesilir.',
- grab:'Görsel al: almak istediğiniz alanı seçin; sonra kaydedebilir, yeni sayfa yapabilir ya da yazıya ekleyebilirsiniz.'};
+ grab:'Görsel al: almak istediğiniz alanı seçin; sonra kaydedebilir, yeni sayfa yapabilir ya da yazıya ekleyebilirsiniz.',
+ ellipse:'Daire: sürükleyerek çizin. Shift basılıyken tam daire olur.',
+ pline:'Çoklu çizgi: noktaları tıklayarak koyun; çift tık ya da Enter ile bitirin, Esc ile bırakın.',
+ dist:'Mesafe: ölçmek istediğiniz iki nokta arasında sürükleyin. Shift ile yatay/dikey. Ölçeği Ölçü → Ölçek ile ayarlayın.',
+ area:'Alan: köşe noktalarını tıklayarak koyun; çift tık ya da Enter ile bitirin. Alan ve çevre yazılır.',
+ xy:'Nokta koy: koordinatını yazmak istediğiniz noktalara tıklayın.',
+ pick:'Renk seçici: sayfada rengini almak istediğiniz yere tıklayın.',
+ calib:'Uzunluğunu bildiğiniz iki nokta arasında sürükleyin; sonra gerçek uzunluğu yazacaksınız.'};
 function setTool(t){
-  flushEdit();if(t!=='place')S.pendingImg=null;S.tool=t;
+  if(S.build)finishBuild();flushEdit();if(t!=='place')S.pendingImg=null;S.tool=t;
   $$('[data-tool]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===t));
   const v=$('#viewer');v.className=v.className.replace(/\btool-\S+/g,'')+' tool-'+t;
   if(t!=='select'&&S.sel)setSel(null);$('#pHint').textContent=HINTS[t]||'';
@@ -314,7 +331,7 @@ function countWords(){let n=0;for(const p of S.pages)if(p.kind==='text'){const e
 function updStatus(){
   const n=S.pages.length;$('#docName').textContent=S.baseName||(S.pages.length&&S.pages.every(p=>p.sample)?'Örnek belge':S.pages.length?'Adsız belge':'Boş belge');const files=new Set(S.pages.filter(p=>!p.sample).map(p=>p.name)).size;
   $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:''):'Sayfa yok';
-  refreshTree();
+  refreshTree();updScaleLbl();
 }
 let scrollRaf=0;
 $('#viewer').addEventListener('scroll',()=>{if(scrollRaf)return;scrollRaf=requestAnimationFrame(()=>{scrollRaf=0;const vr=$('#viewer').getBoundingClientRect(),mid=vr.top+vr.height*0.35;let cur=0;S.pages.forEach((p,i)=>{const e=E[p.id];if(e&&e.pg.getBoundingClientRect().top<=mid)cur=i});

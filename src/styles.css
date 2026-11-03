@@ -363,3 +363,18 @@ nav.tabs .ib{width:28px;height:28px;align-self:center}
 
 @media (max-width:1100px){.ttl .appn{display:none}.hsearch input{width:110px}}
 @media (max-width:760px){.qat .qsep,.qat [data-proxy]{display:none}nav.tabs [role="tab"]{padding:5px 9px}.rgl{display:block}}
+
+/* ===== ek araçlar: ölçü etiketleri, sembol tablosu, OCR penceresi ===== */
+.mlbl{font-family:Arial,Helvetica,sans-serif;font-weight:600;paint-order:stroke;stroke:#ffffff;stroke-width:3px;stroke-linejoin:round;pointer-events:none;user-select:none}
+.symgrid{min-width:0;width:300px}
+.syms{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:2px 4px 4px}
+.ddm .syms button{justify-content:center;padding:0;height:32px;font-size:17px;border-radius:5px}
+#ocrText{width:100%;min-height:220px;resize:vertical;border:1px solid var(--line);background:var(--raised);color:var(--ink);border-radius:8px;padding:10px;font:14px/1.5 var(--ui)}
+footer.status .xy{font:12px var(--mono);color:var(--muted);margin-right:12px;white-space:nowrap;font-variant-numeric:tabular-nums}
+#xyLbl{font-family:var(--mono);font-size:11.5px;font-variant-numeric:tabular-nums}
+.viewer.tool-dist .ov,.viewer.tool-area .ov,.viewer.tool-pline .ov,.viewer.tool-ellipse .ov,.viewer.tool-xy .ov,.viewer.tool-calib .ov{cursor:crosshair}
+.viewer.tool-pick .ov{cursor:copy}
+.fld output{font:12px var(--mono);color:var(--ink);margin-left:6px}
+.fld input[type=range]{width:100%}
+.toast{pointer-events:none}
+.rg{padding:0 5px}

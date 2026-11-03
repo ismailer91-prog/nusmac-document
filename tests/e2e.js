@@ -234,6 +234,82 @@ async function test(name, fn) {
     assert(await page.evaluate(() => !window.__nm.S.pages[0].anns.some(a => a.hid)), 'Geri al gizlemeyi geri getirmedi');
   });
 
+  // Türkçe yazılı bir "taranmış" PNG üretir ve açar
+  async function openScan(page) {
+    const b64 = await page.evaluate(() => {
+      const c = document.createElement('canvas'); c.width = 1240; c.height = 1754; const x = c.getContext('2d');
+      x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#111'; x.font = '44px Arial';
+      x.fillText('Şişli İlçe Müdürlüğüne', 120, 200); x.fillText('Konu: Gizli bilgi 12345', 120, 290); x.fillText('Çalışma ağacı öğütücü ışık', 120, 380);
+      return c.toDataURL('image/png').split(',')[1];
+    });
+    await page.setInputFiles('#fileIn', { name: 'tarama.png', mimeType: 'image/png', buffer: Buffer.from(b64, 'base64') });
+    await page.waitForFunction(() => window.__nm.S.pages.length === 1 && document.querySelector('#busy').hidden);
+  }
+
+  await test('Yazı tanıma (OCR): resimdeki Türkçe yazı okunur ve PDF’te aranabilir olur', async page => {
+    await openScan(page);
+    await page.click('[data-proxy="#ocrBtn"]');
+    await page.waitForSelector('#ocrModal:not([hidden])', { timeout: 60000 });
+    const txt = await page.inputValue('#ocrText');
+    assert(txt.includes('Müdürlüğüne') && txt.includes('12345') && txt.includes('öğütücü'), 'Tanınan yazı eksik: ' + txt);
+    await page.click('#ocrClose');
+    const t = await pdfText(page, await save(page));
+    assert(t[0].includes('Müdürlüğüne') && t[0].includes('12345'), 'PDF’te tanınan yazı yok: ' + t[0]);
+    // sayfada düzenlenebilir yap
+    await page.click('[data-proxy="#ocrBtn"]');
+    await page.waitForSelector('#ocrModal:not([hidden])', { timeout: 60000 });
+    await page.click('#ocrEdit');
+    const n = await page.evaluate(() => window.__nm.S.pages[0].anns.filter(a => a.type === 'text' && a.bg).length);
+    assert(n === 3, `3 düzenlenebilir satır bekleniyordu, ${n} oldu`);
+  });
+
+  await test('Ölçü: ölçek 1:1000, mesafe ve alan doğru hesaplanır', async page => {
+    await openFiles(page, 'turkce.pdf');
+    await page.click('[data-tab="olcu"]');
+    await page.click('#scaleBtn'); await page.selectOption('#scaleSel', '1000'); await page.click('#scaleGo');
+    assert((await page.textContent('#scaleLbl')).includes('1:1.000'), 'Ölçek etiketi: ' + await page.textContent('#scaleLbl'));
+    const box = await page.evaluate(() => { const r = document.querySelector('.ov').getBoundingClientRect(); return { x: r.x, y: r.y, k: window.__nm.S.k }; });
+    const P = (x, y) => [box.x + x * box.k, box.y + y * box.k];
+    await page.click('[data-tool="dist"]');
+    await page.mouse.move(...P(100, 290)); await page.mouse.down(); await page.mouse.move(...P(150, 290)); await page.mouse.move(...P(200, 290)); await page.mouse.up();
+    const lbl = await page.evaluate(() => window.__nm.S.pages[0].anns.find(a => a.type === 'dim').lbl);
+    assert(lbl === '35,28 m', '100 pt × 1:1000 = 35,28 m olmalı: ' + lbl);
+    await page.click('[data-tool="area"]');
+    for (const [x, y] of [[300, 180], [400, 180], [400, 280]]) { await page.mouse.click(...P(x, y)); await page.waitForTimeout(400); }
+    await page.keyboard.press('Enter');
+    const area = await page.evaluate(() => window.__nm.S.pages[0].anns.find(a => a.type === 'area').lbl);
+    assert(area.startsWith('Alan: 622,26 m²'), 'Üçgen alanı yanlış: ' + area);
+    assert((await page.textContent('#objTree')).includes('Mesafe · 35,28 m'), 'Nesne listesinde ölçü yok');
+  });
+
+  await test('Resim ayarı (gri ton) uygulanır ve geri alınır', async page => {
+    await openScan(page);
+    const iv0 = await page.evaluate(() => window.__nm.S.pages[0].img);
+    await page.evaluate(() => document.querySelector('[data-adj="gray"]').click());
+    await page.waitForFunction(() => window.__nm.S.pages[0].iv > 1);
+    await page.evaluate(() => document.activeElement && document.activeElement.blur());
+    await page.keyboard.press('Control+z');
+    const back = await page.evaluate(() => { const p = window.__nm.S.pages[0]; return p.iv === 1 && p.img.tagName === 'IMG'; });
+    assert(back, 'Geri al eski resmi getirmedi');
+    // PDF sayfası da resim sayfasına dönüşebilmeli
+  });
+
+  await test('Word komutları: BÜYÜK HARF ve sembol ekle', async page => {
+    await openFiles(page, 'ornek.docx');
+    const pt = await page.evaluate(() => {
+      const b = document.querySelector('.tbody'); const tw = document.createTreeWalker(b, NodeFilter.SHOW_TEXT); let n;
+      while ((n = tw.nextNode())) { const i = n.nodeValue.indexOf('yetkili'); if (i >= 0) { const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + 7); const q = r.getBoundingClientRect(); return [q.x + q.width / 2, q.y + q.height / 2]; } }
+    });
+    await page.mouse.dblclick(pt[0], pt[1]);
+    await page.click('[data-tab="yazi"]');
+    await page.click('[data-menu="mCase"]'); await page.click('[data-case="upper"]');
+    let t = await page.textContent('.tbody');
+    assert(t.includes('Sayın YETKİLİ,'), 'Büyük harf olmadı: ' + t);
+    await page.click('[data-menu="mSym"]'); await page.click('[data-sym="₺"]');
+    t = await page.textContent('.tbody');
+    assert(t.includes('₺'), 'Sembol eklenmedi: ' + t);
+  });
+
   await test('Word olarak kaydedilir', async page => {
     await openFiles(page, 'ornek.docx');
     const f = await save(page, 'docx');

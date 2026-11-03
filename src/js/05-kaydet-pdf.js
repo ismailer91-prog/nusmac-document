@@ -9,6 +9,7 @@ function drawAnns(ctx,anns,s,skipHl,vec){
     else if(a.type==='path'||a.type==='arrow'){ctx.strokeStyle=a.color;ctx.lineWidth=a.lw*s;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();
       const pts=a.type==='path'?a.pts:[[a.x1,a.y1],[a.x2,a.y2]];pts.forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.stroke();
       if(a.type==='arrow'){ctx.fillStyle=a.color;ctx.beginPath();arrowHead(a).forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.closePath();ctx.fill()}}
+    else if(SVGT.has(a.type))drawMeas(ctx,a,s);
     else if(a.type==='poly'){ctx.fillStyle=a.fill||'#ffffff';ctx.beginPath();a.pts.forEach(([x,y],i)=>i?ctx.lineTo(x*s,y*s):ctx.moveTo(x*s,y*s));ctx.closePath();ctx.fill()}
     else if(a.type==='img'){const im=cachedImg(a.src);if(im)ctx.drawImage(im,a.x*s,a.y*s,a.w*s,a.h*s)}
     else if(a.type==='text'){
@@ -96,11 +97,11 @@ function wordBoxes(b,wr){const out=[];const tw=document.createTreeWalker(b,NodeF
     for(const m of t.matchAll(/\S+/g)){r.setStart(n,m.index);r.setEnd(n,m.index+m[0].length);const rs=r.getClientRects();if(!rs.length)continue;const q=rs[0];if(q.width<=0)continue;
       out.push({s:m[0],x:q.left-wr.left,y:q.top-wr.top,w:q.width,h:q.height,fam,bold,italic})}}
   return out}
-async function drawHiddenWords(pg,words,F,s){/* s: px→pt */
+async function drawHiddenWords(pg,words,F,s,map,R){/* s: px→pt; map/R: kopyalanan PDF sayfası için koordinat dönüşümü */
   for(const w of words){const f=await F.get(w.fam,w.bold,w.italic);if(!f)continue;const t=cleanTxt(w.s);if(!t)continue;
     let size=w.h*s*0.8;try{const u=f.font.widthOfTextAtSize(t,1);if(u>0)size=Math.min(size*1.6,Math.max(size*0.5,w.w*s/u))}catch(e){continue}
-    const base=pg.getHeight()-(w.y+w.h*f.ascR)*s;
-    try{pg.drawText(t,{x:w.x*s,y:base,size,font:f.font,opacity:0})}catch(e){}}}
+    try{if(map){const [px,py]=map(w.x*s,(w.y+w.h*f.ascR)*s);pg.drawText(t,{x:px,y:py,size,font:f.font,opacity:0,rotate:PDFLib.degrees(R||0)})}
+      else pg.drawText(t,{x:w.x*s,y:pg.getHeight()-(w.y+w.h*f.ascR)*s,size,font:f.font,opacity:0})}catch(e){}}}
 async function exportPdf(pages,filename,flat,ret){
   if(!pages.length){toast('Kaydedilecek sayfa yok.');return}
   if(!window.PDFLib){toast('PDF aracı yüklenemedi. Programı yeniden açıp tekrar deneyin.');return}
@@ -131,6 +132,7 @@ async function exportPdf(pages,filename,flat,ret){
             const [ox,oy]=map(0,H);cp.drawImage(png,{x:ox,y:oy,width:W,height:H,rotate:PDFLib.degrees(R)});
           }
           for(const a of rest)if(vec.has(a.id))await drawVecText(cp,a,F,map,R);
+          if(F)await drawHiddenWords(cp,ocrWords(p),F,1,map,R);
           continue;
         }
       }
@@ -139,6 +141,7 @@ async function exportPdf(pages,filename,flat,ret){
       const img=p.fromWord?await out.embedPng(await canvasBytes(c,'image/png')):await out.embedJpg(await canvasBytes(c,'image/jpeg',0.9));
       const pg=out.addPage([dw(p),dh(p)]);pg.drawImage(img,{x:0,y:0,width:dw(p),height:dh(p)});c.width=c.height=0;
       const H0=dh(p);for(const a of p.anns)if(vec.has(a.id))await drawVecText(pg,a,F,(X,Y)=>[X,H0-Y],0);
+      if(F)await drawHiddenWords(pg,ocrWords(p),F,1);
     }
     busy('Dosya yazılıyor…');const bytes=await out.save();if(ret)return bytes;busy(false);
     return await saveFile(filename,new Blob([bytes],{type:'application/pdf'}));

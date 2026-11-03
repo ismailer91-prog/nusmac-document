@@ -31,12 +31,13 @@ $$('[data-proxy]').forEach(b=>{const t=$(b.dataset.proxy);if(!t){b.hidden=true;r
 /* ---------- nesne ağacı (Netcad'deki katman yöneticisi gibi) ----------
    Bulunulan sayfadaki işaretler türlerine göre gruplanır. Her öğe: göster/gizle (a.hid), kilit (a.lock: seçilemez, taşınamaz), sil.
    Gizlenen nesne ekranda görünmez ve kaydedilen dosyaya da girmez. */
-const TGROUPS=[['text','Yazılar','text'],['img','Resimler ve imzalar','image'],['draw','Çizimler','pen'],['hl','Vurgular','hl'],['cover','Örtüler','white']];
-const tgOf=a=>a.type==='text'?'text':a.type==='img'?'img':a.type==='hl'?'hl':(a.type==='white'||a.type==='poly')?'cover':'draw';
+const TGROUPS=[['text','Yazılar','text'],['img','Resimler ve imzalar','image'],['meas','Ölçüler','ruler'],['draw','Çizimler','pen'],['hl','Vurgular','hl'],['cover','Örtüler','white']];
+const tgOf=a=>(a.type==='dim'||a.type==='area'||a.type==='xy')?'meas':a.type==='text'?'text':a.type==='img'?'img':a.type==='hl'?'hl':(a.type==='white'||a.type==='poly')?'cover':'draw';
 const treeOpen=lsGet('nusmac.tree',{text:true,img:true,draw:true,hl:true,cover:true});
 function annLabel(a){
   if(a.type==='text'){const t=(a.text||'').replace(/\s+/g,' ').trim();return t?(t.length>48?t.slice(0,48)+'…':t):'(boş yazı)'}
-  return {img:a.auto?'PDF resmi':'Resim / imza',path:'Kalem çizgisi',rect:'Kutu',arrow:'Ok',hl:'Vurgu',white:'Beyaz örtü',poly:'Serbest kesim'}[a.type]||a.type;
+  return {img:a.auto?'PDF resmi':'Resim / imza',path:'Kalem çizgisi',rect:'Kutu',arrow:'Ok',hl:'Vurgu',white:'Beyaz örtü',poly:'Serbest kesim',ellipse:'Daire / elips',
+    pline:'Çoklu çizgi · '+(a.lbl||''),dim:'Mesafe · '+(a.lbl||''),area:'Alan · '+(a.lbl||'').split('\n')[0].replace(/^Alan: /,''),xy:'Nokta · '+(a.lbl||'')}[a.type]||a.type;
 }
 function refreshTree(){if(refreshTree.r)return;refreshTree.r=requestAnimationFrame(()=>{refreshTree.r=0;buildTree()})}
 function afterAnnChange(p){renderOv(p);markThumb(p);updSelUI();buildTree()}
@@ -50,14 +51,14 @@ function buildTree(){
   for(const [g,name,icon] of TGROUPS){
     const items=p.anns.filter(a=>tgOf(a)===g);if(!items.length)continue;
     const vis=items.filter(a=>!a.hid).length;
-    const row=el('div','tg');row.setAttribute('role','treeitem');row.setAttribute('aria-expanded',String(!!treeOpen[g]));
+    const row=el('div','tg');row.setAttribute('role','treeitem');row.setAttribute('aria-expanded',String(treeOpen[g]!==false));
     row.innerHTML=`<button class="tw" title="Aç / kapat" aria-label="${name} aç/kapat"></button><input type="checkbox" title="Hepsini göster / gizle" aria-label="${name}: göster">${ic(icon)}<span class="tn">${name}</span><span class="tc">${items.length}</span>`;
     const cb=row.querySelector('input');cb.checked=vis>0;cb.indeterminate=vis>0&&vis<items.length;
-    const toggle=()=>{treeOpen[g]=!treeOpen[g];lsSet('nusmac.tree',treeOpen);buildTree()};
+    const toggle=()=>{treeOpen[g]=treeOpen[g]===false;lsSet('nusmac.tree',treeOpen);buildTree()};
     row.querySelector('.tw').onclick=toggle;row.querySelector('.tn').onclick=toggle;
     cb.onchange=()=>{pushUndo();const on=cb.checked;items.forEach(a=>{if(on)delete a.hid;else a.hid=true});if(!on&&S.sel&&items.some(a=>a.id===S.sel.aid))S.sel=null;afterAnnChange(p)};
     box.append(row);
-    if(!treeOpen[g])continue;
+    if(treeOpen[g]===false)continue;
     for(const a of items){
       const it=el('div','ti'+(S.sel&&S.sel.pageId===p.id&&S.sel.aid===a.id?' sel':'')+(a.hid?' off':''));it.setAttribute('role','treeitem');
       it.innerHTML=`<input type="checkbox" ${a.hid?'':'checked'} title="Göster / gizle" aria-label="Göster"><span class="tn" title="${esc(a.type==='text'?a.text||'':annLabel(a))}">${esc(annLabel(a))}</span>${a.auto?'<span class="tauto" title="PDF’ten otomatik ayrıştırıldı">PDF</span>':''}<button class="ib tl" aria-pressed="${!!a.lock}" title="${a.lock?'Kilidi aç':'Kilitle: seçilemez, taşınamaz'}">${ic(a.lock?'lock':'unlock')}</button><button class="ib tdel" title="Sil">${ic('trash')}</button>`;

@@ -38,6 +38,7 @@ const rep = {
   'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js': 'lib/pako.min.js',
   'https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js': 'lib/UTIF.js',
   'https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js': 'lib/fontkit.umd.min.js',
+  'https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/dist/tesseract.min.js': 'lib/tesseract/tesseract.min.js',
 };
 let desk = page;
 for (const [a, b] of Object.entries(rep)) {
