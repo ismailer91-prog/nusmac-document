@@ -11,6 +11,8 @@ const I={
  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
  unlock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
  scan:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M8 9h8M8 12h8M8 15h5"/>',
+ scansel:'<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><rect x="8" y="8" width="8" height="8" stroke-dasharray="2 2"/>',
+ auto:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><circle cx="12" cy="12" r="5"/><path d="M10 12h4"/>',
  aup:'<path d="M3 19 8.5 5 14 19"/><path d="M5.2 14h6.6"/><path d="M18 11V4M15 7l3-3 3 3"/>',
  adown:'<path d="M3 19 8.5 5 14 19"/><path d="M5.2 14h6.6"/><path d="M18 4v7M15 8l3 3 3-3"/>',
  case:'<path d="M2 18 6.5 6 11 18"/><path d="M3.8 14h5.4"/><circle cx="17" cy="15" r="3"/><path d="M20 12v6"/>',

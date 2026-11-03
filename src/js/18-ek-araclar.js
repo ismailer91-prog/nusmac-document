@@ -194,14 +194,18 @@ $$('[data-sym]').forEach(b=>{b.addEventListener('pointerdown',e=>e.preventDefaul
 
 /* ---------- yazı tanıma (OCR) ----------
    Tesseract programla birlikte gelir (app/lib/tesseract, Türkçe dil dosyası dahil), internet gerekmez.
-   Dosyalar okunup bellekten (blob) verilir; çünkü yerel dosyalarda fetch çalışmaz. */
-const OCR={p:null};
+   Dosyalar okunup bellekten (blob) verilir; çünkü yerel dosyalarda fetch çalışmaz.
+   - Yazıları tanı: bulunulan sayfanın tamamı.  - Alandan tanı (tool 'ocrsel'): fareyle seçilen bölüm.
+   - Otomatik: resim (ve yazısı olmayan, taranmış PDF) açılınca arka planda tanınır; p.ocr dolar.
+   Tanınan satırlar sayfanın üstünde görünmez ama seçilebilir bir metin katmanı olur (fareyle seçip Ctrl+C)
+   ve kaydedilen PDF'e görünmez metin olarak yazılır (aranabilir). */
+const OCR={p:null,q:Promise.resolve(),onProg:null,auto:lsGet('nusmac.ocrAuto',true),queue:[]};
 async function readAsset(rel){const D=window.desktop;if(D&&D.readAsset){try{const b=await D.readAsset(rel);if(b)return b}catch(e){}}return await readUrl(rel)}
 function ocrWorker(){
   if(OCR.p)return OCR.p;
   OCR.p=(async()=>{
     if(!window.Tesseract)throw new Error('Yazı tanıma bileşeni yüklenemedi');
-    const log=m=>{if(m.status==='recognizing text')busy(`Yazılar tanınıyor… %${Math.round(m.progress*100)}`)};
+    const log=m=>{if(m.status==='recognizing text'&&OCR.onProg)OCR.onProg(m.progress)};
     const [ws,cs,lg]=await Promise.all(['lib/tesseract/worker.min.js','lib/tesseract/tesseract-core-simd-lstm.wasm.js','lib/tesseract/lang/tur.traineddata.gz'].map(readAsset));
     if(!(ws&&cs&&lg)){
       if(/^https?:/.test(location.protocol))return Tesseract.createWorker('tur',1,{logger:log});   /* tarayıcı sürümü: dosyalar internetten */
@@ -215,41 +219,99 @@ function ocrWorker(){
   OCR.p.catch(()=>{OCR.p=null});return OCR.p;
 }
 const ocrKey=p=>JSON.stringify([p.rot,p.clip||null,p.iv||0]);
-/* PDF'e görünmez metin katmanı için: tanınan satırlar (örtülenler hariç) */
-function ocrWords(p){
-  if(!p.ocr||p.ocr.key!==ocrKey(p))return[];
+const ocrValid=p=>!!(p&&p.ocr&&p.ocr.key===ocrKey(p));
+/* tanınan satırlardan, üstü örtülmemiş olanlar */
+function ocrLines(p){
+  if(!ocrValid(p))return[];
   const cov=p.anns.filter(a=>!a.hid&&(a.type==='white'||a.type==='poly'||(a.type==='text'&&a.bg))).map(annBox);
-  return p.ocr.lines.filter(l=>!cov.some(r=>boxHit(l,r))).map(l=>({s:l.text,x:l.x,y:l.y,w:l.w,h:l.h,fam:'Arial',bold:false,italic:false}));
+  return p.ocr.lines.filter(l=>!cov.some(r=>boxHit(l,r)));
 }
-async function ocrCurrent(){
-  const p=S.pages[S.cur];if(!p){toast('Önce bir resim ya da PDF açın.');return}
+/* PDF'e görünmez metin katmanı için */
+function ocrWords(p){return ocrLines(p).map(l=>({s:l.text,x:l.x,y:l.y,w:l.w,h:l.h,fam:'Arial',bold:false,italic:false}))}
+
+/* Tanıma işi: sırayla çalışır (tek Tesseract işçisi). region: {x,y,w,h} pt ya da null (tüm sayfa). */
+function ocrRun(p,region,onProg){
+  const job=OCR.q.then(async()=>{
+    const s=Math.max(1.5,Math.min(p.kind==='img'?(p.nat||2):3,3500/Math.max(dw(p),dh(p))));
+    let c=await composite(p,s);
+    let ox=0,oy=0;
+    if(region){const r={x:Math.max(0,region.x),y:Math.max(0,region.y)};r.w=Math.min(dw(p)-r.x,region.w);r.h=Math.min(dh(p)-r.y,region.h);
+      const cc=mkCanvas(r.w*s,r.h*s);cc.getContext('2d').drawImage(c,-r.x*s,-r.y*s);c.width=c.height=0;c=cc;ox=r.x;oy=r.y}
+    const w=await ocrWorker();OCR.onProg=onProg||null;
+    let res;try{res=await w.recognize(c,{},{blocks:true})}finally{OCR.onProg=null;c.width=c.height=0}
+    const lines=[],paras=[];let conf=0;
+    for(const b of res.data.blocks||[])for(const pa of b.paragraphs||[]){const pl=[];
+      for(const l of pa.lines||[]){const t=(l.text||'').replace(/\s+/g,' ').trim();if(!t||l.confidence<25||!/[\p{L}\p{N}]/u.test(t))continue;const bb=l.bbox;
+        const L={text:t,x:ox+bb.x0/s,y:oy+bb.y0/s,w:(bb.x1-bb.x0)/s,h:(bb.y1-bb.y0)/s,conf:Math.round(l.confidence)};lines.push(L);pl.push(L);conf+=l.confidence}
+      if(pl.length)paras.push(pl)}
+    return{lines,paras,conf:lines.length?Math.round(conf/lines.length):0,region:region||null};
+  });
+  OCR.q=job.catch(()=>{});return job;
+}
+function ocrShow(p,r){
+  S.ocrPage=p;S.ocrRes=r;
+  $('#ocrInfo').textContent=`Sayfa ${S.pages.indexOf(p)+1}${r.region?' (seçilen bölüm)':''}: ${r.lines.length} satır tanındı · ortalama güven %${r.conf}`;
+  $('#ocrText').value=r.paras.map(pl=>pl.map(l=>l.text).join('\n')).join('\n\n');
+  $('#ocrModal').hidden=false;setTimeout(()=>$('#ocrText').focus(),30);
+}
+async function ocrCurrent(region,page){
+  const p=page||S.pages[S.cur];if(!p){toast('Önce bir resim ya da PDF açın.');return}
   if(p.kind==='text'){toast('Yazı sayfasındaki yazı zaten metin; seçip kopyalayabilirsiniz.');return}
   flushEdit();busy('Yazı tanıma hazırlanıyor…');await tick();
   try{
-    const s=Math.max(1.5,Math.min(p.kind==='img'?(p.nat||2):3,3500/Math.max(dw(p),dh(p))));
-    const c=await composite(p,s);const w=await ocrWorker();busy('Yazılar tanınıyor…');
-    const res=await w.recognize(c,{},{blocks:true});c.width=c.height=0;
-    const lines=[],paras=[];let conf=0;
-    for(const b of res.data.blocks||[])for(const pa of b.paragraphs||[]){const pl=[];
-      for(const l of pa.lines||[]){const t=(l.text||'').replace(/\s+/g,' ').trim();if(!t||l.confidence<25)continue;const bb=l.bbox;
-        const L={text:t,x:bb.x0/s,y:bb.y0/s,w:(bb.x1-bb.x0)/s,h:(bb.y1-bb.y0)/s,conf:l.confidence};lines.push(L);pl.push(L);conf+=l.confidence}
-      if(pl.length)paras.push(pl)}
-    busy(false);
-    if(!lines.length){toast('Bu sayfada okunabilir yazı bulunamadı.',5000);return}
-    p.ocr={key:ocrKey(p),lines,paras};S.dirty=true;
-    $('#ocrInfo').textContent=`Sayfa ${S.cur+1}: ${lines.length} satır tanındı · ortalama güven %${Math.round(conf/lines.length)}`;
-    $('#ocrText').value=paras.map(pl=>pl.map(l=>l.text).join('\n')).join('\n\n');
-    S.ocrPage=p;$('#ocrModal').hidden=false;setTimeout(()=>$('#ocrText').focus(),30);
+    const r=await ocrRun(p,region,pr=>busy(`Yazılar tanınıyor… %${Math.round(pr*100)}`));busy(false);
+    if(!r.lines.length){toast(region?'Seçtiğiniz bölümde okunabilir yazı bulunamadı.':'Bu sayfada okunabilir yazı bulunamadı.',5000);return}
+    if(!region){p.ocr={key:ocrKey(p),lines:r.lines,paras:r.paras,conf:r.conf};renderOv(p);buildTree()}
+    ocrShow(p,r);
   }catch(e){console.error(e);toast('Yazı tanınamadı: '+(e.message||e),6000)}finally{busy(false)}
 }
 /* kutudaki düzeltmeler: satır sayısı aynıysa satırlara işlenir */
-function ocrApplyEdits(p){const tl=$('#ocrText').value.split('\n').filter(x=>x.trim());if(p&&p.ocr&&tl.length===p.ocr.lines.length)p.ocr.lines.forEach((l,i)=>l.text=tl[i].trim())}
-$('#ocrBtn').onclick=ocrCurrent;
-$('#ocrClose').onclick=()=>{ocrApplyEdits(S.ocrPage);$('#ocrModal').hidden=true};
-$('#ocrCopy').onclick=async()=>{try{await navigator.clipboard.writeText($('#ocrText').value);toast('Yazı panoya kopyalandı.')}catch(e){$('#ocrText').select();document.execCommand('copy');toast('Yazı panoya kopyalandı.')}};
-$('#ocrToPage').onclick=()=>{const v=$('#ocrText').value.trim();if(!v)return;ocrApplyEdits(S.ocrPage);$('#ocrModal').hidden=true;
+function ocrApplyEdits(){const r=S.ocrRes;if(!r)return;const tl=$('#ocrText').value.split('\n').filter(x=>x.trim());if(tl.length===r.lines.length){r.lines.forEach((l,i)=>l.text=tl[i].trim());const p=S.ocrPage;if(p){renderOv(p);buildTree()}}}
+$('#ocrBtn').onclick=()=>ocrCurrent(null);
+$('#ocrSelBtn').onclick=()=>setTool('ocrsel');
+$('#ocrClose').onclick=()=>{ocrApplyEdits();$('#ocrModal').hidden=true};
+$('#ocrCopy').onclick=async()=>{ocrApplyEdits();try{await navigator.clipboard.writeText($('#ocrText').value);toast('Yazı panoya kopyalandı.')}catch(e){$('#ocrText').select();document.execCommand('copy');toast('Yazı panoya kopyalandı.')}};
+$('#ocrToPage').onclick=()=>{const v=$('#ocrText').value.trim();if(!v)return;ocrApplyEdits();$('#ocrModal').hidden=true;
   addTextPageAt(v.split(/\n\s*\n/).map(pa=>'<p>'+esc(pa.trim()).replace(/\n/g,'<br>')+'</p>').join(''),'Tanınan yazı');toast('Tanınan yazı yeni bir yazı sayfası olarak eklendi.')};
-$('#ocrEdit').onclick=()=>{const p=S.ocrPage;if(!p||!p.ocr)return;ocrApplyEdits(p);$('#ocrModal').hidden=true;pushUndo();
-  p.ocr.lines.forEach((l,i)=>{const size=Math.max(5,Math.round(l.h*0.78*10)/10);
-    p.anns.push({id:nid('a'),type:'text',x:l.x-1,y:l.y-1,w:l.w+3,h:l.h+2,minW:l.w+3,minH:l.h+2,text:l.text,size,color:'#000000',bold:false,italic:false,underline:false,font:'Arial',align:'left',bg:'#ffffff',lineKey:'ocr'+i})});
-  p.ocr=null;renderOv(p);markThumb(p);buildTree();toast('Satırlar düzenlenebilir metin kutusu oldu: çift tıklayıp değiştirin.',5000)};
+$('#ocrEdit').onclick=()=>{const p=S.ocrPage,r=S.ocrRes;if(!p||!r)return;ocrApplyEdits();$('#ocrModal').hidden=true;pushUndo();
+  r.lines.forEach((l,i)=>{const size=Math.max(5,Math.round(l.h*0.78*10)/10);
+    p.anns.push({id:nid('a'),type:'text',x:l.x-1,y:l.y-1,w:l.w+3,h:l.h+2,minW:l.w+3,minH:l.h+2,text:l.text,size,color:'#000000',bold:false,italic:false,underline:false,font:'Arial',align:'left',bg:'#ffffff',lineKey:'ocr'+(nid('l'))})});
+  renderOv(p);markThumb(p);buildTree();toast('Satırlar düzenlenebilir metin kutusu oldu: çift tıklayıp değiştirin.',5000)};
+
+/* ---------- otomatik tanıma: resim açılınca arka planda ---------- */
+function updOcrAutoBtn(){$('#ocrAutoBtn').setAttribute('aria-pressed',String(!!OCR.auto))}
+$('#ocrAutoBtn').onclick=()=>{OCR.auto=!OCR.auto;lsSet('nusmac.ocrAuto',OCR.auto);updOcrAutoBtn();
+  toast(OCR.auto?'Resim açılınca yazılar kendiliğinden tanınacak.':'Otomatik yazı tanıma kapatıldı. “Yazıları tanı” ile elle başlatabilirsiniz.');if(OCR.auto)queueOcr(S.pages)};
+updOcrAutoBtn();
+function queueOcr(pages){if(!OCR.auto)return;for(const p of pages)if((p.kind==='img'||p.kind==='pdf')&&!p.ocr&&!p.ocrTried&&!OCR.queue.includes(p))OCR.queue.push(p);runOcrQ()}
+async function needsOcr(p){
+  if(p.kind==='img')return true;
+  try{const r=await getTC(p);return !r.items.some(it=>it.str&&it.str.trim())}catch(e){return false}  /* yazısı olmayan PDF sayfası = taranmış */
+}
+async function runOcrQ(){
+  if(OCR.running)return;OCR.running=true;
+  try{while(OCR.queue.length){
+      let i=OCR.queue.indexOf(S.pages[S.cur]);if(i<0)i=0;const p=OCR.queue.splice(i,1)[0];
+      if(!S.pages.includes(p)||!OCR.auto||p.ocr||p.ocrTried)continue;p.ocrTried=true;
+      if(!(await needsOcr(p)))continue;
+      const n=()=>`Yazılar tanınıyor: sayfa ${S.pages.indexOf(p)+1}`;S.ocrMsg=n();updStatus();
+      try{const r=await ocrRun(p,null,pr=>{S.ocrMsg=`${n()} %${Math.round(pr*100)}`;updStatus()});
+        if(r.lines.length&&S.pages.includes(p)&&!p.ocr){p.ocr={key:ocrKey(p),lines:r.lines,paras:r.paras,conf:r.conf};renderOv(p);buildTree();
+          if(!OCR.told){OCR.told=true;toast(`Sayfa ${S.pages.indexOf(p)+1}: ${r.lines.length} satır yazı tanındı. Fareyle seçip kopyalayabilir, “Nesneler” listesinden tümünü alabilirsiniz.`,7000)}}
+      }catch(e){console.warn('otomatik yazı tanıma',e)}
+    }}
+  finally{OCR.running=false;S.ocrMsg='';updStatus()}
+}
+
+/* ---------- sayfa üstünde seçilebilir metin katmanı ---------- */
+let ocrMeas=null;
+function ocrLayer(p,ov,k){
+  const L=ocrLines(p);if(!L.length)return;
+  if(!ocrMeas)ocrMeas=document.createElement('canvas').getContext('2d');
+  const box=el('div','ocrlayer');
+  for(const l of L){const fs=Math.max(4,l.h*0.82)*k;ocrMeas.font=`${fs}px Arial, Helvetica, sans-serif`;const mw=ocrMeas.measureText(l.text).width||1;
+    const d=el('div','ocrl');d.textContent=l.text;d.append(document.createTextNode('\n'));
+    Object.assign(d.style,{left:l.x*k+'px',top:l.y*k+'px',height:l.h*k+'px',lineHeight:l.h*k+'px',fontSize:fs+'px',transform:`scaleX(${(l.w*k/mw).toFixed(4)})`});
+    box.append(d)}
+  ov.prepend(box);
+}

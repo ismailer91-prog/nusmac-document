@@ -20,7 +20,7 @@ async function openFiles(files){
     }catch(e){console.error(e);toast(`${f.name} açılamadı: ${e&&e.name==='PasswordException'?'dosya parola korumalı.':(e.message||e)}`,6000)}
   }
   busy(false);
-  if(added){buildViewer();queueObj(S.pages.slice(start));if(!hadReal) requestAnimationFrame(fitWidth);requestAnimationFrame(()=>scrollToPage(start,false));toast(added>1?'Dosyalar belgeye arka arkaya eklendi.':'Dosya belgeye eklendi.')}
+  if(added){buildViewer();queueObj(S.pages.slice(start));queueOcr(S.pages.slice(start));if(!hadReal) requestAnimationFrame(fitWidth);requestAnimationFrame(()=>scrollToPage(start,false));toast(added>1?'Dosyalar belgeye arka arkaya eklendi.':'Dosya belgeye eklendi.')}
 }
 async function addPdf(f){
   if(!window.pdfjsLib) throw new Error('PDF okuyucu yüklenemedi');

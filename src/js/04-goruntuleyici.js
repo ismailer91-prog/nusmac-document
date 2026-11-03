@@ -164,6 +164,7 @@ function renderOv(p){
     }
   }
   if(hasSvg)ov.append(svg);
+  ocrLayer(p,ov,k);
   if(S.wm&&S.wm.text){const w=el('div','wm');w.textContent=S.wm.text;Object.assign(w.style,{fontSize:wmSize(dw(p))*k+'px',color:S.wm.color,opacity:S.wm.op});if(p.kind==='text')w.style.top=Math.min(50,42100/Math.max(1,dh(p)))+'%';ov.prepend(w)}
   if(S.pnum&&p.kind!=='text'){const n=el('div','pnum');n.textContent=String(S.pages.indexOf(p)+1);Object.assign(n.style,{fontSize:10*k+'px',top:(dh(p)-22-10)*k+'px'});ov.append(n)}
   if(p===S.pages[S.cur])refreshTree();
@@ -208,7 +209,7 @@ function onDown(ev,p){
     return;
   }
   ev.preventDefault();
-  if(p.kind==='text'&&['edit','crop','cut','lasso','grab'].includes(tool)){toast(tool==='edit'?'Yazı sayfasında yazıyı doğrudan tıklayıp düzenleyebilirsiniz.':'Bu resim aracı PDF ve resim sayfalarında çalışır.');setTool('select');return}
+  if(p.kind==='text'&&['edit','crop','cut','lasso','grab','ocrsel'].includes(tool)){toast(tool==='ocrsel'?'Yazı sayfasındaki yazı zaten metin; seçip kopyalayabilirsiniz.':tool==='edit'?'Yazı sayfasında yazıyı doğrudan tıklayıp düzenleyebilirsiniz.':'Bu resim aracı PDF ve resim sayfalarında çalışır.');setTool('select');return}
   if(tool==='edit'){
     const t=ev.target.closest('.ann.text');
     if(t){const a=p.anns.find(q=>q.id===t.dataset.aid);if(a){pushUndo();S.sel={pageId:p.id,aid:a.id};editText(p,a,'end')}return}
@@ -231,7 +232,7 @@ function onDown(ev,p){
   if(tool==='xy'){pushUndo();p.anns.push({id:nid('a'),type:'xy',x,y,color:S.color});renderOv(p);markThumb(p);return}
   const before=snap();let a;
   if(tool==='crop')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,crop:true};
-  else if(tool==='cut'||tool==='grab')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:'#3a3db0',lw:1.2,temp:tool};
+  else if(tool==='cut'||tool==='grab'||tool==='ocrsel')a={id:nid('a'),type:'rect',x,y,w:0,h:0,color:tool==='ocrsel'?'#e07800':'#3a3db0',lw:1.2,temp:tool};
   else if(tool==='lasso')a={id:nid('a'),type:'path',pts:[[x,y]],color:'#3a3db0',lw:1.5,temp:'lasso'};
   else if(tool==='dist'||tool==='calib')a={id:nid('a'),type:'dim',x1:x,y1:y,x2:x,y2:y,color:tool==='calib'?'#3a3db0':S.color,lw:tool==='calib'?1.2:Math.min(S.lw,2),temp:tool==='calib'?'calib':undefined};
   else if(tool==='rect'||tool==='hl'||tool==='white'||tool==='ellipse')a={id:nid('a'),type:tool,x,y,w:0,h:0,color:tool==='hl'?S.hlColor:S.color,lw:S.lw};
@@ -250,6 +251,7 @@ function onDown(ev,p){
     if(a.type==='path'){if(a.pts.length===1)a.pts.push([a.pts[0][0]+0.2,a.pts[0][1]+0.2]);tiny=false}
     else if(a.type==='arrow'||a.type==='dim')tiny=Math.hypot(a.x2-a.x1,a.y2-a.y1)<4;else tiny=a.w<3||a.h<3;
     if(a.temp==='calib'){p.anns.pop();renderOv(p);if(!tiny)openCalib(p,Math.hypot(a.x2-a.x1,a.y2-a.y1));return}
+    if(a.temp==='ocrsel'){p.anns.pop();renderOv(p);setTool('select');if(!tiny)ocrCurrent({x:a.x,y:a.y,w:a.w,h:a.h},p);return}
     if(a.temp){p.anns.pop();renderOv(p);if(a.temp==='lasso'?a.pts.length>3:!tiny)imageOp(p,a);return}
     if(a.crop){p.anns.pop();if(tiny||!applyCrop(p,a))renderOv(p);else commitUndo(before);return}
     if(tiny)p.anns.pop();else{commitUndo(before);markThumb(p)}renderOv(p)});
@@ -320,6 +322,7 @@ const HINTS={select:'Seç: işarete tıklayıp taşıyın, köşedeki tutamaçla
  area:'Alan: köşe noktalarını tıklayarak koyun; çift tık ya da Enter ile bitirin. Alan ve çevre yazılır.',
  xy:'Nokta koy: koordinatını yazmak istediğiniz noktalara tıklayın.',
  pick:'Renk seçici: sayfada rengini almak istediğiniz yere tıklayın.',
+ ocrsel:'Alandan yazı tanı: yazısını almak istediğiniz bölümü fareyle seçin.',
  calib:'Uzunluğunu bildiğiniz iki nokta arasında sürükleyin; sonra gerçek uzunluğu yazacaksınız.'};
 function setTool(t){
   if(S.build)finishBuild();flushEdit();if(t!=='place')S.pendingImg=null;S.tool=t;
@@ -330,7 +333,7 @@ function setTool(t){
 function countWords(){let n=0;for(const p of S.pages)if(p.kind==='text'){const e=E[p.id];const t=e&&e.body?e.body.innerText:(p.html||'').replace(/<[^>]+>/g,' ');n+=(t.match(/\S+/g)||[]).length}S.words=n}
 function updStatus(){
   const n=S.pages.length;$('#docName').textContent=S.baseName||(S.pages.length&&S.pages.every(p=>p.sample)?'Örnek belge':S.pages.length?'Adsız belge':'Boş belge');const files=new Set(S.pages.filter(p=>!p.sample).map(p=>p.name)).size;
-  $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:''):'Sayfa yok';
+  $('#pStat').textContent=n?`Sayfa ${Math.min(S.cur+1,n)} / ${n}`+(S.words?` · ${S.words} sözcük`:'')+(S.objMsg?` · ${S.objMsg}`:'')+(S.ocrMsg?` · ${S.ocrMsg}`:''):'Sayfa yok';
   refreshTree();updScaleLbl();
 }
 let scrollRaf=0;

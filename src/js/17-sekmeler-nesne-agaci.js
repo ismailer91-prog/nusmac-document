@@ -47,7 +47,13 @@ function buildTree(){
   const box=$('#objTree');if(!box)return;const p=S.pages[S.cur];const sc=box.scrollTop;box.innerHTML='';
   $('#objCount').textContent=p?`Sayfa ${S.cur+1}`:'';
   if(!p){box.innerHTML='<div class="tempty">Belge boş.</div>';return}
-  if(!p.anns.length){box.innerHTML='<div class="tempty">Bu sayfada nesne yok. Metin, resim, imza ya da çizim eklediğinizde burada listelenir.</div>';return}
+  if(ocrValid(p)){const n=ocrLines(p).length;const row=el('div','tg tocr');
+    row.innerHTML=`${ic('scan')}<span class="tn" title="Fareyle sayfadan seçip kopyalayabilirsiniz">Tanınan yazı</span><span class="tc">${n} satır</span><button class="ib" title="Tümünü panoya kopyala">${ic('copy')}</button><button class="ib" title="Yazıyı göster ve düzenle">${ic('edit')}</button>`;
+    const [cp,ed]=row.querySelectorAll('button');
+    cp.onclick=async()=>{const t=p.ocr.paras.map(pl=>pl.map(l=>l.text).join('\n')).join('\n\n');try{await navigator.clipboard.writeText(t)}catch(e){}toast('Tanınan yazı panoya kopyalandı.')};
+    ed.onclick=()=>ocrShow(p,{lines:p.ocr.lines,paras:p.ocr.paras,conf:p.ocr.conf||0,region:null});
+    box.append(row)}
+  if(!p.anns.length){if(!ocrValid(p))box.innerHTML='<div class="tempty">Bu sayfada nesne yok. Metin, resim, imza ya da çizim eklediğinizde burada listelenir.</div>';return}
   for(const [g,name,icon] of TGROUPS){
     const items=p.anns.filter(a=>tgOf(a)===g);if(!items.length)continue;
     const vis=items.filter(a=>!a.hid).length;

@@ -263,6 +263,34 @@ async function test(name, fn) {
     assert(n === 3, `3 düzenlenebilir satır bekleniyordu, ${n} oldu`);
   });
 
+  await test('Resim açılınca yazılar kendiliğinden tanınır ve fareyle seçilebilir', async page => {
+    await openScan(page);
+    await page.waitForFunction(() => window.__nm.S.pages[0].ocr, null, { timeout: 60000 });
+    await page.waitForSelector('.ocrl');
+    const lines = await page.$$eval('.ocrl', l => l.map(x => x.textContent));
+    assert(lines.some(t => t.includes('Müdürlüğüne')), 'Seçilebilir katmanda yazı yok: ' + lines.join(' | '));
+    // fareyle ikinci satırı seç
+    const r = await page.evaluate(() => { const d = [...document.querySelectorAll('.ocrl')].find(x => x.textContent.includes('12345')).getBoundingClientRect(); return [d.left + 2, d.top + d.height / 2, d.right - 2]; });
+    await page.mouse.move(r[0], r[1]); await page.mouse.down(); await page.mouse.move(r[2], r[1], { steps: 5 }); await page.mouse.up();
+    const sel = await page.evaluate(() => getSelection().toString());
+    assert(sel.includes('Gizli bilgi 12345'), 'Fareyle seçilen yazı: ' + JSON.stringify(sel));
+    assert((await page.textContent('#objTree')).includes('Tanınan yazı'), 'Nesne listesinde tanınan yazı yok');
+  });
+
+  await test('Alandan tanı: yalnız seçilen bölümdeki yazı çıkar', async page => {
+    await page.evaluate(() => { localStorage.setItem('nusmac.ocrAuto', 'false'); });
+    await page.reload(); await page.waitForFunction(() => window.__nm);
+    await openScan(page);
+    await page.click('[data-tab="resim"]'); await page.click('#ocrSelBtn');
+    const box = await page.evaluate(() => { const r = document.querySelector('.ov').getBoundingClientRect(); return { x: r.x, y: r.y, k: window.__nm.S.k, s: window.__nm.S.pages[0].w / 1240 }; });
+    // ikinci satır: resimde y≈250..300 px
+    const P = (px, py) => [box.x + px * box.s * box.k, box.y + py * box.s * box.k];
+    await page.mouse.move(...P(100, 245)); await page.mouse.down(); await page.mouse.move(...P(700, 310), { steps: 4 }); await page.mouse.up();
+    await page.waitForSelector('#ocrModal:not([hidden])', { timeout: 60000 });
+    const t = await page.inputValue('#ocrText');
+    assert(t.includes('12345') && !t.includes('Müdürlüğüne') && !t.includes('öğütücü'), 'Bölüm dışı yazı da geldi ya da eksik: ' + t);
+  });
+
   await test('Ölçü: ölçek 1:1000, mesafe ve alan doğru hesaplanır', async page => {
     await openFiles(page, 'turkce.pdf');
     await page.click('[data-tab="olcu"]');

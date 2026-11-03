@@ -378,3 +378,16 @@ footer.status .xy{font:12px var(--mono);color:var(--muted);margin-right:12px;whi
 .fld input[type=range]{width:100%}
 .toast{pointer-events:none}
 .rg{padding:0 5px}
+/* tanınan yazının seçilebilir katmanı (görünmez; seçince mavi) */
+.ocrlayer{position:absolute;inset:0;pointer-events:none}
+.ocrl{position:absolute;white-space:pre;color:transparent;transform-origin:0 0;pointer-events:auto;user-select:text;-webkit-user-select:text;cursor:text;font-family:Arial,Helvetica,sans-serif}
+.ocrl::selection{background:rgba(31,111,209,.32);color:transparent}
+.viewer:not(.tool-select) .ocrl{pointer-events:none}
+.viewer.tool-ocrsel .ov{cursor:crosshair}
+.tocr{background:color-mix(in srgb,var(--ic-o) 10%,transparent)}
+.tocr svg{color:var(--ic-o)!important}
+.tocr .ib{width:22px;height:22px;border-radius:4px;color:var(--muted)}.tocr .ib svg{width:14px;height:14px;color:var(--muted)!important}
+/* seçim yalnız belge yazısında kalsın; çubuklar ve menüler seçilmesin */
+header.top,nav.tabs,.ribbon,footer.status,.side,.pghead,.ddm{-webkit-user-select:none;user-select:none}
+.hsearch input{-webkit-user-select:text;user-select:text}
+.viewer.tool-select .ocrlayer{pointer-events:auto;-webkit-user-select:text;user-select:text}
