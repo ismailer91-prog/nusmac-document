@@ -24,6 +24,9 @@ npm run dist
 
 ## Claude Code ile devam etmek
 Bu klasörde `claude` komutunu çalıştırın. Claude, `CLAUDE.md` dosyasını okuyarak projenin yapısını öğrenir.
-Asıl düzenlenen dosya `src/nusmac.html`; `app/index.html` her `npm start` / `npm run dist` sırasında ondan üretilir.
+Asıl kaynak `src/` klasörüdür (`index.html`, `styles.css`, `js/`); `app/index.html` her `npm start` / `npm test` / `npm run dist` sırasında ondan üretilir.
 
-İlk iş olarak önerim: Claude'dan projeyi bir **git deposu** yapmasını isteyin; böylece her değişikliği geri alabilirsiniz.
+Testler: `npm test`. Tarayıcıda açılan tek dosyalık sürüm: `dist-web/nusmac.html` (build sırasında üretilir).
+
+## Windows kurulum dosyası (GitHub'dan)
+Kod GitHub'a gönderildiğinde testler ve Windows kurulum dosyası kendiliğinden hazırlanır: GitHub'da depo → **Actions** → son çalıştırma → **Artifacts** → `NusmacDocument-Windows`.

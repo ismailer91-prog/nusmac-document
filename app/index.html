@@ -544,6 +544,7 @@ footer.status .r{flex:1;text-align:center}
 <script>
 (function(){
 'use strict';
+/* ===== js/01-temel.js ===== */
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const PT2PX=96/72;
 const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
@@ -682,6 +683,7 @@ async function fileToImage(f){
 }
 function srcSize(s){return [s.naturalWidth||s.width,s.naturalHeight||s.height]}
 
+/* ===== js/02-dosya-acma.js ===== */
 /* ---------- opening files ---------- */
 function clearSample(){if(S.pages.length&&S.pages.every(p=>p.sample)){S.pages=[];S.undo=[];S.redo=[];S.sel=null;S.checked.clear()}}
 function setBase(name){if(!S.baseName)S.baseName=name.replace(/\.[^.]+$/,'')}
@@ -723,6 +725,7 @@ function imgPage(img,name,extra){
 async function addImage(f){addPage(imgPage(await fileToImage(f),f.name))}
 async function addTiff(f){const cs=tiffCanvases(await f.arrayBuffer());cs.forEach(c=>addPage(imgPage(c,f.name)))}
 
+/* ===== js/03-geri-al.js ===== */
 /* ---------- undo ---------- */
 function snap(){return JSON.stringify({order:S.pages.map(p=>p.id),st:S.pages.map(p=>({id:p.id,rot:p.rot,anns:p.anns,clip:p.clip||null,objMode:!!p.objMode,objSig:p.objSig||null}))})}
 function pushUndo(){S.dirty=true;S.undo.push(snap());if(S.undo.length>80)S.undo.shift();S.redo=[];updUndo()}
@@ -733,6 +736,7 @@ function redo(){if(!S.redo.length)return;S.undo.push(snap());restore(S.redo.pop(
 function updUndo(){$('#undoBtn').disabled=!S.undo.length;$('#redoBtn').disabled=!S.redo.length}
 function keepScroll(fn){const v=$('#viewer'),t=v.scrollTop;fn();v.scrollTop=t}
 
+/* ===== js/04-goruntuleyici.js ===== */
 /* ---------- viewer ---------- */
 let io=null,tio=null,zt=0;
 function el(tag,cls){const e=document.createElement(tag);if(cls)e.className=cls;return e}
@@ -1084,6 +1088,7 @@ $('#q').addEventListener('input',e=>{clearTimeout(sT);sT=setTimeout(()=>runSearc
 $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(S.hits.length)gotoHit(S.hitI+(e.shiftKey?-1:1));else runSearch(e.target.value)}});
 $('#qprev').onclick=()=>gotoHit(S.hitI-1);$('#qnext').onclick=()=>gotoHit(S.hitI+1);
 
+/* ===== js/05-kaydet-pdf.js ===== */
 /* ---------- compositing & export ---------- */
 function wrapLines(ctx,text,maxW){const out=[];for(const para of text.split('\n')){if(!para){out.push('');continue}let line='';for(const w of para.split(/ +/)){const t=line?line+' '+w:w;if(ctx.measureText(t).width<=maxW||!line){if(ctx.measureText(t).width>maxW&&!line){let cur='';for(const ch of w){if(ctx.measureText(cur+ch).width>maxW&&cur){out.push(cur);cur=ch}else cur+=ch}line=cur}else line=t}else{out.push(line);line=w}}out.push(line)}return out}
 function drawAnns(ctx,anns,s,skipHl,vec){
@@ -1243,6 +1248,7 @@ async function exportImage(type){
 }
 const base=()=>(S.baseName||'belge').replace(/[\\/:*?"<>|]+/g,'-');
 
+/* ===== js/06-pdf-word.js ===== */
 /* ---------- PDF text → Word ---------- */
 async function pdfToWord(){
   const pp=S.pages.filter(p=>p.kind==='pdf');
@@ -1266,6 +1272,7 @@ async function pdfToWord(){
   toast(`PDF’teki yazı, düzenlenebilir yazı sayfası olarak eklendi (sayfa ${S.pages.indexOf(p)+1}). Biçim sadeleştirilmiştir.`,6500);
 }
 
+/* ===== js/07-imza.js ===== */
 /* ---------- signature ---------- */
 const pad=$('#sigPad'),pctx=pad.getContext('2d');let ink='#1f3fbf',padDirty=false;
 function clearPad(){pctx.clearRect(0,0,pad.width,pad.height);padDirty=false}
@@ -1297,6 +1304,7 @@ function renderSaved(){const list=lsGet('belgemasasi.imzalar',[]);$('#sigSavedWr
       const im=c.querySelector('img');closeSign();preparePlace(src,(im.naturalWidth||3)/(im.naturalHeight||1),140)};box.append(c)})}
 $('#signBtn').onclick=openSign;
 
+/* ===== js/08-serit.js ===== */
 /* ---------- ribbon ---------- */
 function showTab(t){$$('.rtabs [data-rt]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.rt===t)));$$('#ribbon [data-rp]').forEach(p=>p.hidden=p.dataset.rp!==t)}
 $$('.rtabs [data-rt]').forEach(b=>b.onclick=()=>showTab(b.dataset.rt));
@@ -1374,6 +1382,7 @@ document.addEventListener('keydown',e=>{
   const m={v:'select',t:'text',e:'edit',h:'hl',p:'pen',r:'rect',a:'arrow',w:'white',c:'crop',k:'cut',l:'lasso',g:'grab'};if(m[k])setTool(m[k]);
 });
 
+/* ===== js/09-yazi-sayfalari.js ===== */
 /* ---------- yazı sayfaları ---------- */
 try{document.execCommand('defaultParagraphSeparator',false,'p');document.execCommand('styleWithCSS',false,true)}catch(e){}
 const isImgFile=f=>/^image\//.test(f.type||'')||/\.(jpe?g|png|gif|webp|bmp|tiff?)$/i.test(f.name||'');
@@ -1521,6 +1530,7 @@ function dupPage(p){syncText(p);pushUndo();const c=Object.assign({},p,{id:nid('p
   const i=S.pages.indexOf(p);addPage(c,i+1);buildViewer();scrollToPage(i+1,false);toast('Sayfa çoğaltıldı.')}
 $('#dupPage').onclick=()=>curPage(dupPage);
 
+/* ===== js/10-resim-araclari.js ===== */
 /* ---------- resim araçları (sayfa üstünde) ---------- */
 function clampRect(p,r){const x=Math.max(0,r.x),y=Math.max(0,r.y),x2=Math.min(dw(p),r.x+r.w),y2=Math.min(dh(p),r.y+r.h);return x2-x>=3&&y2-y>=3?{x,y,w:x2-x,h:y2-y}:null}
 async function regionCanvas(p,r,pts){const s=Math.min(pageScale(p),3);const full=await composite(p,s);const c=document.createElement('canvas');c.width=Math.max(1,Math.round(r.w*s));c.height=Math.max(1,Math.round(r.h*s));const x=c.getContext('2d');
@@ -1591,6 +1601,7 @@ $('#pdfImgs').onclick=async()=>{const pp=S.pages.filter(p=>p.kind==='pdf');if(!p
     busy(false);await saveFile(`${base()}-resimler.zip`,zipStore(files,'application/zip'));toast(`${out.length} resim çıkarıldı.`)}
   catch(e){console.error(e);toast('Resimler çıkarılamadı: '+(e.message||e))}finally{busy(false)}};
 
+/* ===== js/11-nesne-modu.js ===== */
 /* ---------- PDF nesne modu: yazılar ve resimler ayrı, düzenlenebilir nesneler ---------- */
 function filterCtx(ctx,noText,noImg){
   if(noText){ctx.fillText=function(){};ctx.strokeText=function(){}}
@@ -1670,6 +1681,7 @@ $('#objBtn').onclick=()=>{S.objAuto=!S.objAuto;updObjBtn();lsSet('nusmac.objAuto
     if(ps.length){pushUndo();ps.forEach(p=>{p.anns=p.anns.filter(a=>!a.auto);p.objMode=false;p.objSig=null});keepScroll(buildViewer)}
     toast(ps.length?'Nesne modu kapandı; değiştirilmemiş sayfalar orijinal görünüme döndü.':'Nesne modu kapandı. Yeni açılan PDF’ler ayrıştırılmayacak.',5000)}};
 
+/* ===== js/12-zip-docx.js ===== */
 /* ---- zip (no library) ---- */
 async function unzip(buf){
   const u8=new Uint8Array(buf),dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);let eo=-1;
@@ -1822,6 +1834,7 @@ async function docxToHtml(buf){
   return{html:html||'<p><br></p>',margins:pm?{t:+wv(pm,'top')/15,r:+wv(pm,'right')/15,b:+wv(pm,'bottom')/15,l:+wv(pm,'left')/15}:null};
 }
 function withTimeout(p,ms,msg){let t;return Promise.race([p,new Promise((_,rej)=>{t=setTimeout(()=>rej(new Error(msg)),ms)})]).finally(()=>clearTimeout(t))}
+/* ===== js/13-kaydet-word-resim.js ===== */
 /* yazı sayfasını A4 sayfalara böler; işaretler (imza, kaşe, kalem) üstüne çizilir */
 async function textCanvases(p,scale=2,words=false){
   if(!window.html2canvas)throw new Error('Sayfa çizici yüklenemedi');
@@ -1893,6 +1906,7 @@ async function exportImages(pages,type,name){
 async function exportSplitPdf(pages,name){const files=[];for(let i=0;i<pages.length;i++){const b=await exportPdf([pages[i]],'',false,true);if(!b)return false;files.push([`${name}-sayfa-${String(i+1).padStart(2,'0')}.pdf`,new Uint8Array(b)])}
   busy(false);return await saveFile(`${name}.zip`,zipStore(files,'application/zip'))}
 
+/* ===== js/14-gorsel-alani.js ===== */
 /* ================= Görsel alanı (katmanlı resim düzenleyici) ================= */
 const G={W:1600,H:1000,bg:'#ffffff',layers:[],sel:null,tool:'move',z:1,ox:0,oy:0,fitted:false,autoFit:true,undo:[],redo:[],mq:null,drag:null,space:false,cropTarget:null};
 const gcv=$('#gcv'),gctx=gcv.getContext('2d');
@@ -2217,6 +2231,7 @@ function closeStudio(apply){
 }
 $('#stApply').onclick=()=>closeStudio(true);$('#stCancel').onclick=()=>closeStudio(false);
 
+/* ===== js/15-kaydet-penceresi.js ===== */
 /* ---------- kaydet penceresi ---------- */
 const fmtVal=()=>{const r=document.querySelector('input[name="svf"]:checked');return r?r.value:'pdf'};
 const SVNOTES={pdf:'Tüm sayfalar tek PDF olur. Yazılar (düzenlediğiniz ve eklediğiniz metinler, Word sayfaları dahil) seçilebilir ve aranabilir kalır. Beyaz örtüyle kapattığınız yazılar dosyadan tamamen silinir.',
@@ -2258,32 +2273,7 @@ window.addEventListener('dragover',e=>{if(e.dataTransfer&&e.dataTransfer.types.i
 window.addEventListener('drop',e=>{if(!e.dataTransfer||!e.dataTransfer.files.length)return;e.preventDefault();dragDepth=0;document.body.classList.remove('dropping');openFiles([...e.dataTransfer.files])});
 window.addEventListener('beforeunload',e=>{if(S.dirty&&S.pages.some(p=>!p.sample)){e.preventDefault();e.returnValue=''}});
 
-/* ---------- sample content ---------- */
-function makeSample(){
-  const W=1240,H=1754,s=W/595.28,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#111';x.textBaseline='alphabetic';
-  const today=new Date().toLocaleDateString('tr-TR');
-  x.font='bold 34px Arial';x.textAlign='center';x.fillText('ÖRNEK BELGE',W/2,190);
-  x.font='26px Arial';x.textAlign='right';x.fillText(today,W-150,260);x.textAlign='left';
-  x.font='bold 26px Arial';x.fillText('Konu:',150,330);x.font='26px Arial';x.fillText('Nusmac ile düzenleme denemesi',232,330);
-  const body=['Bu sayfa, programın neler yapabildiğini göstermek için hazırlanmış bir örnektir. Kendi PDF, Word, JPG veya TIF dosyanızı açtığınızda örnek sayfalar kendiliğinden kaldırılır.',
-    'Çizim sekmesinden Vurgula ile önemli satırları işaretleyebilir, Kalem ile çizebilir, Beyaz örtü ile bir yazının üstünü kapatabilirsiniz. Ekle sekmesindeki Metin kutusu ile sayfanın istediğiniz yerine yazı koyabilirsiniz.',
-    'Ekle → İmza / Kaşe ile imzanızı çizip ya da kaşe fotoğrafını yükleyip istediğiniz yere yerleştirebilirsiniz. Açtığınız tüm dosyalar bu belgeye arka arkaya eklenir; soldaki listeden sürükleyerek sırasını değiştirebilirsiniz.',
-    'İşiniz bitince Kaydet’e basın ve biçimi seçin: PDF, Word ya da resim.'];
-  let y=420;for(const para of body){for(const ln of wrapLines(x,para,W-300)){x.fillText(ln,150,y);y+=40}y+=22}
-  x.strokeStyle='#999';x.lineWidth=2;x.beginPath();x.moveTo(820,1460);x.lineTo(1090,1460);x.stroke();x.font='24px Arial';x.textAlign='center';x.fillText('İmza',955,1495);
-  const pt=v=>v/s;
-  const p={id:nid('p'),kind:'img',img:c,w:595.28,h:841.89,rot:0,name:'Örnek sayfa',sample:true,nat:s,anns:[
-    {id:nid('a'),type:'hl',x:pt(146),y:pt(302),w:pt(560),h:pt(38),color:'#ffe45c'},
-    {id:nid('a'),type:'text',x:pt(760),y:pt(560)+170,w:150,h:34,text:'Buraya kendi notunuzu yazabilirsiniz.',size:12,color:'#c62828',bold:true,bg:null},
-    {id:nid('a'),type:'arrow',x1:440,y1:480,x2:pt(1000),y2:pt(1440),color:'#1f3fbf',lw:2},
-    {id:nid('a'),type:'rect',x:pt(136),y:pt(1010),w:pt(970),h:pt(150),color:'#2e7d32',lw:1.5}
-  ]};
-  addPage(p);
-}
-function sampleText(){const today=new Date().toLocaleDateString('tr-TR');
-  addPage(textPage(`<p style="text-align:center"><b>ÖRNEK YAZI SAYFASI</b></p><p style="text-align:right">${today}</p><p><b>Konu:</b> Yazı sayfası örneği</p><p style="text-align:justify">Bu sayfa Word gibi çalışır: içine tıklayıp yazabilir, üstteki <b>Giriş</b> sekmesinden yazı tipini, boyutunu, rengini ve hizalamayı değiştirebilirsiniz. Açtığınız Word dosyaları da belgeye böyle eklenir.</p><p style="text-align:justify"><b>Ekle</b> sekmesinden resim, tablo, imza ya da kaşe ekleyebilirsiniz. Yazı sayfasının üstüne de Çizim sekmesindeki araçlarla işaret koyabilirsiniz.</p><p style="text-align:justify">İşiniz bitince <b>Kaydet</b>’e basın; belgenin tamamını PDF, Word ya da resim olarak kaydedebilirsiniz.</p>`,'Örnek yazı sayfası',{sample:true}))}
-
+/* ===== js/16-acilis.js ===== */
 /* ---------- boot ---------- */
 const missing=[['pdfjsLib','PDF görüntüleyici'],['PDFLib','PDF kaydedici'],['html2canvas','sayfa çizici'],['UTIF','TIF okuyucu']].filter(([g])=>!window[g]).map(([,n])=>n);
 setTool('select');updObjBtn();buildViewer();

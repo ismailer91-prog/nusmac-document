@@ -1,7 +1,35 @@
-// src/nusmac.html (tek dosya, kütüphaneleri CDN'den yükler) -> app/index.html (masaüstü, kütüphaneler app/lib içinde)
+// Kaynaktan çalışan programı üretir.
+//   src/index.html + src/styles.css + src/js/*.js (ad sırasıyla)
+//     → dist-web/nusmac.html  (tek dosya, kütüphaneler CDN'den; tarayıcıda açılır)
+//     → app/index.html        (masaüstü; kütüphaneler app/lib içinden, internet gerekmez)
+// JS dosyaları tek bir (function(){ 'use strict'; ... })() içinde birleştirilir;
+// yani dosyalar birbirinin fonksiyon ve değişkenlerini doğrudan görür.
 const fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..');
-let src = fs.readFileSync(path.join(root, 'src', 'nusmac.html'), 'utf8');
+const src = path.join(root, 'src');
+const read = f => fs.readFileSync(path.join(src, f), 'utf8');
+
+const jsFiles = fs.readdirSync(path.join(src, 'js')).filter(f => /^\d+-.+\.js$/.test(f)).sort();
+const js = jsFiles.map(f => `/* ===== js/${f} ===== */\n` + read('js/' + f)).join('');
+
+let page = read('index.html');
+const LINK = '<link rel="stylesheet" href="styles.css">';
+const MARK = /<!-- @scripts:[^>]*-->/;
+if (!page.includes(LINK) || !MARK.test(page)) throw new Error('src/index.html içinde stil bağlantısı veya @scripts işareti bulunamadı');
+page = page.replace(LINK, () => '<style>\n' + read('styles.css') + '</style>');
+page = page.replace(MARK, () => "<script>\n(function(){\n'use strict';\n" + js + '})();\n</script>');
+
+function wrap(body) {
+  const i = body.indexOf('<div id="app">');
+  return '<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+    + body.slice(0, i) + '</head>\n<body>\n' + body.slice(i) + '\n</body>\n</html>\n';
+}
+
+// Tarayıcı sürümü
+fs.mkdirSync(path.join(root, 'dist-web'), { recursive: true });
+fs.writeFileSync(path.join(root, 'dist-web', 'nusmac.html'), wrap(page));
+
+// Masaüstü sürümü
 const rep = {
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js': 'lib/pdf.js',
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js': 'lib/pdf.worker.js',
@@ -11,13 +39,12 @@ const rep = {
   'https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js': 'lib/UTIF.js',
   'https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js': 'lib/fontkit.umd.min.js',
 };
+let desk = page;
 for (const [a, b] of Object.entries(rep)) {
-  if (!src.includes(a)) throw new Error('Bulunamadı: ' + a);
-  src = src.split(a).join(b);
+  if (!desk.includes(a)) throw new Error('Bulunamadı: ' + a);
+  desk = desk.split(a).join(b);
 }
-src = src.replace(/<link rel="(preconnect|stylesheet)" href="https:\/\/fonts[^>]*>\n/g, '');
-src = src.replace('İnternet bağlantısını kontrol edip sayfayı yenileyin.', 'Programı yeniden kurmayı deneyin.');
-const i = src.indexOf('<div id="app">');
-const head = '<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n';
-fs.writeFileSync(path.join(root, 'app', 'index.html'), head + src.slice(0, i) + '</head>\n<body>\n' + src.slice(i) + '\n</body>\n</html>\n');
-console.log('app/index.html oluşturuldu');
+desk = desk.replace(/<link rel="(preconnect|stylesheet)" href="https:\/\/fonts[^>]*>\n/g, '');
+desk = desk.replace('İnternet bağlantısını kontrol edip sayfayı yenileyin.', 'Programı yeniden kurmayı deneyin.');
+fs.writeFileSync(path.join(root, 'app', 'index.html'), wrap(desk));
+console.log(`app/index.html ve dist-web/nusmac.html oluşturuldu (${jsFiles.length} JS dosyası)`);

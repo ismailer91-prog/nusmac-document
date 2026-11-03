@@ -5,8 +5,11 @@ kesip parçalayan ve sonunda PDF / Word / JPG / PNG olarak kaydeden bir masaüst
 Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılmalıdır.
 
 ## Dosya yapısı
-- `src/nusmac.html` — **asıl kaynak.** Tek dosyalık uygulama (HTML + CSS + JS). Kütüphaneleri CDN'den yükler; tarayıcıda da açılır.
-- `tools/build.js` — `src/nusmac.html` → `app/index.html` (CDN adreslerini `app/lib/` içindeki yerel kopyalarla değiştirir, Google Fonts bağlantısını kaldırır). **`app/index.html` elle düzenlenmez**, her zaman build ile üretilir.
+- `src/` — **asıl kaynak** (yalnız burası düzenlenir):
+  - `src/index.html` — sayfa iskeleti (şerit, pencereler, kütüphane `<script>` etiketleri).
+  - `src/styles.css` — tüm stiller.
+  - `src/js/NN-ad.js` — program kodu, numara sırasıyla birleştirilir. Hepsi tek bir `(function(){'use strict'; … })()` içine konur; dosyalar ortak kapsamı paylaşır (import/export yok). Yeni dosya eklerken numarayla sıraya koyun; üst düzeyde hemen çalışan kod, kullandığı `const`/`let` tanımlarından sonra gelmelidir.
+- `tools/build.js` — `src/` → `app/index.html` (masaüstü: kütüphaneler `app/lib/`'den, Google Fonts yok) ve `dist-web/nusmac.html` (tek dosyalık tarayıcı sürümü, CDN). **`app/index.html` elle düzenlenmez.**
 - `app/main.js` — Electron ana süreci: pencere, Türkçe sağ tık menüsü + yazım denetimi önerileri, dosya ile açma (argv / ikinci örnek), kaydetme penceresi, kaydedilmemiş değişiklik uyarısı. `BM_TEST_DIR` ortam değişkeni varsa indirmeler soru sormadan oraya yazılır (testler için).
 - `app/preload.js` — `window.desktop.onOpenFile` ve `window.desktop.readFont` (PDF'e gömülecek yazı tipini Windows'tan ya da `app/fonts`'tan okur) köprüleri.
 - `app/fonts/` — PDF'e gerçek metin yazmak için gömülen yazı tipleri (Liberation = Arial/Times/Courier eşdeğeri, Carlito = Calibri, Caladea = Cambria; lisanslar `LICENSES.txt`).
@@ -20,25 +23,29 @@ Arayüz dili Türkçedir; kullanıcıya görünen tüm metinler Türkçe yazılm
 - GitHub Actions (`.github/workflows/build.yml`): her gönderimde testler + Windows kurulum dosyası (Actions → Artifacts). `v1.5.0` gibi etiket gönderilince Releases sayfasına da konur.
 - `npm run dist` → `dist/` içinde Windows kurulum (.exe, NSIS) ve taşınabilir sürüm (electron-builder). Simge: `app/icon.ico`.
 
-## Kod haritası (src/nusmac.html içindeki `/* ---------- … ---------- */` başlıkları)
-Tüm JS tek bir IIFE içinde, `'use strict'`. Yardımcılar: `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFile` (Türkçe karakterleri dosya adında sadeleştirir).
-- **state** — `S` (belge durumu: `pages`, `k` ölçek, `tool`, `sel`, `ctx` ['txt'|'ann'], `undo/redo`, `wm` filigran, `pnum`, `objAuto` …), `pool` (id→sayfa), `E` (id→DOM).
+## Kod haritası (`src/js/`)
+Yardımcılar (`01-temel.js`): `$`, `$$`, `el`, `esc`, `toast`, `busy`, `saveFile` (Türkçe karakterleri dosya adında sadeleştirir).
+- `01-temel.js` — simgeler, arayüz yardımcıları, **durum**: `S` (belge durumu: `pages`, `k` ölçek, `tool`, `sel`, `ctx` ['txt'|'ann'], `undo/redo`, `wm` filigran, `pnum`, `objAuto` …), `pool` (id→sayfa), `E` (id→DOM); resim yardımcıları.
 - **Sayfa modeli** — `S.pages` dizisi. `kind`: `'pdf'` (src+index), `'img'` (canvas/img), `'text'` (yazı sayfası, `html`). Ortak alanlar: `w,h` (pt), `rot`, `clip` (kırpma), `anns` (işaretler), `objMode/objSig` (PDF nesne modu), `comp` (gelişmiş düzenleyici katmanları).
 - **İşaret (ann) türleri** — `text` (metin kutusu; `lineKey` varsa tek satır), `hl`, `path` (kalem), `rect`, `arrow`, `white` (beyaz örtü), `poly` (serbest kesim örtüsü), `img` (imza/kaşe/kesilen parça). Koordinatlar pt, sayfanın görünen (döndürülmüş, kırpılmış) alanına göre. `auto:true` = nesne modunun ürettiği.
-- **viewer / overlay** — `buildViewer`, `renderBase`, `paintPage` (nesne modunda yazı+resimsiz çizim), `renderOv`, `onDown` (tüm araçların fare işlemleri), `editText`, `editLineAt`.
-- **undo** — `snap/pushUndo/commitUndo/restore` (sayfa sırası + her sayfanın rot/anns/clip/objMode). Yazı sayfası içindeki yazım geri alması tarayıcının kendi `execCommand` geçmişidir.
-- **compositing & export** — `composite`, `drawAnns`, `exportPdf` (değişmemiş PDF sayfaları vektör kopyalanır; değişenler arka plan resmi + gerçek metin olarak; beyaz örtü/kesim olan sayfa her zaman yeniden çizilir ki örtülen yazı dosyada kalmasın), `PdfFonts`/`vecTexts`/`drawVecText` (metin kutularını gerçek PDF metni yazar), `wordBoxes`/`drawHiddenWords` (Word sayfalarına görünmez, seçilebilir metin katmanı), `decorate` (filigran + sayfa no), `exportSplit`.
-- **ribbon / formatting / keyboard** — şerit grupları (Yazı, Paragraf, Ekle, Çizim, Resim, Sayfa), açılır klasörler (`data-menu` → `.ddm`).
-- **yazı sayfaları** — `textPage`, `addTextPageAt`, `textChanged`, satır içi resim ekleme/boyutlandırma (`wSel`, `freeImage` ile serbest konuma alma).
-- **resim araçları** — `imageOp` (kes-ayır, serbest kes, görsel al), parçalama, PDF’ten gömülü resim çıkarma.
-- **PDF nesne modu** — `objectify` (yazı satırlarını ve resimleri ayrıştırır; yazılı/yazısız iki çizimi karşılaştırarak görünmez OCR yazısını atlar ve yazı rengini bulur), `queueObj` (arka plan kuyruğu), `revertObj`.
-- **zip / docx → html** — kütüphanesiz zip okuma/yazma (`unzip`, `zipStore`) ve kendi .docx okuyucumuz (`docxToHtml`).
-- **Görsel alanı** — katmanlı resim düzenleyici (`G` durumu, `gRender`, `gCrop`, `gSelCopy`, `gMerge` …); sayfa üstü pencere olarak `openStudio/closeStudio` ile açılır.
-- **kaydet penceresi** — `openSave` → PDF / Word (`exportDocx`, altChunk+MHT yöntemi) / JPG / PNG (çok sayfada .zip).
+- `02-dosya-acma.js` — `openFiles`, `addPdf`, `addImage`, `addTiff`.
+- `03-geri-al.js` — `snap/pushUndo/commitUndo/restore` (sayfa sırası + her sayfanın rot/anns/clip/objMode). Yazı sayfası içindeki yazım geri alması tarayıcının kendi `execCommand` geçmişidir.
+- `04-goruntuleyici.js` — `buildViewer`, `renderBase`, `paintPage` (nesne modunda yazı+resimsiz çizim), küçük resimler, sayfa işlemleri, `renderOv`, `onDown` (tüm araçların fare işlemleri), `editText`, `editLineAt`, PDF içinde arama.
+- `05-kaydet-pdf.js` — `composite`, `drawAnns`, `exportPdf` (değişmemiş PDF sayfaları vektör kopyalanır; değişenler arka plan resmi + gerçek metin; beyaz örtü/kesim olan sayfa her zaman yeniden çizilir ki örtülen yazı dosyada kalmasın), `PdfFonts`/`vecTexts`/`drawVecText` (metin kutularını gerçek PDF metni yazar), `wordBoxes`/`drawHiddenWords` (Word sayfalarına görünmez, seçilebilir metin katmanı), `decorate` (filigran + sayfa no), `exportSplit`.
+- `06-pdf-word.js` — PDF yazısını yazı sayfasına çevirme. `07-imza.js` — imza/kaşe penceresi.
+- `08-serit.js` — şerit grupları (Yazı, Paragraf, Ekle, Çizim, Resim, Sayfa), biçimlendirme, sayfa düğmeleri, klavye kısayolları.
+- `09-yazi-sayfalari.js` — `textPage`, `addTextPageAt`, `textChanged`, satır içi resim (`wSel`, `freeImage`), açılır klasörler (`data-menu` → `.ddm`), bul-değiştir, sayfa numarası, filigran, çoğaltma.
+- `10-resim-araclari.js` — `imageOp` (kes-ayır, serbest kes, görsel al), parçalama, PDF’ten gömülü resim çıkarma.
+- `11-nesne-modu.js` — `objectify` (yazı satırlarını ve resimleri ayrıştırır; yazılı/yazısız iki çizimi karşılaştırarak görünmez OCR yazısını atlar ve yazı rengini bulur), `queueObj` (arka plan kuyruğu), `revertObj`.
+- `12-zip-docx.js` — kütüphanesiz zip okuma/yazma (`unzip`, `zipStore`) ve kendi .docx okuyucumuz (`docxToHtml`).
+- `13-kaydet-word-resim.js` — `textCanvases` (yazı sayfasını A4'lere böler), `exportDocx` (altChunk+MHT), `exportImages`, `exportSplitPdf`.
+- `14-gorsel-alani.js` — katmanlı resim düzenleyici (`G` durumu, `gRender`, `gCrop`, `gSelCopy`, `gMerge` …); `openStudio/closeStudio`.
+- `15-kaydet-penceresi.js` — `openSave` → PDF / Word / JPG / PNG; dosya seçme, sürükle-bırak, kaydedilmemiş değişiklik uyarısı.
+- `16-acilis.js` — açılış, test kancası, masaüstünden dosya alma.
 
 ## Kurallar
 - Kullanıcıya görünen metinler Türkçe, sade ve kısa. Hata mesajı neyin olmadığını ve ne yapılacağını söyler.
 - Renkler `:root` değişkenlerinden gelir; açık/koyu tema ikisi de tanımlı.
-- Değişiklikten sonra: `npm run build:html`, sonra uygulamayı açıp ilgili akışı deneyin (dosya aç → düzenle → kaydet). Kaydedilen PDF’i başka bir okuyucuyla açıp kontrol edin.
+- Değişiklikten sonra: `npm test`; gerekirse `npm start` ile uygulamayı açıp ilgili akışı deneyin (dosya aç → düzenle → kaydet). Kaydedilen PDF’i başka bir okuyucuyla açıp kontrol edin.
 - Testler `#test` adresiyle açılan sayfadaki `window.__nm` kancasını kullanır (yalnız test içindir).
 - Bilinen sınırlar: düzenlenen PDF sayfalarında yazılar gerçek metindir ama arka plan (çizgi, tablo, renk) resim olur; Word sayfaları PDF'te görüntü + görünmez metin katmanıdır; tarayıcı sürümünde yazı tipi dosyası okunamadığı için metin kutuları resim olarak kalır; nesne modunda yazılar en yakın sistem yazı tipiyle gösterilir; .doc (eski Word) açılmaz.

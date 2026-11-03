@@ -1,0 +1,268 @@
+<title>Nusmac Document</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<div id="app">
+  <header class="top gut">
+    <div class="brand"><span class="mark">N</span><span>Nusmac <small class="bsub">Document</small></span></div>
+    <span class="docname" id="docName" title="Belgenin adı">Örnek belge</span>
+    <div class="spacer"></div>
+    <div class="search hsearch"><span data-ico="search"></span><input id="q" placeholder="PDF içinde ara" aria-label="PDF içinde ara"><span class="qi" id="qi"></span><button class="ib" id="qprev" data-ico="up" title="Önceki"></button><button class="ib" id="qnext" data-ico="down" title="Sonraki"></button></div>
+    <div class="hgrp"><button class="ib" id="undoBtn" data-ico="undo" title="Geri al (Ctrl+Z)" disabled></button><button class="ib" id="redoBtn" data-ico="redo" title="Yinele (Ctrl+Y)" disabled></button></div>
+    <div class="top-actions">
+      <label class="btn" title="PDF, Word, JPG, PNG, TIF aç; belgeye eklenir"><span data-ico="open"></span>Aç<input id="fileIn" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label>
+      <button class="btn" id="newBtn" title="Belgeyi temizle">Yeni</button>
+      <button class="btn primary" id="saveBtn" title="Kaydet (Ctrl+S)"><span data-ico="save"></span>Kaydet</button>
+    </div>
+  </header>
+
+  <div class="ribbon gut" id="ribbon">
+    <button class="ib only-narrow" id="sideBtn" data-ico="side" title="Sayfa listesi"></button>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><select id="pfSel" title="Yazı tipi" aria-label="Yazı tipi"></select><select id="fsSel" title="Yazı boyutu" aria-label="Yazı boyutu"></select><button class="ib" id="supBtn" title="Üst simge (m²)"><span class="tx">x²</span></button><button class="ib" id="subBtn" title="Alt simge (H₂O)"><span class="tx">x₂</span></button></div>
+        <div class="rrow"><button class="ib" id="boldBtn" title="Kalın (Ctrl+B)" aria-pressed="false"><b class="tx">K</b></button><button class="ib" id="italBtn" title="Eğik (Ctrl+I)" aria-pressed="false"><i class="tx" style="font-family:Georgia,serif">T</i></button><button class="ib" id="undBtn" title="Altı çizili (Ctrl+U)" aria-pressed="false"><u class="tx">A</u></button><button class="ib" id="strBtn" title="Üstü çizili" aria-pressed="false"><s class="tx">ab</s></button>
+          <label class="cpick" title="Yazı rengi"><span class="tx">A</span><i class="bar" id="fBar" style="background:#000000"></i><input type="color" id="fColor" value="#000000" aria-label="Yazı rengi"></label>
+          <label class="cpick" title="Vurgu rengi (yazının arkası)"><span data-ico="hl"></span><i class="bar" id="hBar" style="background:#ffe45c"></i><input type="color" id="hColor" value="#ffe45c" aria-label="Vurgu rengi"></label>
+          <button class="ib" id="clrBtn" data-ico="clear" title="Biçimi temizle"></button></div>
+      </div>
+      <div class="rgl">Yazı</div>
+    </div>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><button class="ib" id="alL" data-ico="al" title="Sola hizala" aria-pressed="false"></button><button class="ib" id="alC" data-ico="ac" title="Ortala" aria-pressed="false"></button><button class="ib" id="alR" data-ico="ar" title="Sağa hizala" aria-pressed="false"></button><button class="ib" id="alJ" data-ico="aj" title="İki yana yasla" aria-pressed="false"></button>
+          <select id="lsSel" title="Satır aralığı" aria-label="Satır aralığı"><option value="">Aralık</option><option value="1">1,0</option><option value="1.15">1,15</option><option value="1.5">1,5</option><option value="2">2,0</option></select></div>
+        <div class="rrow"><button class="ib" id="ulBtn" data-ico="ul" title="Madde işaretli liste"></button><button class="ib" id="olBtn" data-ico="ol" title="Numaralı liste"></button><button class="ib" id="outBtn" data-ico="outd" title="Girintiyi azalt"></button><button class="ib" id="indBtn" data-ico="ind" title="Girintiyi artır"></button>
+          <select id="fBlock" title="Paragraf biçimi" aria-label="Paragraf biçimi"><option value="p">Normal</option><option value="h1">Başlık 1</option><option value="h2">Başlık 2</option><option value="h3">Başlık 3</option></select></div>
+      </div>
+      <div class="rgl">Paragraf</div>
+    </div>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><button class="sb" data-tool="text" data-ico="text" title="Sayfanın istediğiniz yerine yazı kutusu koyar (T)">Metin</button><label class="sb" data-ico="image" title="Yazı sayfasında imlecin olduğu yere, diğer sayfalarda tıkladığınız yere resim ekler">Resim<input type="file" id="imgIn" hidden multiple accept="image/*,.tif,.tiff"></label><button class="sb" id="signBtn" data-ico="sign">İmza / Kaşe</button></div>
+        <div class="rrow"><button class="sb" id="tblBtn" data-ico="table" title="Yazı sayfasına 3×3 tablo ekler">Tablo</button><button class="sb dd" data-menu="mPage" data-ico="plus">Sayfa</button><button class="sb dd" data-menu="mMore" data-ico="more">Diğer</button></div>
+      </div>
+      <div class="rgl">Ekle</div>
+    </div>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><button class="ib" data-tool="select" data-ico="select" title="Seç ve taşı (V)"></button><button class="ib" data-tool="hl" data-ico="hl" title="Vurgula (H)"></button><button class="ib" data-tool="pen" data-ico="pen" title="Kalem (P)"></button><button class="ib" data-tool="rect" data-ico="rect" title="Kutu (R)"></button><button class="ib" data-tool="arrow" data-ico="arrow" title="Ok (A)"></button><button class="ib" data-tool="white" data-ico="white" title="Beyaz örtü: yazının üstünü kapatır (W)"></button></div>
+        <div class="rrow"><div class="grp" id="swatches" role="group" aria-label="Renk"></div><select id="lwSel" title="Çizgi kalınlığı" aria-label="Çizgi kalınlığı"><option value="1">1 pt</option><option value="2" selected>2 pt</option><option value="3">3 pt</option><option value="5">5 pt</option><option value="8">8 pt</option></select><button class="ib" id="delBtn" data-ico="trash" title="Seçili işareti sil (Delete)" disabled></button></div>
+      </div>
+      <div class="rgl">Çizim</div>
+    </div>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><button class="sb" data-tool="crop" data-ico="crop" title="Sayfayı kırp (C)">Kırp</button><button class="sb" data-tool="cut" data-ico="scissors" title="Dikdörtgen alanı kesip taşınabilir parça yapar (K)">Kes, ayır</button><button class="sb" data-tool="lasso" data-ico="lasso" title="İstediğiniz şekli çizerek keser (L)">Serbest kes</button></div>
+        <div class="rrow"><button class="sb" id="splitBtn" data-ico="grid" title="Sayfayı satır ve sütunlara böler">Parçala</button><button class="sb" data-tool="grab" data-ico="grab" title="Seçtiğiniz alanı resim olarak alır (G)">Görsel al</button><button class="sb dd" data-menu="mImg" data-ico="layers">Diğer</button></div>
+      </div>
+      <div class="rgl">Resim</div>
+    </div>
+    <div class="rg">
+      <div class="rrows">
+        <div class="rrow"><button class="sb" id="objBtn" data-ico="layers" aria-pressed="true" title="Açık olduğunda PDF’teki her yazı satırı ve resim ayrı, düzenlenebilir nesne olur">Nesneler</button><button class="sb" id="findBtn" data-ico="search" title="Yazı sayfalarında bul ve değiştir (Ctrl+H)">Bul</button><button class="sb dd" data-menu="mPg" data-ico="more">Diğer</button></div>
+        <div class="rrow"><button class="ib" id="rotL" data-ico="rotl" title="Bu sayfayı sola döndür"></button><button class="ib" id="rotR" data-ico="rotr" title="Bu sayfayı sağa döndür"></button><button class="ib" id="dupPage" data-ico="copy" title="Bu sayfayı çoğalt"></button><button class="ib" id="delPage" data-ico="trash" title="Bu sayfayı sil"></button></div>
+      </div>
+      <div class="rgl">Sayfa</div>
+    </div>
+  </div>
+
+  <div class="ddm" id="mPage" hidden>
+    <button id="addTxt"><span data-ico="text"></span><span><b>Yazı sayfası</b><small>Word gibi yazılabilir sayfa</small></span></button>
+    <button id="blankBtn"><span data-ico="plus"></span><span><b>Boş sayfa</b><small>Üstüne çizip yazabileceğiniz A4</small></span></button>
+    <button id="brkBtn"><span data-ico="pbreak"></span><span><b>Sayfa sonu</b><small>Yazı sayfasında yeni sayfaya geç</small></span></button>
+    <button id="newImg"><span data-ico="layers"></span><span><b>Yeni görsel</b><small>Resimleri üst üste koyarak oluştur</small></span></button>
+  </div>
+  <div class="ddm" id="mMore" hidden>
+    <button id="dateBtn"><span data-ico="cal"></span><span><b>Bugünün tarihi</b><small>Yazı sayfasında imlecin olduğu yere</small></span></button>
+    <button id="pnumBtn" aria-pressed="false"><span data-ico="hash"></span><span><b id="pnumLbl">Sayfa numaraları: kapalı</b><small>Kaydederken her sayfanın altına</small></span></button>
+    <button id="wmBtn"><span data-ico="drop"></span><span><b>Filigran…</b><small>Tüm sayfalara çapraz yazı (TASLAK vb.)</small></span></button>
+  </div>
+  <div class="ddm" id="mImg" hidden>
+    <button id="editImg"><span data-ico="layers"></span><span><b>Gelişmiş düzenleyici</b><small>Katmanlar, parlaklık, yazı, şekil</small></span></button>
+    <button id="pdfImgs"><span data-ico="image"></span><span><b>PDF’teki resimleri çıkar</b><small>Gömülü resimleri dosya olarak kaydeder</small></span></button>
+  </div>
+  <div class="ddm" id="mPg" hidden>
+    <button data-tool="edit"><span data-ico="edit"></span><span><b>PDF satırını düzenle</b><small>Nesneler kapalıyken tek satırı değiştirmek için</small></span></button>
+    <button id="pdf2txt"><span data-ico="text"></span><span><b>Yazı sayfasına çevir</b><small>PDF’teki tüm yazıyı Word gibi düzenlenebilir yap</small></span></button>
+  </div>
+  <div class="ddm" id="grabMenu" hidden></div>
+
+  <div class="body">
+    <aside class="thumbs" id="thumbs" aria-label="Sayfa listesi"></aside>
+    <main class="viewer gut tool-select" id="viewer">
+      <div class="note" id="sampleNote" hidden><b>Örnek belge.</b> Programı denemek için hazırlandı. Kendi dosyanızı <b>Aç</b> ile açın ya da buraya sürükleyin; örnek sayfalar kendiliğinden kalkar.</div>
+      <div class="empty" id="emptyNote" hidden>
+        <h2>Belgeye bir şey ekleyin</h2>
+        <div>PDF, Word ve resim dosyalarını açın ya da buraya sürükleyin; hepsi tek belgede arka arkaya eklenir. Boş bir yazı sayfasıyla da başlayabilirsiniz.</div>
+        <div class="fmt">PDF · DOCX · JPG · PNG · TIF</div>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <label class="btn primary"><span data-ico="open"></span>Dosya aç<input id="fileIn2" type="file" multiple hidden accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.tif,.tiff,.webp,.gif,.bmp,application/pdf,image/*"></label>
+          <button class="btn" id="emptyTxt"><span data-ico="text"></span>Yazı sayfası</button>
+        </div>
+      </div>
+      <div id="pagesList"></div>
+    </main>
+  </div>
+  <footer class="status gut"><span class="l" id="pStat"></span><span class="r" id="pHint"></span>
+    <span class="zoom"><button class="ib" id="zout" data-ico="zout" title="Uzaklaştır"></button><span class="zl" id="zl">100%</span><button class="ib" id="zin" data-ico="zin" title="Yakınlaştır"></button><button class="ib" id="zfit" data-ico="fit" title="Genişliğe sığdır"></button></span></footer>
+
+  <div class="fpanel" id="findPanel" hidden role="dialog" aria-label="Bul ve değiştir">
+    <div class="fph"><b>Bul ve değiştir</b><span class="muted">Yazı sayfalarında</span><span class="spacer"></span><button class="ib" id="fpClose" title="Kapat" aria-label="Kapat">✕</button></div>
+    <label class="fld">Aranan<input type="text" id="fpFind" spellcheck="false"></label>
+    <label class="fld">Yerine yazılacak<input type="text" id="fpRep" spellcheck="false"></label>
+    <div class="row2"><button class="btn sm" id="fpNext">Sonrakini bul</button><button class="btn sm" id="fpOne">Değiştir</button><button class="btn sm" id="fpAll">Tümünü değiştir</button></div>
+    <div class="muted" id="fpInfo"></div>
+  </div>
+
+  <div class="wimgbar" id="wImgBar" hidden>
+    <button data-w="25" title="Satır genişliğinin %25'i">%25</button><button data-w="50" title="Satır genişliğinin %50'si">%50</button><button data-w="75" title="Satır genişliğinin %75'i">%75</button><button data-w="100" title="Tam satır genişliği">%100</button>
+    <span class="vs"></span>
+    <button data-al="left" data-ico="al" title="Sola yasla"></button><button data-al="center" data-ico="ac" title="Ortala"></button><button data-al="right" data-ico="ar" title="Sağa yasla"></button>
+    <span class="vs"></span>
+    <button data-act="free" class="wfree" title="Resmi yazıdan ayırıp sayfada serbestçe taşınabilir yap"><span data-ico="move"></span>Serbest taşı</button>
+    <span class="vs"></span>
+    <button data-act="del" data-ico="trash" title="Resmi sil"></button>
+  </div>
+  <div class="wimgh" id="wImgHandle" hidden title="Sürükleyerek boyutlandırın"></div>
+
+  <section class="studio" id="studio" hidden aria-label="Resim düzenleyici">
+    <div class="sthead gut">
+      <b id="stTitle">Resim düzenleyici</b>
+      <span class="muted">Katmanlar, kırpma, kesip ayırma, yazı ve şekil.</span>
+      <span class="spacer"></span>
+      <button class="btn" id="stCancel">Vazgeç</button>
+      <button class="btn primary" id="stApply">Sayfaya uygula</button>
+    </div>
+    <div class="tb gut" id="gtb">
+      <div class="grp" role="group" aria-label="Görsel araçları">
+        <button class="ib" data-gtool="move" data-ico="move" title="Taşı, boyutlandır, döndür (V)"></button>
+        <button class="ib" data-gtool="marquee" data-ico="marquee" title="Alan seç: kesip ayırmak, kopyalamak, silmek için (M)"></button>
+        <button class="ib" data-gtool="crop" data-ico="crop" title="Tuvali kırp (C)"></button>
+        <button class="ib" data-gtool="text" data-ico="text" title="Yazı ekle (T)"></button>
+        <button class="ib" data-gtool="rect" data-ico="rect" title="Dikdörtgen (R)"></button>
+        <button class="ib" data-gtool="ellipse" data-ico="ellipse" title="Elips (E)"></button>
+        <label class="ib" data-ico="image" title="Resim ekle (yeni katman)"><input type="file" id="gImg" hidden multiple accept="image/*,.tif,.tiff,.pdf"></label>
+      </div>
+      <div class="sep"></div>
+      <button class="ib" id="gUndo" data-ico="undo" title="Geri al (Ctrl+Z)" disabled></button>
+      <button class="ib" id="gRedo" data-ico="redo" title="Yinele (Ctrl+Y)" disabled></button>
+      <div class="sep"></div>
+      <button class="ib" id="gZout" data-ico="zout" title="Uzaklaştır (Ctrl -)"></button>
+      <span class="zl" id="gZl">100%</span>
+      <button class="ib" id="gZin" data-ico="zin" title="Yakınlaştır (Ctrl +)"></button>
+      <button class="ib" id="gZfit" data-ico="fit" title="Ekrana sığdır (Ctrl+0)"></button>
+      <div class="sep" id="gSelSep" hidden></div>
+      <div class="grp" id="gSelOps" hidden>
+        <button class="btn sm" id="gCutSel" title="Seçili alanı katmandan kesip ayrı bir katman yapar">Kes ve ayır</button>
+        <button class="btn sm" id="gCopySel" title="Seçili alanın kopyasını yeni katman yapar">Kopyala</button>
+        <button class="btn sm" id="gEraseSel" title="Seçili alanı katmandan siler">Sil</button>
+        <button class="btn sm" id="gCropSel" title="Tuvali seçili alana kırpar">Tuvali kırp</button>
+      </div>
+    </div>
+    <div class="gbody">
+      <div class="gstage" id="gstage">
+        <canvas id="gcv" aria-label="Görsel tuvali"></canvas>
+        <div class="gempty" id="gEmpty">
+          <h2>Görsel oluşturun</h2>
+          <div>Resim ekleyin; birden fazla resmi üst üste koyup taşıyın, kırpın, bir parçasını kesip ayırın, yazı ekleyin ve birleştirin. Resimleri buraya sürükleyebilir ya da Ctrl+V ile yapıştırabilirsiniz.</div>
+          <div class="fmt">JPG · PNG · TIF · PDF</div>
+          <label class="btn primary"><span data-ico="image"></span>Resim ekle<input type="file" id="gImg2" multiple hidden accept="image/*,.tif,.tiff,.pdf"></label>
+        </div>
+      </div>
+      <aside class="gpanel" aria-label="Katmanlar ve özellikler">
+        <div class="gsec"><div class="gh">Katmanlar <span class="muted">(üstteki öndedir)</span></div>
+          <div class="glist" id="gLayers"></div>
+          <div class="glbtns">
+            <button class="ib" id="gUp" data-ico="up" title="Öne getir (bir üst sıraya)"></button>
+            <button class="ib" id="gDown" data-ico="down" title="Arkaya gönder (bir alt sıraya)"></button>
+            <button class="ib" id="gDup" data-ico="copy" title="Çoğalt (Ctrl+J)"></button>
+            <button class="ib" id="gDel" data-ico="trash" title="Katmanı sil (Delete)"></button>
+            <button class="btn sm" id="gMergeDown" title="Seçili katmanı alttakiyle tek katman yapar">Alttakiyle birleştir</button>
+            <button class="btn sm" id="gFlatten" title="Görünen tüm katmanları tek resim yapar">Tümünü birleştir</button>
+          </div>
+        </div>
+        <div class="gsec" id="gProps"></div>
+      </aside>
+    </div>
+    <footer class="status gut"><span class="l" id="gStat"></span><span class="r" id="gHint"></span></footer>
+  </section>
+</div>
+
+<div class="scrim" id="sigModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+    <h3 id="sigTitle">İmza veya kaşe</h3>
+    <div class="muted">Aşağıdaki alana fare ya da parmakla imzanızı atın, veya imza/kaşe fotoğrafı yükleyin.</div>
+    <canvas class="sigpad" id="sigPad" width="800" height="300"></canvas>
+    <div class="row">
+      <span class="muted">Mürekkep:</span>
+      <button class="sw" data-ink="#111111" style="background:#111111" title="Siyah" aria-pressed="false"></button>
+      <button class="sw" data-ink="#1f3fbf" style="background:#1f3fbf" title="Mavi" aria-pressed="true"></button>
+      <span class="spacer" style="flex:1"></span>
+      <button class="btn" id="sigClear">Temizle</button>
+      <label class="btn">Resim yükle<input type="file" id="sigFile" hidden accept="image/*,.tif,.tiff"></label>
+    </div>
+    <label class="row muted"><input type="checkbox" id="sigWhite" checked> Yüklenen resimde beyaz arka planı kaldır</label>
+    <div id="sigSavedWrap" hidden><div class="muted" style="margin-bottom:6px">Kayıtlı imzalar (tıklayıp yerleştirin):</div><div class="saved" id="sigSaved"></div></div>
+    <div class="row" style="justify-content:flex-end">
+      <button class="btn" id="sigCancel">Vazgeç</button>
+      <button class="btn primary" id="sigOk">Sayfaya yerleştir</button>
+    </div>
+  </div>
+</div>
+<div class="scrim" id="saveModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="svTitle">
+    <h3 id="svTitle">Belgeyi kaydet</h3>
+    <div class="muted" id="svInfo"></div>
+    <div class="fopts" role="radiogroup" aria-label="Biçim">
+      <label class="fopt"><input type="radio" name="svf" value="pdf" checked><b>PDF</b><span>Tüm belge tek dosya</span></label>
+      <label class="fopt"><input type="radio" name="svf" value="docx"><b>Word (.docx)</b><span>Yazılar düzenlenebilir kalır</span></label>
+      <label class="fopt"><input type="radio" name="svf" value="jpg"><b>JPG resim</b><span>Küçük dosya, paylaşmaya uygun</span></label>
+      <label class="fopt"><input type="radio" name="svf" value="png"><b>PNG resim</b><span>Kayıpsız kalite</span></label>
+    </div>
+    <div id="svNote"></div>
+    <div class="svopts">
+      <label class="fld">Hangi sayfalar<select id="svRange"></select></label>
+      <label class="chk" id="svSplitW"><input type="checkbox" id="svSplit"> Her sayfayı ayrı PDF yap (hepsi tek .zip dosyasında)</label>
+      <label class="chk" id="svFlatW"><input type="checkbox" id="svFlat"> Düz görüntü PDF: beyaz örtünün altındaki yazı tamamen silinir</label>
+      <label class="fld">Dosya adı<input type="text" id="svName" spellcheck="false"></label>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="svCancel">Vazgeç</button><button class="btn primary" id="svGo"><span data-ico="save"></span>Kaydet</button></div>
+  </div>
+</div>
+<div class="scrim" id="splitModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="spTitle" style="width:min(460px,100%)">
+    <h3 id="spTitle">Sayfayı parçala</h3>
+    <div class="muted" id="spInfo"></div>
+    <div class="pgrid"><label class="fld">Satır<input type="number" id="spR" min="1" max="12" value="2"></label><label class="fld">Sütun<input type="number" id="spC" min="1" max="12" value="2"></label></div>
+    <div class="fopts" style="grid-template-columns:1fr">
+      <label class="fopt"><input type="radio" name="spm" value="pieces" checked><b>Sayfada taşınabilir parçalar</b><span>Parçaları sürükleyip yeniden dizebilirsiniz</span></label>
+      <label class="fopt"><input type="radio" name="spm" value="pages"><b>Her parça yeni sayfa olsun</b><span>Parçalar bu sayfanın arkasına eklenir</span></label>
+      <label class="fopt"><input type="radio" name="spm" value="zip"><b>Resim dosyaları olarak kaydet</b><span>Tüm parçalar tek .zip dosyasında</span></label>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="spCancel">Vazgeç</button><button class="btn primary" id="spGo"><span data-ico="grid"></span>Parçala</button></div>
+  </div>
+</div>
+<div class="scrim" id="wmModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wmTitle" style="width:min(460px,100%)">
+    <h3 id="wmTitle">Filigran</h3>
+    <div class="muted">Tüm sayfalara çapraz, yarı saydam bir yazı eklenir. Ekranda önizlenir, kaydedince sayfalara işlenir.</div>
+    <label class="fld">Yazı<input type="text" id="wmText" value="TASLAK"></label>
+    <div class="pgrid"><label class="fld">Renk<input type="color" id="wmColor" value="#c62828"></label><label class="fld">Saydamlık<input type="range" id="wmOp" min="5" max="60" value="18"></label></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" id="wmOff">Filigranı kaldır</button><span style="flex:1"></span><button class="btn" id="wmCancel">Vazgeç</button><button class="btn primary" id="wmGo">Uygula</button></div>
+  </div>
+</div>
+<div class="busy" id="busy" hidden><div><span class="spin"></span><span id="busyMsg">Hazırlanıyor…</span></div></div>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<!-- @scripts: tools/build.js src/js/*.js dosyalarını sırayla tek bir (function(){ ... })() içinde buraya yerleştirir -->
