@@ -1,0 +1,24 @@
+{
+  "name": "nusmac-document",
+  "productName": "Nusmac Document",
+  "version": "1.4.0",
+  "description": "Nusmac Document - PDF, Word ve resim düzenleyici",
+  "main": "app/main.js",
+  "scripts": {
+    "build:html": "node tools/build.js",
+    "start": "npm run build:html && electron .",
+    "dist": "npm run build:html && electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.nusmac.document",
+    "productName": "Nusmac Document",
+    "files": ["app/**/*", "package.json"],
+    "win": { "target": ["nsis", "portable"], "icon": "app/icon.ico" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "Nusmac Document" },
+    "fileAssociations": [{ "ext": ["pdf", "docx", "jpg", "jpeg", "png", "tif", "tiff"], "name": "Belge", "role": "Editor" }]
+  }
+}
