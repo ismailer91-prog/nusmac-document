@@ -7,7 +7,9 @@ const fs = require('fs');
 const ROOT = path.join(__dirname, '..');
 const FIX = path.join(__dirname, 'fixtures');
 const OUT = path.join(ROOT, 'test-output');
+fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
+let saveNo = 0;
 
 let browser;
 const results = [];
@@ -31,7 +33,7 @@ async function openFiles(page, ...names) {
 }
 
 // Kaydet penceresinden kaydeder, inen dosyanın yolunu döndürür
-async function save(page, fmt = 'pdf', { flat = false, name = 'test' } = {}) {
+async function save(page, fmt = 'pdf', { flat = false, name = 'kayit' + (++saveNo) } = {}) {
   await page.click('#saveBtn');
   await page.check(`input[name="svf"][value="${fmt}"]`);
   if (fmt === 'pdf') await page.setChecked('#svFlat', flat);
@@ -76,7 +78,7 @@ async function test(name, fn) {
 }
 
 (async () => {
-  browser = await chromium.launch();
+  browser = await chromium.launch({ args: ['--allow-file-access-from-files'] });
   console.log('Nusmac Document testleri');
 
   await test('Program hatasız açılıyor', async page => {
@@ -147,6 +149,39 @@ async function test(name, fn) {
     const t = await pdfText(page, await save(page));
     assert(t.join(' ').includes('DİLEKÇE BAŞLIĞI'), 'Word yazısı PDF içinde metin değil: ' + t.join(' | '));
     assert(t.join(' ').includes('ışığı söndürünüz'), 'Paragraf metni eksik: ' + t.join(' | '));
+  });
+
+  await test('Döndürülmüş PDF sayfasına eklenen metin doğru yönde kaydedilir', async page => {
+    await openFiles(page, 'turkce.pdf');
+    await page.evaluate(() => {
+      const { S, renderOv, pushUndo, nid } = window.__nm; pushUndo();
+      const p = S.pages[0]; p.rot = 90;
+      p.anns.filter(a => !a.auto).length = 0;
+      p.anns.push({ id: nid('a'), type: 'text', x: 40, y: 40, w: 300, h: 24, text: 'Döndürülmüş not', size: 14, color: '#111111', bold: false, italic: false, underline: false, font: 'Arial', align: 'left', bg: null });
+    });
+    const f = await save(page, 'pdf', { name: 'dondur' });
+    const t = await pdfText(page, f);
+    assert(t[0].includes('Döndürülmüş not'), 'Döndürülmüş sayfada metin yok: ' + t[0]);
+    const info = await page.evaluate(async b64 => {
+      const doc = await pdfjsLib.getDocument({ data: Uint8Array.from(atob(b64), c => c.charCodeAt(0)) }).promise;
+      const pg = await doc.getPage(1); const vp = pg.getViewport({ scale: 1 });
+      const it = (await pg.getTextContent()).items.find(i => i.str.includes('Döndürülmüş'));
+      const [x, y] = vp.convertToViewportPoint(it.transform[4], it.transform[5]);
+      return { x, y, w: vp.width, h: vp.height };
+    }, fs.readFileSync(f).toString('base64'));
+    assert(info.w > info.h, 'Sayfa yatay olmalı');
+    assert(Math.abs(info.x - 40) < 3 && info.y > 40 && info.y < 70, 'Metin yanlış yerde: ' + JSON.stringify(info));
+  });
+
+  await test('Word sayfasında beyaz örtünün altındaki kelime PDF’te kalmaz', async page => {
+    await openFiles(page, 'ornek.docx');
+    await page.evaluate(() => {
+      const { S, pushUndo, nid } = window.__nm; pushUndo();
+      S.pages[0].anns.push({ id: nid('a'), type: 'white', x: 0, y: 0, w: 595, h: 78 });
+    });
+    const t = (await pdfText(page, await save(page))).join(' ');
+    assert(!t.includes('DİLEKÇE'), 'Örtülen başlık PDF içinde duruyor: ' + t);
+    assert(t.includes('söndürünüz'), 'Örtülmeyen yazı kayboldu: ' + t);
   });
 
   await test('Word olarak kaydedilir', async page => {

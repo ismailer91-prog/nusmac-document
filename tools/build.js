@@ -9,6 +9,7 @@ const rep = {
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js': 'lib/html2canvas.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js': 'lib/pako.min.js',
   'https://cdn.jsdelivr.net/npm/utif@3.1.0/UTIF.js': 'lib/UTIF.js',
+  'https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js': 'lib/fontkit.umd.min.js',
 };
 for (const [a, b] of Object.entries(rep)) {
   if (!src.includes(a)) throw new Error('Bulunamadı: ' + a);
